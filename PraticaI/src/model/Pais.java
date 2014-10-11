@@ -6,6 +6,8 @@ package model;
  * @author Dinei A. Rockenbach
  */
 public class Pais {
+    
+    
     private int PaiCodigo;
     private String PaiAlfa2;
     private String PaiAlfa3;
