@@ -5,15 +5,24 @@ package model;
  *
  * @author Dinei A. Rockenbach
  */
-public class Pais {
+public class Pais extends ModelTemplate {
     
+//    private static String[] listColumns;
     
     private int PaiCodigo;
     private String PaiAlfa2;
     private String PaiAlfa3;
     private int PaiBacenIbge;
+    private int PaiISO3166;
     private String PaiNome;
-
+    
+    //public static String dbTable = "pais"; //Necessário apenas quando for diferente do nome da classe
+    public static String[] idColumn = {"PaiCodigo"};
+    public static String[][] listColumns = {
+        {"Nome",    "Sigla"},
+        {"PaiNome", "PaiAlfa2"}
+    };
+    
     public Pais() {
     }
 
@@ -49,6 +58,14 @@ public class Pais {
         this.PaiBacenIbge = PaiBacenIbge;
     }
 
+    public int getPaiISO3166() {
+        return PaiISO3166;
+    }
+
+    public void setPaiISO3166(int PaiISO3166) {
+        this.PaiISO3166 = PaiISO3166;
+    }
+    
     public String getPaiNome() {
         return PaiNome;
     }
