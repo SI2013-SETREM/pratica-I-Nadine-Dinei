@@ -1,8 +1,6 @@
 
 package view;
 
-import model.Pais;
-
 /**
  *
  * @author Dinei A. Rockenbach
@@ -15,7 +13,7 @@ public class LstPais extends reflection.ListJFrame {
      */
     public LstPais() {
         initComponents();
-        super.setClass(Pais.class);
+        super.setClass(model.Pais.class);
         super.initListComponents();
     }
 
