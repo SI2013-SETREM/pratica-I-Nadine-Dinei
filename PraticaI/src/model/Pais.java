@@ -7,8 +7,6 @@ package model;
  */
 public class Pais extends ModelTemplate {
     
-//    private static String[] listColumns;
-    
     private int PaiCodigo;
     private String PaiAlfa2;
     private String PaiAlfa3;
@@ -16,11 +14,16 @@ public class Pais extends ModelTemplate {
     private int PaiISO3166;
     private String PaiNome;
     
-    //public static String dbTable = "pais"; //Necessário apenas quando for diferente do nome da classe
     public static String[] idColumn = {"PaiCodigo"};
-    public static String[][] listColumns = {
-        {"Nome",    "Sigla"},
-        {"PaiNome", "PaiAlfa2"}
+    
+    public static String[][] listTableFields = {
+        {"Nome",    "Sigla"}, //Nome da coluna
+        {"PaiNome", "PaiAlfa2"}, //Nome do campo no banco / atributo do model
+    };
+    
+    public static Object[][] listFilterFields = {
+        {"Nome", "PaiNome", 200},
+        {"Sigla", "PaiAlfa2", 60}
     };
     
     public Pais() {
