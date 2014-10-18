@@ -1,8 +1,11 @@
 
 package model;
 
+import reflection.FilterField;
+import reflection.FilterFieldText;
+
 /**
- *
+ *  Classe de País
  * @author Dinei A. Rockenbach
  * @author Nadine Anderle
  */
@@ -15,16 +18,36 @@ public class Pais extends ModelTemplate {
     private int PaiISO3166;
     private String PaiNome;
     
+    /**
+     * @see model.ModelTemplate#sngTitle
+     */
+    public static String sngTitle = "País";
+    /**
+     * @see model.ModelTemplate#prlTitle
+     */
+    public static String prlTitle = "Países";
+    /**
+     * @see model.ModelTemplate#idColumn
+     */
     public static String[] idColumn = {"PaiCodigo"};
-    
+    /**
+     * @see model.ModelTemplate#listTableFields
+     */
     public static String[][] listTableFields = {
-        {"Nome",    "Sigla"}, //Nome da coluna
+        {"Nome",    "Sigla"}, //Rótulo da coluna
         {"PaiNome", "PaiAlfa2"}, //Nome do campo no banco / atributo do model
     };
     
-    public static Object[][] listFilterFields = {
-        {"Nome", "PaiNome", 200},
-        {"Sigla", "PaiAlfa2", 60}
+//    public static FilterField[] listFilterFields = {
+//        {"Nome", "PaiNome", 200},
+//        {"Sigla", "PaiAlfa2", 60}
+//    };
+    /**
+     * @see model.ModelTemplate#listFilterFields
+     */
+    public static FilterField[] listFilterFields = {
+        new FilterFieldText("PaiNome", "Nome", 200),
+        new FilterFieldText("PaiAlfa2", "Sigla", 60)
     };
     
     public Pais() {

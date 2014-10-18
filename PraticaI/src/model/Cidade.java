@@ -1,30 +1,33 @@
+
 package model;
 
 /**
  *
- * @author Nadine
+ * @author Dinei A. Rockenbach
+ * @author Nadine Anderle
  */
 public class Cidade {
 
-    private Pais PaiCodigo;
-    private Estado EstSigla;
+    private Estado estado;
     private int CidCodigo;
     private String CidNome;
+    
+    public static String[] idColumn = {"Estado.Pais.PaiCodigo", "Estado.EstSigla", "CidCodigo"};
+    
+    public static String[][] listTableFields = {
+        {"País", "Estado", "Nome"}, //Rótulo da coluna
+        {"Estado.Pais.PaiNome", "Estado.EstNome", "CidNome"}, //Nome do campo no banco / atributo do model
+    };
 
-    public Pais getPaiCodigo() {
-        return PaiCodigo;
+    public Cidade() {
     }
 
-    public void setPaiCodigo(Pais PaiCodigo) {
-        this.PaiCodigo = PaiCodigo;
+    public Estado getEstado() {
+        return estado;
     }
 
-    public Estado getEstSigla() {
-        return EstSigla;
-    }
-
-    public void setEstSigla(Estado EstSigla) {
-        this.EstSigla = EstSigla;
+    public void setEstado(Estado estado) {
+        this.estado = estado;
     }
 
     public int getCidCodigo() {
@@ -43,7 +46,21 @@ public class Cidade {
         this.CidNome = CidNome;
     }
 
-    public Cidade() {
+    public static String[] getIdColumn() {
+        return idColumn;
     }
 
+    public static void setIdColumn(String[] idColumn) {
+        Cidade.idColumn = idColumn;
+    }
+
+    public static String[][] getListTableFields() {
+        return listTableFields;
+    }
+
+    public static void setListTableFields(String[][] listTableFields) {
+        Cidade.listTableFields = listTableFields;
+    }
+    
+    
 }

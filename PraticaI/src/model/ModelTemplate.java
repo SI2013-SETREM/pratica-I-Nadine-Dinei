@@ -1,11 +1,23 @@
 
 package model;
 
+import reflection.FilterField;
+
 /**
  *  Template para os modelos do projeto
  * @author Dinei A. Rockenbach
  */
 abstract class ModelTemplate {
+    
+    /**
+     *  Título da classe, em singular
+     */
+    public static String sngTitle;
+    
+    /**
+     *  Título da classe, em plural
+     */
+    public static String prlTitle;
     
     /**
      *  Nome da tabela, caso seja diferente do nome da classe<br>
@@ -32,6 +44,6 @@ abstract class ModelTemplate {
      *  Campos que vão no filtro (acima da tabela), no formato:<br>
      * {Label, campo no banco, tamanho[, operador de comparação]}
      */
-    public static Object[][] listFilterFields = {};
+    public static FilterField[] listFilterFields = {};
     
 }

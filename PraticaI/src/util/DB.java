@@ -7,19 +7,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- *
+ *  Classe que faz o acesso ao banco de dados
  * @author Dinei A. Rockenbach
  * @author Nadine Anderle
  */
-public class DB {
+public abstract class DB {
     
     public static final String DB_DBMS  = "mysql";
     public static final String DB_HOST  = "localhost";
-    public static final int DB_PORT     = 3306;
+    public static final int    DB_PORT  = 3306;
     public static final String DB_NAME  = "pratica_i";
     public static final String DB_USER  = "root";
     public static final String DB_PASS  = "";
@@ -28,17 +26,18 @@ public class DB {
     
     public static Connection getConnection() {
         if (con == null) {
-            try {
-                Class.forName("org." + DB_DBMS + ".jdbc.Driver").newInstance();
-            } catch (ClassNotFoundException ex) {
-                System.err.println("Erro na Conexão: Class Not Found '" + ex.getMessage() + "'");
-            } catch (Exception ex) {
-                System.err.println("ERRO NA CONEXÃO: " + ex.getClass() + ", " + ex.getMessage());
-            }
+            // Sempre dá o erro Class Not Found
+//            try {
+//                Class.forName("org." + DB_DBMS + ".jdbc.Driver");
+//            } catch (ClassNotFoundException ex) {
+//                System.err.println("Erro na Conexão: Class Not Found '" + ex.getMessage() + "'");
+//            } catch (Exception ex) {
+//                System.err.println("ERRO NA CONEXÃO: " + ex.getClass() + ", " + ex.getMessage());
+//            }
             
             try {
                 con = DriverManager.getConnection(getDsn(), DB_USER, DB_PASS);
-                System.out.println(getDsn());
+                System.out.println(DB.class.getName() + " - " + getDsn());
             } catch (SQLException ex) {
                 System.err.println("ERRO NO DSN: " + getDsn() + " - " + ex.getErrorCode() + " - " + ex.getMessage());
             }
@@ -95,6 +94,7 @@ public class DB {
         }
         dsn += "/" + DB_NAME;
         dsn += "?useUnicode=true&characterEncoding=UTF-8";
+//        dsn += "?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&connectionCollation=utf8_general_ci";
         return dsn;
     }
     

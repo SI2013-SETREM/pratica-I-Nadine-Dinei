@@ -1,8 +1,6 @@
 
 package reflection;
 
-import java.lang.reflect.Field;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,8 +9,6 @@ import java.util.logging.Logger;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 import javax.swing.table.DefaultTableModel;
 import util.DB;
@@ -22,18 +18,20 @@ import util.DB;
  * @author Dinei A. Rockenbach
  * @author Nadine Anderle
  */
-public abstract class ListJFrame extends javax.swing.JFrame {
+public class ListJFrame extends javax.swing.JFrame {
     
     private javax.swing.JTable tblList = new javax.swing.JTable();
     private Class<?> cls; //Ex.: Estado.class
-    private ArrayList<JTextField> txtFilters = new ArrayList<JTextField>();
-    private ArrayList<JLabel> txtFilterLabels = new ArrayList<JLabel>();
+    private String mainTable;
+    
+    private int width = 500;
+    private int height = 300;
+    
 //    private ArrayList<Field> lstIdFields = new ArrayList<Field>();
     
     // Atributos que vem da classe
-    private Object[][] listFilterFields;
+    private FilterField[] listFilterFields;
     private String[][] listTableFields;
-    
     
     /**
      *  Define a classe para a qual se está fazendo a listagem
@@ -41,17 +39,18 @@ public abstract class ListJFrame extends javax.swing.JFrame {
      */
     public void setClass(Class<?> cls) {
         this.cls = cls;
+        this.mainTable = ReflectionUtil.getDBTableName(cls);
     }
     
-    public Object[][] getListFilterFields() {
+    public FilterField[] getListFilterFields() {
         if (listFilterFields == null)
-            listFilterFields = (Object[][]) ReflectionUtil.getStaticAttibute(cls, "listFilterFields");
+            listFilterFields = (FilterField[]) ReflectionUtil.getAttibute(cls, "listFilterFields");
         return listFilterFields;
     }
 
     public String[][] getListTableFields() {
         if (listTableFields == null)
-            listTableFields = (String[][]) ReflectionUtil.getStaticAttibute(cls, "listTableFields");
+            listTableFields = (String[][]) ReflectionUtil.getAttibute(cls, "listTableFields");
         return listTableFields;
     }
     
@@ -61,6 +60,14 @@ public abstract class ListJFrame extends javax.swing.JFrame {
     protected void initListComponents() {
         
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        
+        String title = null;
+        if (ReflectionUtil.isAttributeExists(cls, "prlTitle"))
+            title = (String) ReflectionUtil.getAttibute(cls, "prlTitle");
+        if (title != null)
+            setTitle("Lista de " + title);
+        else
+            setTitle("ALERTA! Falta o atributo 'prlTitle' em " + cls.getName());
         
         try {
             
@@ -77,24 +84,13 @@ public abstract class ListJFrame extends javax.swing.JFrame {
             
             
             // Recupera informações da classe
-//            String[] idColumns = (String[]) ReflectionUtil.getStaticAttibute(cls, "idColumn");
+//            String[] idColumns = (String[]) ReflectionUtil.getAttibute(cls, "idColumn");
 //            for (String field : idColumns) {
 //                lstIdFields.add(cls.getDeclaredField(field)); //throw NoSuchFieldException
 //            }
             
             listFilterFields = getListFilterFields();
             listTableFields = getListTableFields();
-            
-            for (Object[] field : listFilterFields) {
-                JLabel lbl = new JLabel();
-                lbl.setText((String) field[0]);
-                txtFilterLabels.add(lbl);
-                
-                JTextField txt = new JTextField();
-                txt.setText(null);
-                txtFilters.add(txt);
-            }
-            
             
             // Recupera os dados do banco
             tblList.setModel(new javax.swing.table.DefaultTableModel(
@@ -108,17 +104,15 @@ public abstract class ListJFrame extends javax.swing.JFrame {
             javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
             scrollPane.setViewportView(tblList);
             
+            java.awt.event.ActionListener alRefresh = new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    listData();
+                }
+            };
+            
             javax.swing.JButton btnFilter = new javax.swing.JButton();
             btnFilter.setText("Filtrar");
-            btnFilter.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    try {
-                        listData();
-                    } catch (SQLException ex) {
-                        Logger.getLogger(ListJFrame.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            });
+            btnFilter.addActionListener(alRefresh);
             
             GroupLayout layout = new GroupLayout(getContentPane());
             getContentPane().setLayout(layout);
@@ -134,22 +128,25 @@ public abstract class ListJFrame extends javax.swing.JFrame {
             pgContainer = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
             
             ParallelGroup pgMainTable = layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 500, GroupLayout.PREFERRED_SIZE)
+                .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, width, GroupLayout.PREFERRED_SIZE)
                     ;
             
             // Filtros
-            if (txtFilters.size() > 0) {
+            if (listFilterFields.length > 0) {
                 ParallelGroup pgFilterButton = layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                     .addComponent(btnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         ;
                 
                 SequentialGroup sgFilters = layout.createSequentialGroup();
-                for (int i = 0; i < txtFilters.size(); i++) {
+                for (int i = 0; i < listFilterFields.length; i++) {
+                    if (listFilterFields[i].getJComponent() instanceof javax.swing.JTextField) {
+                        ((javax.swing.JTextField) listFilterFields[i].getJComponent()).addActionListener(alRefresh);
+                    }
                     sgFilters
                         .addGap(6, 6, 6)
-                        .addComponent(txtFilterLabels.get(i))
+                        .addComponent(listFilterFields[i].getJLabel())
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtFilters.get(i), GroupLayout.PREFERRED_SIZE, (int) listFilterFields[i][2], GroupLayout.PREFERRED_SIZE)
+                        .addComponent(listFilterFields[i].getJComponent(), GroupLayout.PREFERRED_SIZE, listFilterFields[i].getWidth(), GroupLayout.PREFERRED_SIZE)
                             ;
                 }
                 
@@ -172,12 +169,12 @@ public abstract class ListJFrame extends javax.swing.JFrame {
             sgMain = layout.createSequentialGroup();
             sgMain.addContainerGap(20, Short.MAX_VALUE);
             
-            if (txtFilters.size() > 0) {
+            if (listFilterFields.length > 0) {
                 ParallelGroup pgFilters = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
-                for (int i = 0; i < txtFilters.size(); i++) {
+                for (int i = 0; i < listFilterFields.length; i++) {
                     pgFilters
-                        .addComponent(txtFilters.get(i), GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtFilterLabels.get(i))
+                        .addComponent(listFilterFields[i].getJComponent(), GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(listFilterFields[i].getJLabel())
                             ;
                 }
                 sgMain.addGroup(pgFilters)
@@ -187,7 +184,7 @@ public abstract class ListJFrame extends javax.swing.JFrame {
                         ;
             }
             // Tabela principal
-            sgMain.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE);
+            sgMain.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, height, GroupLayout.PREFERRED_SIZE);
             sgMain.addContainerGap();
             pgMain.addGroup(sgMain);
             
@@ -204,94 +201,172 @@ public abstract class ListJFrame extends javax.swing.JFrame {
         
     }
     
-    private void listData() throws SQLException {
+    /**
+     *  Busca os dados do banco e lista-os na tabela
+     */
+    private void listData() {
         
-        // Recupera informações da classe
-        listFilterFields = getListFilterFields();
-        listTableFields = getListTableFields();
+        try {
         
-        // Recupera os dados do banco
-        String sql = "";
-        sql += "SELECT ";
-        for (String col : listTableFields[1]) {
-            sql += "t." + col + ",";
-        }
-        sql = sql.substring(0, (sql.length()-1));
-        sql += " FROM " + ReflectionUtil.getDBTableName(cls) + " t";
+            // Recupera informações da classe
+            listFilterFields = getListFilterFields();
+            listTableFields = getListTableFields();
 
-        boolean isWhere = false;
+            // Recupera os dados do banco
+            String sql = "";
+            sql += "SELECT ";
 
-        ArrayList<Object> filterValues = new ArrayList<>();
-        for (int i = 0; i < txtFilters.size(); i++) {
-            if (!"".equals(txtFilters.get(i).getText())) {
-                String field = (String) listFilterFields[i][1];
-                if (!isWhere) {
-                    sql += " WHERE ";
-                    isWhere = true;
-                } else
-                    sql += " AND ";
-                sql += "t." + field;
+            ArrayList<Object[]> joins = new ArrayList<>();
 
-                boolean isOperator = false;
-                if (listFilterFields[i].length >= 4) {
-                    sql += " " + listFilterFields[i][3] + " ";
-                    isOperator = true;
-                }
-                Class<?> clsType = ReflectionUtil.getAttributeType(cls, field);
-                if (clsType == String.class) {
-                    if (!isOperator) {
-                        sql += " LIKE ";
-                        filterValues.add("%" + txtFilters.get(i).getText() + "%");
-                    } else {
-                        if ("LIKE".equals(String.valueOf(listFilterFields[i][3]).toUpperCase()))
-                            filterValues.add("%" + txtFilters.get(i).getText() + "%");
-                        else 
-                            filterValues.add(txtFilters.get(i).getText());
+            for (String column : listTableFields[1]) {
+                String[] join = column.split("\\.");
+                if (join.length == 1)
+                    sql += mainTable + "." + column;
+                else {
+                    Class clsInJoin = cls;
+                    int c = 0;
+                    String fieldToSelect = "";
+                    for (String tbl : join) {
+                        c++;
+                        if (c == join.length) {
+                            fieldToSelect = tbl;
+                        } else {
+                            Class clsJoin = Class.forName("model." + tbl);
+                            joins.add(new Object[]{clsJoin, ReflectionUtil.getDBTableName(clsJoin), clsInJoin, ReflectionUtil.getDBTableName(clsInJoin)});
+                            clsInJoin = clsJoin;
+                        }
                     }
-                } else if (clsType == Integer.class) {
-                    if (!isOperator)
-                        sql += " = ";
-                    filterValues.add(Integer.parseInt(txtFilters.get(i).getText()));
-                } else if (clsType == Double.class) {
-                    if (!isOperator)
-                        sql += " = ";
-                    filterValues.add(Double.parseDouble(txtFilters.get(i).getText()));
-                } else if (clsType == Float.class) {
-                    if (!isOperator)
-                        sql += " = ";
-                    filterValues.add(Float.parseFloat(txtFilters.get(i).getText()));
+                    Object[] last = joins.get(joins.size()-1);
+                    sql += (String) last[1] + "." + fieldToSelect;
                 }
-                sql += "?";
+                sql += ",";
             }
-        }
+            sql = sql.substring(0, (sql.length()-1)); //Tira a última vírgula
+            sql += " FROM " + mainTable;
 
-        System.out.println("SQL:" + sql); //Debug
+            //@TODO Fazer loop nos campos de filtros para verificar se algum deles precisa de um join
 
-        ResultSet rs;
-        if (filterValues.size() > 0) 
-            rs = DB.executeQuery(sql, filterValues.toArray());
-        else
-            rs = DB.executeQuery(sql);
+            for (Object[] tbl : joins) {
+                sql += " LEFT OUTER JOIN " + (String) tbl[1] + " ON (";
+                String[] idColumn = (String[]) ReflectionUtil.getAttibute((Class) tbl[0], "idColumn");
+                for (String col : idColumn) {
+                    sql += (String) tbl[1] + "." + col + "=" + (String) tbl[3] + "." + col + " AND ";
+                }
+                sql = sql.substring(0, (sql.length()-5)); //Tira o último AND
+                sql += ")";
+            }
 
-        DefaultTableModel dtm = (DefaultTableModel) tblList.getModel();
-        dtm.setNumRows(0);
+            // Filtros
+            boolean isWhere = false;
+
+            ArrayList<Object> filterValues = new ArrayList<>();
+            for (int i = 0; i < listFilterFields.length; i++) {
+                if (!listFilterFields[i].isEmpty()) {
+                    if (!isWhere) {
+                        sql += " WHERE ";
+                        isWhere = true;
+                    } else
+                        sql += " AND ";
+
+                    Class<?> clsJoin = cls;
+                    String column = "";
+                    String[] join = {};
+    //                if (listFilterFields[i] instanceof FilterFieldDynamicCombo) {
+    //                    FilterFieldDynamicCombo dcbox = (FilterFieldDynamicCombo) listFilterFields[i];
+    //                    clsJoin = dcbox.getClass();
+    //                    String joinTable = ReflectionUtil.getDBTableName(clsJoin);
+    //                    
+    //                    join = new String[] {joinTable};
+    //                } else {
+                        column = listFilterFields[i].getField();
+                        join = column.split("\\."); //Verifica se o campo veio de Join
+    //                }
+                    if (join.length <= 1)
+                        sql += mainTable + "." + column;
+                    else {
+                        clsJoin = Class.forName("model." + join[join.length-2]);
+                        sql += ReflectionUtil.getDBTableName(clsJoin) + "." + join[join.length-1];
+                    }
+                    sql += " ";
+                    boolean isOperator = false;
+                    String operator = "=";
+                    if (ReflectionUtil.isAttributeExists(listFilterFields[i], "operator")) {
+                        operator = (String) ReflectionUtil.getAttibute(listFilterFields[i], "operator", true);
+                        isOperator = true;
+                    }
+                    Class<?> clsType = ReflectionUtil.getAttributeType(clsJoin, column);
+                    if (clsType == null && listFilterFields[i] instanceof FilterFieldDynamicCombo) {
+                        clsJoin = ((FilterFieldDynamicCombo) listFilterFields[i]).getDynamicClass();
+                        clsType = ReflectionUtil.getAttributeType(clsJoin, column);
+                        System.out.println(clsJoin.getName() + " . " + column);
+                    }
+                    if (clsType == String.class) {
+                        if (!isOperator) {
+                            sql += "LIKE";
+                            filterValues.add("%" + listFilterFields[i].getSQLValue() + "%");
+                        } else {
+                            sql += operator;
+                            if ("LIKE".equals(operator.toUpperCase()))
+                                filterValues.add("%" + listFilterFields[i].getSQLValue() + "%");
+                            else 
+                                filterValues.add(listFilterFields[i].getSQLValue());
+                        }
+                    } else if (clsType == Integer.class || clsType == int.class) {
+                        sql += operator;
+                        filterValues.add(Integer.parseInt(listFilterFields[i].getSQLValue()));
+                    } else if (clsType == Double.class) {
+                        sql += operator;
+                        filterValues.add(Double.parseDouble(listFilterFields[i].getSQLValue()));
+                    } else if (clsType == Float.class) {
+                        sql += operator;
+                        filterValues.add(Float.parseFloat(listFilterFields[i].getSQLValue()));
+                    }
+                    sql += " ?";
+                }
+            }
+
+            System.out.println(this.getClass().getName() +  " - SQL:" + sql); //Debug
+
+            ResultSet rs;
+            if (filterValues.size() > 0) 
+                rs = DB.executeQuery(sql, filterValues.toArray());
+            else
+                rs = DB.executeQuery(sql);
+
+            DefaultTableModel dtm = (DefaultTableModel) tblList.getModel();
+            dtm.setNumRows(0);
+
+            while (rs.next()) {
+                Object[] row = new Object[listTableFields[1].length]; //Linha da tabela
+                int count = 0;
+                for (String col : listTableFields[1]) {
+                    String column = col;
+                    String[] join = column.split("\\."); //Verifica se o campo veio de Join
+
+                    Class<?> clsType = Object.class;
+                    if (join.length == 1)
+                        clsType = ReflectionUtil.getAttributeType(cls, column);
+                    else {
+                        column = join[join.length-1];
+                        Class clsInJoin = Class.forName("model." + join[join.length-2]);
+                        clsType = ReflectionUtil.getAttributeType(clsInJoin, column);
+                    }
+                    if (clsType == String.class)
+                        row[count] = rs.getString(column);
+                    else if (clsType == Integer.class || clsType == int.class)
+                        row[count] = rs.getInt(column);
+                    else if (clsType == Double.class)
+                        row[count] = rs.getDouble(column);
+                    else if (clsType == Float.class)
+                        row[count] = rs.getFloat(column);
+
+                    count++;
+                }
+                dtm.addRow(row);
+            }
         
-        while (rs.next()) {
-            Object[] row = new Object[listTableFields[1].length]; //Linha da tabela
-            int count = 0;
-            for (String col : listTableFields[1]) {
-                Class<?> clsType = ReflectionUtil.getAttributeType(cls, col);
-                if (clsType == String.class)
-                    row[count] = rs.getString(col);
-                else if (clsType == Integer.class)
-                    row[count] = rs.getInt(col);
-                else if (clsType == Double.class)
-                    row[count] = rs.getDouble(col);
-                else if (clsType == Float.class)
-                    row[count] = rs.getFloat(col);
-                count++;
-            }
-            dtm.addRow(row);
+        } catch (Exception ex) {
+            Logger.getLogger(ListJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }

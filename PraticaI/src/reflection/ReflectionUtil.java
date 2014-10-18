@@ -13,7 +13,8 @@ import java.util.logging.Logger;
  */
 public class ReflectionUtil {
     
-    public static Object getStaticAttibute(Class<?> cls, String attr) {
+    // Trabalhando com atributos
+    public static Object getAttibute(Class<?> cls, String attr) {
         try {
             Field attribute = cls.getField(attr);
             attribute.setAccessible(true);
@@ -27,6 +28,30 @@ public class ReflectionUtil {
         }
         return null;
     }
+    public static Object getAttibute(Object obj, String attr) {
+        try {
+            Field attribute = obj.getClass().getField(attr);
+            attribute.setAccessible(true);
+            return attribute.get(obj);
+        } catch (NoSuchFieldException ex) {
+            //Nestes casos, retorna null
+        } catch (Exception ex) {
+            Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    public static Object getAttibute(Object obj, String attr, boolean checkGetMethod) {
+        try {
+            Field attribute = obj.getClass().getField(attr);
+            attribute.setAccessible(true);
+            return attribute.get(obj);
+        } catch (NoSuchFieldException ex) {
+            return getMethod(obj, "get" + Character.toUpperCase(attr.charAt(0)) + attr.substring(1));
+        } catch (Exception ex) {
+            Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
     
     public static Class<?> getAttributeType(Class<?> cls, String attr) {
         try {
@@ -34,8 +59,58 @@ public class ReflectionUtil {
             attribute.setAccessible(true);
             return attribute.getType();
         } catch (NoSuchFieldException ex) {
-            return getMethodGetReturnType(cls, attr); //Busca se o atributo possui uma função GET
+            return getMethodReturnType(cls, "get" + Character.toUpperCase(attr.charAt(0)) + attr.substring(1));
         } catch (SecurityException ex) {
+            Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    public static boolean isAttributeExists(Class<?> cls, String attr) {
+        try {
+            cls.getField(attr);
+            return true;
+        } catch (NoSuchFieldException ex) {
+            return false;
+        }
+    }
+    public static boolean isAttributeExists(Object obj, String attr) {
+        try {
+            obj.getClass().getField(attr);
+            return true;
+        } catch (NoSuchFieldException ex) {
+            return false;
+        }
+    }
+    public static boolean isAttributeExists(Object obj, String attr, boolean checkGetMethod) {
+        boolean r = isAttributeExists(obj, attr);
+        if (!r) {
+            r = isMethodExists(obj, "get" + Character.toUpperCase(attr.charAt(0)) + attr.substring(1));
+        }
+        return r;
+    }
+    
+    // Trabalhando com métodos
+    public static Object getMethod(Class<?> cls, String method) {
+        try {
+            Method func = cls.getMethod(method);
+            func.setAccessible(true);
+            return func.invoke(null);
+        } catch (NoSuchMethodException ex) {
+            //Nestes casos, retorna null
+        } catch (Exception ex) {
+            Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    public static Object getMethod(Object obj, String method) {
+        try {
+            Method func = obj.getClass().getMethod(method);
+            func.setAccessible(true);
+            return func.invoke(obj);
+        } catch (NoSuchMethodException ex) {
+            //Nestes casos, retorna null
+        } catch (Exception ex) {
             Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -54,31 +129,18 @@ public class ReflectionUtil {
         return null;
     }
     
-    public static Class<?> getMethodGetReturnType(Class<?> cls, String attribute) {
-        return getMethodReturnType(cls, "get" + Character.toUpperCase(attribute.charAt(0)) + attribute.substring(1));
-    }
-    
-    public static Object getStaticMethod(Class<?> cls, String method) {
+    public static boolean isMethodExists(Object obj, String method) {
         try {
-            Method func = cls.getMethod(method);
-            func.setAccessible(true);
-            return func.invoke(null);
+            obj.getClass().getMethod(method);
+            return true;
         } catch (NoSuchMethodException ex) {
-            Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
-        return null;
     }
     
+    // Outras funções
     public static String getDBTableName(Class<?> cls) {
-        String dbtable = (String) getStaticAttibute(cls, "dbTable");
+        String dbtable = (String) getAttibute(cls, "dbTable");
         if (dbtable == null) 
             return cls.getSimpleName().toLowerCase();
         else 

@@ -12,6 +12,7 @@ public class LstPais extends reflection.ListJFrame {
      * Creates new form LstPais
      */
     public LstPais() {
+//        System.out.println(java.nio.charset.Charset.defaultCharset());
         initComponents();
         super.setClass(model.Pais.class);
         super.initListComponents();
@@ -53,7 +54,7 @@ public class LstPais extends reflection.ListJFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
