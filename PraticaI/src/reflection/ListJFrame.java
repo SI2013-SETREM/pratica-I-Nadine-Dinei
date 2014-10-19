@@ -1,8 +1,8 @@
 
 package reflection;
 
+import java.awt.Toolkit;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,17 +11,23 @@ import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.LayoutStyle;
 import javax.swing.table.DefaultTableModel;
+import model.ModelTemplate;
 import util.DB;
+import util.Util;
+import util.field.FilterField;
+import util.field.FilterFieldDynamicCombo;
+import util.sql.Join;
+import util.sql.LeftOuterJoin;
 
 /**
- *
+ *  JFrame padrão de listagem
  * @author Dinei A. Rockenbach
  * @author Nadine Anderle
  */
 public class ListJFrame extends javax.swing.JFrame {
     
     private javax.swing.JTable tblList = new javax.swing.JTable();
-    private Class<?> cls; //Ex.: Estado.class
+    private Class<? extends ModelTemplate> cls; //Ex.: Estado.class
     private String mainTable;
     
     private int width = 500;
@@ -31,26 +37,30 @@ public class ListJFrame extends javax.swing.JFrame {
     
     // Atributos que vem da classe
     private FilterField[] listFilterFields;
-    private String[][] listTableFields;
+    private Object[][] listTableFields;
     
     /**
      *  Define a classe para a qual se está fazendo a listagem
      * @param cls 
      */
-    public void setClass(Class<?> cls) {
+    public void setClass(Class<? extends ModelTemplate> cls) {
         this.cls = cls;
         this.mainTable = ReflectionUtil.getDBTableName(cls);
     }
-    
+    public void setWidth(int width) {
+        this.width = width;
+    }
+    public void setHeight(int height) {
+        this.height = height;
+    }
     public FilterField[] getListFilterFields() {
         if (listFilterFields == null)
             listFilterFields = (FilterField[]) ReflectionUtil.getAttibute(cls, "listFilterFields");
         return listFilterFields;
     }
-
-    public String[][] getListTableFields() {
+    public Object[][] getListTableFields() {
         if (listTableFields == null)
-            listTableFields = (String[][]) ReflectionUtil.getAttibute(cls, "listTableFields");
+            listTableFields = (Object[][]) ReflectionUtil.getAttibute(cls, "listTableFields");
         return listTableFields;
     }
     
@@ -67,37 +77,13 @@ public class ListJFrame extends javax.swing.JFrame {
         if (title != null)
             setTitle("Lista de " + title);
         else
-            setTitle("ALERTA! Falta o atributo 'prlTitle' em " + cls.getName());
+            setTitle("Listagem de Dados");
         
         try {
             
-            //Debug
-//            System.out.println(cls.getName());
-//            for (Field fld : cls.getDeclaredFields()) {
-//                System.out.println("Coluna: " + fld.getName() + " - " + fld.toString());
-//            }
-//            for (String col : cols[0]) {
-//                System.out.println("Coluna: " + col);
-//            }
-//            Object[] o = {new String("as"), 10, 10.5};
-//            DB.executeQuery("", o);
-            
-            
-            // Recupera informações da classe
-//            String[] idColumns = (String[]) ReflectionUtil.getAttibute(cls, "idColumn");
-//            for (String field : idColumns) {
-//                lstIdFields.add(cls.getDeclaredField(field)); //throw NoSuchFieldException
-//            }
-            
             listFilterFields = getListFilterFields();
-            listTableFields = getListTableFields();
             
             // Recupera os dados do banco
-            tblList.setModel(new javax.swing.table.DefaultTableModel(
-                    null,
-                    listTableFields[0]
-            ));
-            
             listData();
             
             // Monta os elementos visuais
@@ -105,6 +91,7 @@ public class ListJFrame extends javax.swing.JFrame {
             scrollPane.setViewportView(tblList);
             
             java.awt.event.ActionListener alRefresh = new java.awt.event.ActionListener() {
+                @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     listData();
                 }
@@ -113,6 +100,16 @@ public class ListJFrame extends javax.swing.JFrame {
             javax.swing.JButton btnFilter = new javax.swing.JButton();
             btnFilter.setText("Filtrar");
             btnFilter.addActionListener(alRefresh);
+            btnFilter.setIcon(new javax.swing.ImageIcon(Util.getIconUrl("filter.png")));
+            
+            if (ReflectionUtil.isAttributeExists(cls, "iconTitle")) {
+                String iconTitle = (String) ReflectionUtil.getAttibute(cls, "iconTitle");
+                if (iconTitle != null && !"".equals(iconTitle)) {
+                    java.net.URL urlImage = Util.getIconUrl(iconTitle);
+                    if (urlImage != null)
+                        this.setIconImage(Toolkit.getDefaultToolkit().getImage(urlImage));
+                }
+            }
             
             GroupLayout layout = new GroupLayout(getContentPane());
             getContentPane().setLayout(layout);
@@ -205,152 +202,199 @@ public class ListJFrame extends javax.swing.JFrame {
      *  Busca os dados do banco e lista-os na tabela
      */
     private void listData() {
-        
+
         try {
-        
+            
             // Recupera informações da classe
             listFilterFields = getListFilterFields();
-            listTableFields = getListTableFields();
-
+            Object[][] lstTblFields = getListTableFields();
+            String[] colNamesTable = new String[lstTblFields.length];
+            
             // Recupera os dados do banco
             String sql = "";
             sql += "SELECT ";
 
-            ArrayList<Object[]> joins = new ArrayList<>();
+            ArrayList<Join> joins = new ArrayList<>();
 
-            for (String column : listTableFields[1]) {
-                String[] join = column.split("\\.");
-                if (join.length == 1)
-                    sql += mainTable + "." + column;
-                else {
-                    Class clsInJoin = cls;
-                    int c = 0;
-                    String fieldToSelect = "";
-                    for (String tbl : join) {
-                        c++;
-                        if (c == join.length) {
-                            fieldToSelect = tbl;
-                        } else {
-                            Class clsJoin = Class.forName("model." + tbl);
-                            joins.add(new Object[]{clsJoin, ReflectionUtil.getDBTableName(clsJoin), clsInJoin, ReflectionUtil.getDBTableName(clsInJoin)});
-                            clsInJoin = clsJoin;
+            // Lista as colunas que deve selecionar e já faz a lista de JOIN
+            int i = 0;
+            for (Object[] field : lstTblFields) {
+                colNamesTable[i] = (String) field[0];
+                if (field[1] instanceof String) {
+                    String[] fieldParts = ((String) field[1]).split("\\.");
+                    if (fieldParts.length == 1)
+                        sql += mainTable + "." + field[1] + " AS " + mainTable + "_" + field[1];
+                    else {
+                        Class clsInJoin = cls;
+                        int c = 0;
+                        String fieldToSelect = "";
+                        for (String tbl : fieldParts) {
+                            c++;
+                            if (c == fieldParts.length) {
+                                fieldToSelect = tbl;
+                            } else {
+                                Class clsJoin = Class.forName("model." + tbl);
+                                Join join = new LeftOuterJoin(clsInJoin, clsJoin);
+                                if (clsInJoin == cls) 
+                                    join.setLeftAlias(mainTable);
+                                joins.add(join);
+                                clsInJoin = clsJoin;
+                            }
                         }
+                        Join lastJoin = joins.get(joins.size()-1);
+                        sql += lastJoin.getRightAlias() + "." + fieldToSelect + " AS " + lastJoin.getRightAlias() + "_" + fieldToSelect;
                     }
-                    Object[] last = joins.get(joins.size()-1);
-                    sql += (String) last[1] + "." + fieldToSelect;
+                } else if (field[1] instanceof Join) {
+                    Join join = (Join) field[1];
+                    if (join.getLeftClass() == cls) 
+                        join.setLeftAlias(mainTable);
+                    sql += join.getRightAlias() + "." + join.getRightField() + " AS " + join.getRightAlias() + "_" + join.getRightField();
+                    joins.add(join);
                 }
                 sql += ",";
+                i++;
             }
             sql = sql.substring(0, (sql.length()-1)); //Tira a última vírgula
             sql += " FROM " + mainTable;
-
-            //@TODO Fazer loop nos campos de filtros para verificar se algum deles precisa de um join
-
-            for (Object[] tbl : joins) {
-                sql += " LEFT OUTER JOIN " + (String) tbl[1] + " ON (";
-                String[] idColumn = (String[]) ReflectionUtil.getAttibute((Class) tbl[0], "idColumn");
-                for (String col : idColumn) {
-                    sql += (String) tbl[1] + "." + col + "=" + (String) tbl[3] + "." + col + " AND ";
+            
+            // Verifica os JOIN necessários pelos campos de filtro
+            for (FilterField ff : listFilterFields) {
+                String[] fieldParts = ff.getField().split("\\.");
+                if (fieldParts.length > 1) {
+                    Class clsInJoin = cls;
+                    int c = 0;
+                    for (String part : fieldParts) {
+                        c++;
+                        if (c < fieldParts.length) {
+                            Class clsJoin = Class.forName("model." + part);
+                            boolean isJoinExists = false;
+                            for (Join join : joins) {
+                                if (clsJoin == join.getRightClass()) {
+                                    isJoinExists = true;
+                                    break;
+                                }
+                            }
+                            if (!isJoinExists) {
+                                joins.add(new LeftOuterJoin(clsInJoin, clsJoin));
+                            }
+                            clsInJoin = clsJoin;
+                        }
+                    }
                 }
-                sql = sql.substring(0, (sql.length()-5)); //Tira o último AND
-                sql += ")";
             }
 
+            // Faz os JOIN na SQL
+            for (Join join : joins) {
+                sql += " " + join.getJoinSQL();
+            }
+            
             // Filtros
             boolean isWhere = false;
 
             ArrayList<Object> filterValues = new ArrayList<>();
-            for (int i = 0; i < listFilterFields.length; i++) {
-                if (!listFilterFields[i].isEmpty()) {
+            for (FilterField filterField : listFilterFields) {
+                if (!filterField.isEmpty()) {
                     if (!isWhere) {
                         sql += " WHERE ";
                         isWhere = true;
                     } else
                         sql += " AND ";
-
                     Class<?> clsJoin = cls;
-                    String column = "";
-                    String[] join = {};
-    //                if (listFilterFields[i] instanceof FilterFieldDynamicCombo) {
-    //                    FilterFieldDynamicCombo dcbox = (FilterFieldDynamicCombo) listFilterFields[i];
-    //                    clsJoin = dcbox.getClass();
-    //                    String joinTable = ReflectionUtil.getDBTableName(clsJoin);
-    //                    
-    //                    join = new String[] {joinTable};
-    //                } else {
-                        column = listFilterFields[i].getField();
-                        join = column.split("\\."); //Verifica se o campo veio de Join
-    //                }
-                    if (join.length <= 1)
+                    String column = filterField.getField();
+                    String[] fieldParts = column.split("\\."); //Verifica se o campo veio de Join
+                    String classAttr = column;
+                    if (fieldParts.length <= 1)
                         sql += mainTable + "." + column;
                     else {
-                        clsJoin = Class.forName("model." + join[join.length-2]);
-                        sql += ReflectionUtil.getDBTableName(clsJoin) + "." + join[join.length-1];
+                        classAttr = fieldParts[fieldParts.length-1];
+                        clsJoin = Class.forName("model." + fieldParts[fieldParts.length-2]);
+                        String tblAlias = null;
+                        for (Join join : joins) {
+                            if (clsJoin == join.getRightClass()) {
+                                tblAlias = join.getRightAlias();
+                            }
+                        }
+                        if (tblAlias == null) 
+                            sql += classAttr;
+                        else
+                            sql += tblAlias + "." + classAttr;
                     }
                     sql += " ";
                     boolean isOperator = false;
                     String operator = "=";
-                    if (ReflectionUtil.isAttributeExists(listFilterFields[i], "operator")) {
-                        operator = (String) ReflectionUtil.getAttibute(listFilterFields[i], "operator", true);
+                    if (ReflectionUtil.isAttributeExists(filterField, "operator")) {
+                        operator = (String) ReflectionUtil.getAttibute(filterField, "operator", true);
                         isOperator = true;
                     }
-                    Class<?> clsType = ReflectionUtil.getAttributeType(clsJoin, column);
-                    if (clsType == null && listFilterFields[i] instanceof FilterFieldDynamicCombo) {
-                        clsJoin = ((FilterFieldDynamicCombo) listFilterFields[i]).getDynamicClass();
-                        clsType = ReflectionUtil.getAttributeType(clsJoin, column);
-                        System.out.println(clsJoin.getName() + " . " + column);
+                    Class<?> clsType = ReflectionUtil.getAttributeType(clsJoin, classAttr);
+                    if (filterField instanceof FilterFieldDynamicCombo) {
+                        clsJoin = ((FilterFieldDynamicCombo) filterField).getDynamicClass();
+                        clsType = ReflectionUtil.getAttributeType(clsJoin, classAttr);
                     }
                     if (clsType == String.class) {
                         if (!isOperator) {
                             sql += "LIKE";
-                            filterValues.add("%" + listFilterFields[i].getSQLValue() + "%");
+                            filterValues.add("%" + filterField.getSQLValue() + "%");
                         } else {
                             sql += operator;
-                            if ("LIKE".equals(operator.toUpperCase()))
-                                filterValues.add("%" + listFilterFields[i].getSQLValue() + "%");
-                            else 
-                                filterValues.add(listFilterFields[i].getSQLValue());
+                            if ("LIKE".equals(operator.toUpperCase())) {
+                                filterValues.add("%" + filterField.getSQLValue() + "%");
+                            } else {
+                                filterValues.add(filterField.getSQLValue());
+                            }
                         }
                     } else if (clsType == Integer.class || clsType == int.class) {
                         sql += operator;
-                        filterValues.add(Integer.parseInt(listFilterFields[i].getSQLValue()));
+                        filterValues.add(Integer.parseInt(filterField.getSQLValue()));
                     } else if (clsType == Double.class) {
                         sql += operator;
-                        filterValues.add(Double.parseDouble(listFilterFields[i].getSQLValue()));
+                        filterValues.add(Double.parseDouble(filterField.getSQLValue()));
                     } else if (clsType == Float.class) {
                         sql += operator;
-                        filterValues.add(Float.parseFloat(listFilterFields[i].getSQLValue()));
+                        filterValues.add(Float.parseFloat(filterField.getSQLValue()));
                     }
                     sql += " ?";
                 }
             }
 
-            System.out.println(this.getClass().getName() +  " - SQL:" + sql); //Debug
+            Util.debug(this.getClass().getName() + " - SQL:" + sql);
 
             ResultSet rs;
             if (filterValues.size() > 0) 
                 rs = DB.executeQuery(sql, filterValues.toArray());
             else
                 rs = DB.executeQuery(sql);
-
-            DefaultTableModel dtm = (DefaultTableModel) tblList.getModel();
+            
+            DefaultTableModel dtm = new javax.swing.table.DefaultTableModel(
+                    null,
+                    colNamesTable
+            );
             dtm.setNumRows(0);
 
             while (rs.next()) {
-                Object[] row = new Object[listTableFields[1].length]; //Linha da tabela
+                Object[] row = new Object[lstTblFields.length]; //Linha da tabela
                 int count = 0;
-                for (String col : listTableFields[1]) {
-                    String column = col;
-                    String[] join = column.split("\\."); //Verifica se o campo veio de Join
-
+                for (Object[] col : lstTblFields) {
                     Class<?> clsType = Object.class;
-                    if (join.length == 1)
-                        clsType = ReflectionUtil.getAttributeType(cls, column);
-                    else {
-                        column = join[join.length-1];
-                        Class clsInJoin = Class.forName("model." + join[join.length-2]);
-                        clsType = ReflectionUtil.getAttributeType(clsInJoin, column);
+                    String column = null;
+                    if (col[1] instanceof String) {
+                        column = (String) col[1];
+                        String[] join = column.split("\\."); //Verifica se o campo veio de Join
+                        
+                        if (join.length == 1) {
+                            clsType = ReflectionUtil.getAttributeType(cls, column);
+                            column = mainTable + "_" + column;
+                        } else {
+                            Class clsInJoin = Class.forName("model." + join[join.length-2]);
+                            clsType = ReflectionUtil.getAttributeType(clsInJoin, join[join.length-1]);
+                            column = ReflectionUtil.getDBTableName(clsInJoin) + "_" + join[join.length-1];
+                        }
+                    } else if (col[1] instanceof Join) {
+                        Join join = (Join) col[1];
+                        clsType = ReflectionUtil.getAttributeType(join.getRightClass(), join.getRightField());
+                        column = join.getRightAlias() + "_" + join.getRightField();
                     }
+                    System.out.println(column);
                     if (clsType == String.class)
                         row[count] = rs.getString(column);
                     else if (clsType == Integer.class || clsType == int.class)
@@ -359,11 +403,12 @@ public class ListJFrame extends javax.swing.JFrame {
                         row[count] = rs.getDouble(column);
                     else if (clsType == Float.class)
                         row[count] = rs.getFloat(column);
-
                     count++;
                 }
                 dtm.addRow(row);
             }
+            
+            tblList.setModel(dtm);
         
         } catch (Exception ex) {
             Logger.getLogger(ListJFrame.class.getName()).log(Level.SEVERE, null, ex);

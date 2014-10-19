@@ -1,8 +1,8 @@
 
 package model;
 
-import reflection.FilterField;
-import reflection.FilterFieldText;
+import util.field.FilterField;
+import util.field.FilterFieldText;
 
 /**
  *  Classe de País
@@ -27,15 +27,19 @@ public class Pais extends ModelTemplate {
      */
     public static String prlTitle = "Países";
     /**
+     * @see model.ModelTemplate#iconTitle
+     */
+    public static String iconTitle = "locate.png";
+    /**
      * @see model.ModelTemplate#idColumn
      */
     public static String[] idColumn = {"PaiCodigo"};
     /**
      * @see model.ModelTemplate#listTableFields
      */
-    public static String[][] listTableFields = {
-        {"Nome",    "Sigla"}, //Rótulo da coluna
-        {"PaiNome", "PaiAlfa2"}, //Nome do campo no banco / atributo do model
+    public static Object[][] listTableFields = {
+        {"Nome",  "PaiNome"},
+        {"Sigla", "PaiAlfa2"}
     };
     
 //    public static FilterField[] listFilterFields = {

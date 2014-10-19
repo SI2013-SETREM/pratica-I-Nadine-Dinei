@@ -37,7 +37,7 @@ public abstract class DB {
             
             try {
                 con = DriverManager.getConnection(getDsn(), DB_USER, DB_PASS);
-                System.out.println(DB.class.getName() + " - " + getDsn());
+                Util.debug(DB.class.getName() + " - " + getDsn());
             } catch (SQLException ex) {
                 System.err.println("ERRO NO DSN: " + getDsn() + " - " + ex.getErrorCode() + " - " + ex.getMessage());
             }

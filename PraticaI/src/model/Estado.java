@@ -1,13 +1,9 @@
 
 package model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import reflection.ComboBoxItem;
-import reflection.FilterField;
-import reflection.FilterFieldComboBox;
-import reflection.FilterFieldDynamicCombo;
-import reflection.FilterFieldText;
+import util.field.FilterField;
+import util.field.FilterFieldDynamicCombo;
+import util.field.FilterFieldText;
 
 /**
  *
@@ -35,18 +31,16 @@ public class Estado extends ModelTemplate {
      * @see model.ModelTemplate#listTableFields
      */
     public static String[][] listTableFields = {
-        {"País",        "Sigla",    "Nome"}, //Rótulo da coluna
-        {"Pais.PaiNome", "EstSigla", "EstNome"}, //Nome do campo no banco / atributo do model
+        {"País", "Pais.PaiNome"},
+        {"Sigla","EstSigla"},
+        {"Nome", "EstNome"}
     };
     /**
      * @see model.ModelTemplate#listFilterFields
      */
     public static FilterField[] listFilterFields = {
         new FilterFieldText("EstNome", "Nome", 200),
-//        new FilterFieldComboBox("EstSigla", "Sigla", 200, new ComboBoxItem[]{
-//            new ComboBoxItem("RS", "Rio Grande do Sul")
-//        }, ""),
-        new FilterFieldDynamicCombo("PaiCodigo", "País", 200, Pais.class, "PaiNome", null, null, "")
+        new FilterFieldDynamicCombo("Pais.PaiCodigo", "País", 200, Pais.class, "PaiNome", null, null, "")
     };
     
     public Estado() {

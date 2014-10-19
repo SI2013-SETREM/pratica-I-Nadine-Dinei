@@ -1,5 +1,5 @@
 
-package reflection;
+package util.field;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;

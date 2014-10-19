@@ -2,19 +2,19 @@
 package view;
 
 /**
- *
+ *  Form pra testes
  * @author Dinei A. Rockenbach
  * @author Nadine Anderle
  */
-public class LstPais extends reflection.ListJFrame {
+public class ListExample extends reflection.ListJFrame {
 
     /**
      * Creates new form LstPais
      */
-    public LstPais() {
+    public ListExample() {
 //        System.out.println(java.nio.charset.Charset.defaultCharset());
         initComponents();
-        super.setClass(model.Pais.class);
+        super.setClass(model.PlanoContas.class);
         super.initListComponents();
     }
 
@@ -60,20 +60,20 @@ public class LstPais extends reflection.ListJFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(LstPais.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListExample.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(LstPais.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListExample.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(LstPais.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListExample.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(LstPais.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListExample.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LstPais().setVisible(true);
+                new ListExample().setVisible(true);
             }
         });
     }

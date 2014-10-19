@@ -8,6 +8,8 @@ package util;
  */
 public abstract class Config {
     
+    public static String imageFolder = "assets";
+    
     /**
      * Locais onde são verificados os tipos de variáveis:
      * @see util.DB#executeQuery(java.lang.String) 
