@@ -56,13 +56,17 @@ public abstract class ModelTemplate {
     public static util.field.FilterField[] listFilterFields = {};
     
     /**
-     *  Permite excluir registros
+     *  Permite inserir registros
      */
-    public static boolean allowDelete = true;
+    public static boolean allowInsert = true;
     /**
      *  Permite atualizar registros
      */
     public static boolean allowUpdate = true;
+    /**
+     *  Permite excluir registros
+     */
+    public static boolean allowDelete = true;
     
     // Implementar se necessário
 //    /**

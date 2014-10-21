@@ -23,6 +23,7 @@ public class Pais extends ModelTemplate {
      */
     public static String sngTitle = "País";
     /**
+     * {@inheritDoc}
      * @see model.ModelTemplate#prlTitle
      */
     public static String prlTitle = "Países";

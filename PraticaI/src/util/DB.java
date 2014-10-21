@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *  Classe que faz o acesso ao banco de dados
@@ -81,6 +83,23 @@ public abstract class DB {
     public static int executeUpdate(String sql) throws SQLException {
         Statement st = getConnection().createStatement();
         return st.executeUpdate(sql);
+    }
+    
+    public static Object getColumnByType(ResultSet rs, String colLabel, Class<?> colType) {
+        Object r = null;
+        try {
+            if (colType == String.class)
+                r = rs.getString(colLabel);
+            else if (colType == Integer.class || colType == int.class)
+                r = rs.getInt(colLabel);
+            else if (colType == Double.class)
+                r = rs.getDouble(colLabel);
+            else if (colType == Float.class)
+                r = rs.getFloat(colLabel);
+        } catch (SQLException ex) {
+            Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return r;
     }
     
     /**

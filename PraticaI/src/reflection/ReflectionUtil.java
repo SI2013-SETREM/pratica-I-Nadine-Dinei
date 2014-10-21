@@ -21,24 +21,13 @@ public class ReflectionUtil {
             return attribute.get(null);
         } catch (NoSuchFieldException ex) {
             //Nestes casos, retorna null
-        } catch (SecurityException ex) {
-            Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
     public static Object getAttibute(Object obj, String attr) {
-        try {
-            Field attribute = obj.getClass().getField(attr);
-            attribute.setAccessible(true);
-            return attribute.get(obj);
-        } catch (NoSuchFieldException ex) {
-            //Nestes casos, retorna null
-        } catch (Exception ex) {
-            Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
+        return getAttibute(obj, attr, true);
     }
     public static Object getAttibute(Object obj, String attr, boolean checkGetMethod) {
         try {
@@ -46,7 +35,8 @@ public class ReflectionUtil {
             attribute.setAccessible(true);
             return attribute.get(obj);
         } catch (NoSuchFieldException ex) {
-            return getMethod(obj, "get" + Character.toUpperCase(attr.charAt(0)) + attr.substring(1));
+            if (checkGetMethod)
+                return getMethod(obj, "get" + Character.toUpperCase(attr.charAt(0)) + attr.substring(1));
         } catch (Exception ex) {
             Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -60,7 +50,7 @@ public class ReflectionUtil {
             return attribute.getType();
         } catch (NoSuchFieldException ex) {
             return getMethodReturnType(cls, "get" + Character.toUpperCase(attr.charAt(0)) + attr.substring(1));
-        } catch (SecurityException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -84,7 +74,7 @@ public class ReflectionUtil {
     }
     public static boolean isAttributeExists(Object obj, String attr, boolean checkGetMethod) {
         boolean r = isAttributeExists(obj, attr);
-        if (!r) {
+        if (!r && checkGetMethod) {
             r = isMethodExists(obj, "get" + Character.toUpperCase(attr.charAt(0)) + attr.substring(1));
         }
         return r;

@@ -6,6 +6,8 @@
 
 package view;
 
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author Nadine
@@ -17,6 +19,7 @@ public class MainMenu extends javax.swing.JFrame {
      */
     public MainMenu() {
         initComponents();
+        btnEfetuarLancamento.setIcon(new ImageIcon(util.Util.getImageUrl("moneydollar.png", util.ImageSize.M)));
     }
 
     /**
@@ -30,7 +33,7 @@ public class MainMenu extends javax.swing.JFrame {
 
         jTabbedPane2 = new javax.swing.JTabbedPane();
         pnlPrincipal = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        btnEfetuarLancamento = new javax.swing.JButton();
         pnlFluxoDeCaixa = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -42,21 +45,20 @@ public class MainMenu extends javax.swing.JFrame {
 
         pnlPrincipal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jButton1.setBackground(new java.awt.Color(255, 255, 255));
-        jButton1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Nadine\\Google Drive\\Sistemas\\4º Semestre -Nadine\\Pratica I\\Desenvolvimento\\FatCow - Hosting\\PNG\\Money-Dollar.png")); // NOI18N
-        jButton1.setText("Efetuar Lançamento");
-        jButton1.setBorder(null);
-        jButton1.setBorderPainted(false);
-        jButton1.setContentAreaFilled(false);
-        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setMaximumSize(new java.awt.Dimension(75, 75));
-        jButton1.setMinimumSize(new java.awt.Dimension(75, 75));
-        jButton1.setPreferredSize(new java.awt.Dimension(75, 75));
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnEfetuarLancamento.setBackground(new java.awt.Color(255, 255, 255));
+        btnEfetuarLancamento.setText("Efetuar Lançamento");
+        btnEfetuarLancamento.setBorder(null);
+        btnEfetuarLancamento.setBorderPainted(false);
+        btnEfetuarLancamento.setContentAreaFilled(false);
+        btnEfetuarLancamento.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEfetuarLancamento.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnEfetuarLancamento.setMaximumSize(new java.awt.Dimension(75, 75));
+        btnEfetuarLancamento.setMinimumSize(new java.awt.Dimension(75, 75));
+        btnEfetuarLancamento.setPreferredSize(new java.awt.Dimension(75, 75));
+        btnEfetuarLancamento.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnEfetuarLancamento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnEfetuarLancamentoActionPerformed(evt);
             }
         });
 
@@ -66,14 +68,14 @@ public class MainMenu extends javax.swing.JFrame {
             pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnEfetuarLancamento, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(484, Short.MAX_VALUE))
         );
         pnlPrincipalLayout.setVerticalGroup(
             pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnEfetuarLancamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
@@ -113,9 +115,9 @@ public class MainMenu extends javax.swing.JFrame {
         
     }//GEN-LAST:event_formWindowOpened
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnEfetuarLancamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEfetuarLancamentoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnEfetuarLancamentoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -153,7 +155,7 @@ public class MainMenu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnEfetuarLancamento;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JPanel pnlFluxoDeCaixa;
     private javax.swing.JPanel pnlPrincipal;

@@ -13,7 +13,8 @@ public abstract class Config {
     /**
      * Locais onde são verificados os tipos de variáveis:
      * @see util.DB#executeQuery(java.lang.String) 
-     * @see reflection.ListJFrame#listData() [2 locais]
+     * @see util.DB#getColumnByType(java.sql.ResultSet, java.lang.String, java.lang.Class) 
+     * @see reflection.ListJFrame#listData()
      * @see reflection.FilterFieldComboBox#isEmpty() 
      * 
      * Documentação:
