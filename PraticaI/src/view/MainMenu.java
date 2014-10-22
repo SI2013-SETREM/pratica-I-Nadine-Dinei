@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package view;
 
 import javax.swing.ImageIcon;
@@ -19,7 +18,16 @@ public class MainMenu extends javax.swing.JFrame {
      */
     public MainMenu() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        this.setExtendedState(MAXIMIZED_BOTH);
         btnEfetuarLancamento.setIcon(new ImageIcon(util.Util.getImageUrl("moneydollar.png", util.ImageSize.M)));
+        btnFecharCaixa.setIcon(new ImageIcon(util.Util.getImageUrl("accept.png", util.ImageSize.M)));
+        btnContatos.setIcon(new ImageIcon(util.Util.getImageUrl("email.png", util.ImageSize.M)));
+        btnSair.setIcon(new ImageIcon(util.Util.getImageUrl("exit.png", util.ImageSize.M)));
+        btnLancamento.setIcon(new ImageIcon(util.Util.getImageUrl("moneydollar.png", util.ImageSize.M)));
+        btnPlanoContas.setIcon(new ImageIcon(util.Util.getImageUrl("category.png", util.ImageSize.M)));
+        btnContasCapital.setIcon(new ImageIcon(util.Util.getImageUrl("safe.png", util.ImageSize.M)));
+         btnFechaCaixa2.setIcon(new ImageIcon(util.Util.getImageUrl("accept.png", util.ImageSize.M)));
     }
 
     /**
@@ -34,7 +42,14 @@ public class MainMenu extends javax.swing.JFrame {
         jTabbedPane2 = new javax.swing.JTabbedPane();
         pnlPrincipal = new javax.swing.JPanel();
         btnEfetuarLancamento = new javax.swing.JButton();
+        btnFecharCaixa = new javax.swing.JButton();
+        btnContatos = new javax.swing.JButton();
+        btnSair = new javax.swing.JButton();
         pnlFluxoDeCaixa = new javax.swing.JPanel();
+        btnLancamento = new javax.swing.JButton();
+        btnPlanoContas = new javax.swing.JButton();
+        btnContasCapital = new javax.swing.JButton();
+        btnFechaCaixa2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -62,34 +77,180 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
+        btnFecharCaixa.setBackground(new java.awt.Color(255, 255, 255));
+        btnFecharCaixa.setText("Fechar Caixa");
+        btnFecharCaixa.setBorder(null);
+        btnFecharCaixa.setBorderPainted(false);
+        btnFecharCaixa.setContentAreaFilled(false);
+        btnFecharCaixa.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnFecharCaixa.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnFecharCaixa.setMaximumSize(new java.awt.Dimension(75, 75));
+        btnFecharCaixa.setMinimumSize(new java.awt.Dimension(75, 75));
+        btnFecharCaixa.setPreferredSize(new java.awt.Dimension(75, 75));
+        btnFecharCaixa.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnFecharCaixa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFecharCaixaActionPerformed(evt);
+            }
+        });
+
+        btnContatos.setBackground(new java.awt.Color(255, 255, 255));
+        btnContatos.setText("Contatos");
+        btnContatos.setBorder(null);
+        btnContatos.setBorderPainted(false);
+        btnContatos.setContentAreaFilled(false);
+        btnContatos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnContatos.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnContatos.setMaximumSize(new java.awt.Dimension(75, 75));
+        btnContatos.setMinimumSize(new java.awt.Dimension(75, 75));
+        btnContatos.setPreferredSize(new java.awt.Dimension(75, 75));
+        btnContatos.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnContatos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnContatosActionPerformed(evt);
+            }
+        });
+
+        btnSair.setBackground(new java.awt.Color(255, 255, 255));
+        btnSair.setText("Sair");
+        btnSair.setBorder(null);
+        btnSair.setBorderPainted(false);
+        btnSair.setContentAreaFilled(false);
+        btnSair.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSair.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSair.setMaximumSize(new java.awt.Dimension(75, 75));
+        btnSair.setMinimumSize(new java.awt.Dimension(75, 75));
+        btnSair.setPreferredSize(new java.awt.Dimension(75, 75));
+        btnSair.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSair.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSairActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlPrincipalLayout = new javax.swing.GroupLayout(pnlPrincipal);
         pnlPrincipal.setLayout(pnlPrincipalLayout);
         pnlPrincipalLayout.setHorizontalGroup(
             pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnEfetuarLancamento, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(484, Short.MAX_VALUE))
+                .addComponent(btnEfetuarLancamento, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addComponent(btnFecharCaixa, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnContatos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(206, Short.MAX_VALUE))
         );
         pnlPrincipalLayout.setVerticalGroup(
             pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnEfetuarLancamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnContatos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEfetuarLancamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnFecharCaixa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Principal", pnlPrincipal);
 
+        pnlFluxoDeCaixa.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        btnLancamento.setBackground(new java.awt.Color(255, 255, 255));
+        btnLancamento.setText("Lançamento");
+        btnLancamento.setBorder(null);
+        btnLancamento.setBorderPainted(false);
+        btnLancamento.setContentAreaFilled(false);
+        btnLancamento.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLancamento.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnLancamento.setMaximumSize(new java.awt.Dimension(75, 75));
+        btnLancamento.setMinimumSize(new java.awt.Dimension(75, 75));
+        btnLancamento.setPreferredSize(new java.awt.Dimension(75, 75));
+        btnLancamento.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnLancamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLancamentoActionPerformed(evt);
+            }
+        });
+
+        btnPlanoContas.setBackground(new java.awt.Color(255, 255, 255));
+        btnPlanoContas.setText("Plano Contas");
+        btnPlanoContas.setBorder(null);
+        btnPlanoContas.setBorderPainted(false);
+        btnPlanoContas.setContentAreaFilled(false);
+        btnPlanoContas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnPlanoContas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnPlanoContas.setMaximumSize(new java.awt.Dimension(75, 75));
+        btnPlanoContas.setMinimumSize(new java.awt.Dimension(75, 75));
+        btnPlanoContas.setPreferredSize(new java.awt.Dimension(75, 75));
+        btnPlanoContas.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnPlanoContas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPlanoContasActionPerformed(evt);
+            }
+        });
+
+        btnContasCapital.setBackground(new java.awt.Color(255, 255, 255));
+        btnContasCapital.setText("Contas de Capital");
+        btnContasCapital.setBorder(null);
+        btnContasCapital.setBorderPainted(false);
+        btnContasCapital.setContentAreaFilled(false);
+        btnContasCapital.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnContasCapital.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnContasCapital.setMaximumSize(new java.awt.Dimension(75, 75));
+        btnContasCapital.setMinimumSize(new java.awt.Dimension(75, 75));
+        btnContasCapital.setPreferredSize(new java.awt.Dimension(75, 75));
+        btnContasCapital.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnContasCapital.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnContasCapitalActionPerformed(evt);
+            }
+        });
+
+        btnFechaCaixa2.setBackground(new java.awt.Color(255, 255, 255));
+        btnFechaCaixa2.setText("Fechar Caixa");
+        btnFechaCaixa2.setBorder(null);
+        btnFechaCaixa2.setBorderPainted(false);
+        btnFechaCaixa2.setContentAreaFilled(false);
+        btnFechaCaixa2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnFechaCaixa2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnFechaCaixa2.setMaximumSize(new java.awt.Dimension(75, 75));
+        btnFechaCaixa2.setMinimumSize(new java.awt.Dimension(75, 75));
+        btnFechaCaixa2.setPreferredSize(new java.awt.Dimension(75, 75));
+        btnFechaCaixa2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnFechaCaixa2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFechaCaixa2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlFluxoDeCaixaLayout = new javax.swing.GroupLayout(pnlFluxoDeCaixa);
         pnlFluxoDeCaixa.setLayout(pnlFluxoDeCaixaLayout);
         pnlFluxoDeCaixaLayout.setHorizontalGroup(
             pnlFluxoDeCaixaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 595, Short.MAX_VALUE)
+            .addGroup(pnlFluxoDeCaixaLayout.createSequentialGroup()
+                .addComponent(btnLancamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnContasCapital, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnFechaCaixa2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(228, Short.MAX_VALUE))
         );
         pnlFluxoDeCaixaLayout.setVerticalGroup(
             pnlFluxoDeCaixaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 104, Short.MAX_VALUE)
+            .addGroup(pnlFluxoDeCaixaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlFluxoDeCaixaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnFechaCaixa2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnContasCapital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnLancamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Fluxo de Caixa", pnlFluxoDeCaixa);
@@ -112,12 +273,41 @@ public class MainMenu extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_formWindowOpened
 
     private void btnEfetuarLancamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEfetuarLancamentoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnEfetuarLancamentoActionPerformed
+
+    private void btnFecharCaixaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharCaixaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnFecharCaixaActionPerformed
+
+    private void btnContatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContatosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnContatosActionPerformed
+
+    private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_btnSairActionPerformed
+
+    private void btnLancamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLancamentoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnLancamentoActionPerformed
+
+    private void btnPlanoContasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlanoContasActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnPlanoContasActionPerformed
+
+    private void btnContasCapitalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContasCapitalActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnContasCapitalActionPerformed
+
+    private void btnFechaCaixa2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFechaCaixa2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnFechaCaixa2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -155,7 +345,14 @@ public class MainMenu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnContasCapital;
+    private javax.swing.JButton btnContatos;
     private javax.swing.JButton btnEfetuarLancamento;
+    private javax.swing.JButton btnFechaCaixa2;
+    private javax.swing.JButton btnFecharCaixa;
+    private javax.swing.JButton btnLancamento;
+    private javax.swing.JButton btnPlanoContas;
+    private javax.swing.JButton btnSair;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JPanel pnlFluxoDeCaixa;
     private javax.swing.JPanel pnlPrincipal;
