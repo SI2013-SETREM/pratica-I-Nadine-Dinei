@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Paises" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c8d0598c-3416-4dc1-a66d-a7e6c903d61a">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="paiCodigo" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT PaiCodigo,PaiAlfa3,PaiAlfa2,PaiBacenIbge,PaiISO3166,PaiNome FROM `pais` where paicodigo=$P{paiCodigo}]]>
+	</queryString>
+	<field name="PaiCodigo" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="PaiAlfa3" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="PaiAlfa2" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="PaiBacenIbge" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="PaiISO3166" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="PaiNome" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="8" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="51" splitType="Stretch">
+			<staticText>
+				<reportElement x="159" y="0" width="249" height="50" uuid="5c56d717-88ac-4d88-9581-efea937e85e1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[Listagem de Países]]></text>
+			</staticText>
+			<image>
+				<reportElement x="0" y="0" width="100" height="50" uuid="971d3884-d766-4ea7-a4c3-8bc2f46d9273"/>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="23" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="40" height="20" uuid="8351f358-6029-4206-8cd1-24d40b591d8f"/>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="40" y="0" width="42" height="20" uuid="1ad89fed-08e4-40d5-8b4e-b36356dadb7d"/>
+				<text><![CDATA[Sigla 3]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="82" y="0" width="39" height="20" uuid="d13e7d27-d63f-45f3-986a-a093ae2087b2"/>
+				<text><![CDATA[Sigla 2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="121" y="0" width="315" height="20" uuid="00e5528e-351e-4642-a868-1fe7772f0115"/>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="436" y="0" width="52" height="20" uuid="70b44a1f-bdff-48ec-9e02-0f3218bf9a8c"/>
+				<text><![CDATA[Cod IBGE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="488" y="0" width="67" height="20" uuid="0f1be6c6-8912-4111-913b-ad5ddc9b360d"/>
+				<text><![CDATA[Cod ISO3166]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="22" width="555" height="1" uuid="08dfb1ba-edc6-4f8e-a1d7-3b96d02f12bd"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="40" height="20" uuid="d6c9c1f5-dce2-495b-af22-79eb27c51ac5"/>
+				<textFieldExpression><![CDATA[$F{PaiCodigo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="0" width="42" height="20" uuid="298d50e5-0694-4d6c-a7ad-7f6a0364e8cf"/>
+				<textFieldExpression><![CDATA[$F{PaiAlfa3}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="82" y="0" width="39" height="20" uuid="8df5cb0e-3879-427e-82fe-f6ec0ece9e54"/>
+				<textFieldExpression><![CDATA[$F{PaiAlfa2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="436" y="0" width="52" height="20" uuid="3c09fa17-2ccd-412a-b303-8c1901b4cb9d"/>
+				<textFieldExpression><![CDATA[$F{PaiBacenIbge}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="488" y="0" width="67" height="20" uuid="7e789e5a-7fd3-4786-a50e-8328ffb967a3"/>
+				<textFieldExpression><![CDATA[$F{PaiISO3166}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="121" y="0" width="312" height="20" uuid="d010784c-1482-4729-bf0b-d6329ed48101"/>
+				<textFieldExpression><![CDATA[$F{PaiNome}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
