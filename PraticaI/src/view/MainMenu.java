@@ -96,7 +96,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnEfetuarLancamento.setBackground(new java.awt.Color(255, 255, 255));
         btnEfetuarLancamento.setText("Efetuar Lançamento");
-        btnEfetuarLancamento.setBorder(null);
         btnEfetuarLancamento.setBorderPainted(false);
         btnEfetuarLancamento.setContentAreaFilled(false);
         btnEfetuarLancamento.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -113,7 +112,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnFecharCaixa.setBackground(new java.awt.Color(255, 255, 255));
         btnFecharCaixa.setText("Fechar Caixa");
-        btnFecharCaixa.setBorder(null);
         btnFecharCaixa.setBorderPainted(false);
         btnFecharCaixa.setContentAreaFilled(false);
         btnFecharCaixa.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -130,7 +128,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnContatos.setBackground(new java.awt.Color(255, 255, 255));
         btnContatos.setText("Contatos");
-        btnContatos.setBorder(null);
         btnContatos.setBorderPainted(false);
         btnContatos.setContentAreaFilled(false);
         btnContatos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -147,7 +144,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnSair.setBackground(new java.awt.Color(255, 255, 255));
         btnSair.setText("Sair");
-        btnSair.setBorder(null);
         btnSair.setBorderPainted(false);
         btnSair.setContentAreaFilled(false);
         btnSair.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -195,7 +191,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnLancamento.setBackground(new java.awt.Color(255, 255, 255));
         btnLancamento.setText("Lançamento");
-        btnLancamento.setBorder(null);
         btnLancamento.setBorderPainted(false);
         btnLancamento.setContentAreaFilled(false);
         btnLancamento.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -212,7 +207,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnPlanoContas.setBackground(new java.awt.Color(255, 255, 255));
         btnPlanoContas.setText("Plano Contas");
-        btnPlanoContas.setBorder(null);
         btnPlanoContas.setBorderPainted(false);
         btnPlanoContas.setContentAreaFilled(false);
         btnPlanoContas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -229,7 +223,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnContasCapital.setBackground(new java.awt.Color(255, 255, 255));
         btnContasCapital.setText("Contas de Capital");
-        btnContasCapital.setBorder(null);
         btnContasCapital.setBorderPainted(false);
         btnContasCapital.setContentAreaFilled(false);
         btnContasCapital.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -246,7 +239,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnFechaCaixa2.setBackground(new java.awt.Color(255, 255, 255));
         btnFechaCaixa2.setText("Fechar Caixa");
-        btnFechaCaixa2.setBorder(null);
         btnFechaCaixa2.setBorderPainted(false);
         btnFechaCaixa2.setContentAreaFilled(false);
         btnFechaCaixa2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -293,7 +285,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnVendas.setBackground(new java.awt.Color(255, 255, 255));
         btnVendas.setText("Vendas");
-        btnVendas.setBorder(null);
         btnVendas.setBorderPainted(false);
         btnVendas.setContentAreaFilled(false);
         btnVendas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -310,7 +301,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnClientes.setBackground(new java.awt.Color(255, 255, 255));
         btnClientes.setText("Clientes");
-        btnClientes.setBorder(null);
         btnClientes.setBorderPainted(false);
         btnClientes.setContentAreaFilled(false);
         btnClientes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -327,7 +317,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnProdutos.setBackground(new java.awt.Color(255, 255, 255));
         btnProdutos.setText("Produtos");
-        btnProdutos.setBorder(null);
         btnProdutos.setBorderPainted(false);
         btnProdutos.setContentAreaFilled(false);
         btnProdutos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -369,7 +358,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnUsuarios.setBackground(new java.awt.Color(255, 255, 255));
         btnUsuarios.setText("Usuários");
-        btnUsuarios.setBorder(null);
         btnUsuarios.setBorderPainted(false);
         btnUsuarios.setContentAreaFilled(false);
         btnUsuarios.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -386,7 +374,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnFuncionarios.setBackground(new java.awt.Color(255, 255, 255));
         btnFuncionarios.setText("Funcionários");
-        btnFuncionarios.setBorder(null);
         btnFuncionarios.setBorderPainted(false);
         btnFuncionarios.setContentAreaFilled(false);
         btnFuncionarios.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -403,7 +390,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnPessoas.setBackground(new java.awt.Color(255, 255, 255));
         btnPessoas.setText("Pessoas");
-        btnPessoas.setBorder(null);
         btnPessoas.setBorderPainted(false);
         btnPessoas.setContentAreaFilled(false);
         btnPessoas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -420,7 +406,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnClientes1.setBackground(new java.awt.Color(255, 255, 255));
         btnClientes1.setText("Clientes");
-        btnClientes1.setBorder(null);
         btnClientes1.setBorderPainted(false);
         btnClientes1.setContentAreaFilled(false);
         btnClientes1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -437,7 +422,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnContatos1.setBackground(new java.awt.Color(255, 255, 255));
         btnContatos1.setText("Contatos");
-        btnContatos1.setBorder(null);
         btnContatos1.setBorderPainted(false);
         btnContatos1.setContentAreaFilled(false);
         btnContatos1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -454,7 +438,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnPerfilUsuario.setBackground(new java.awt.Color(255, 255, 255));
         btnPerfilUsuario.setText("Perfis de Usuários");
-        btnPerfilUsuario.setBorder(null);
         btnPerfilUsuario.setBorderPainted(false);
         btnPerfilUsuario.setContentAreaFilled(false);
         btnPerfilUsuario.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -471,7 +454,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnCargos.setBackground(new java.awt.Color(255, 255, 255));
         btnCargos.setText("Cargos Funcionários");
-        btnCargos.setBorder(null);
         btnCargos.setBorderPainted(false);
         btnCargos.setContentAreaFilled(false);
         btnCargos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -532,7 +514,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnConfiguracoes.setBackground(new java.awt.Color(255, 255, 255));
         btnConfiguracoes.setText("Configurações");
-        btnConfiguracoes.setBorder(null);
         btnConfiguracoes.setBorderPainted(false);
         btnConfiguracoes.setContentAreaFilled(false);
         btnConfiguracoes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -549,7 +530,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnLogs.setBackground(new java.awt.Color(255, 255, 255));
         btnLogs.setText("Logs");
-        btnLogs.setBorder(null);
         btnLogs.setBorderPainted(false);
         btnLogs.setContentAreaFilled(false);
         btnLogs.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -566,7 +546,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnPaises.setBackground(new java.awt.Color(255, 255, 255));
         btnPaises.setText("Países");
-        btnPaises.setBorder(null);
         btnPaises.setBorderPainted(false);
         btnPaises.setContentAreaFilled(false);
         btnPaises.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -583,7 +562,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnEstados.setBackground(new java.awt.Color(255, 255, 255));
         btnEstados.setText("Estados");
-        btnEstados.setBorder(null);
         btnEstados.setBorderPainted(false);
         btnEstados.setContentAreaFilled(false);
         btnEstados.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -600,7 +578,6 @@ public class MainMenu extends javax.swing.JFrame {
 
         btnCidades.setBackground(new java.awt.Color(255, 255, 255));
         btnCidades.setText("Cidades");
-        btnCidades.setBorder(null);
         btnCidades.setBorderPainted(false);
         btnCidades.setContentAreaFilled(false);
         btnCidades.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -609,6 +586,11 @@ public class MainMenu extends javax.swing.JFrame {
         btnCidades.setMinimumSize(new java.awt.Dimension(75, 75));
         btnCidades.setPreferredSize(new java.awt.Dimension(75, 75));
         btnCidades.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnCidades.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCidadesActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -750,6 +732,10 @@ public class MainMenu extends javax.swing.JFrame {
     private void btnEstadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEstadosActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnEstadosActionPerformed
+
+    private void btnCidadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCidadesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCidadesActionPerformed
 
     /**
      * @param args the command line arguments
