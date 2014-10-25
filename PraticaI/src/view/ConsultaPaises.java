@@ -5,13 +5,24 @@
  */
 package view;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRResultSetDataSource;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.view.JasperViewer;
+import util.DB;
+
 /**
  *
  * @author Nadine
  */
 public class ConsultaPaises extends javax.swing.JFrame {
 
-  
     /**
      * Creates new form ConsultaPaises
      */
@@ -53,7 +64,20 @@ public class ConsultaPaises extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+//            ResultSet rs = DB.executeQuery("SELECT PaiCodigo,PaiAlfa3,PaiAlfa2,PaiBacenIbge,PaiISO3166,PaiNome "
+//                    + "FROM `pais` where paicodigo=?", new Object[]{Integer.parseInt(txtFiltro.getText())});
+            ResultSet rs = DB.executeQuery("SELECT PaiCodigo,PaiAlfa3,PaiAlfa2,PaiBacenIbge,PaiISO3166,PaiNome "
+                    + "FROM `pais`");
+            JRResultSetDataSource relatRes = new JRResultSetDataSource(rs);
+            JasperPrint p = JasperFillManager.fillReport("reports/paises2.jasper", new HashMap(), relatRes);
+            JasperViewer jv = new JasperViewer(p);
+            jv.setVisible(true);
+            
+        } catch (Exception ex) {
+            Logger.getLogger(ConsultaPaises.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }//GEN-LAST:event_jButton1ActionPerformed
 

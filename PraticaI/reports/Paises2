@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="paises2" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d0d14bc9-d9f9-45ba-93f8-ac84f87e9b4d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="PaiCodigo" class="java.lang.String"/>
+	<field name="PaiNome" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="41" width="100" height="20" uuid="eeb5c97e-75f1-4194-843d-a6019eb1151f"/>
+				<text><![CDATA[PaiCodigo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="41" width="370" height="20" uuid="8dae1586-d041-4c43-9c0e-0790934bba4e"/>
+				<text><![CDATA[PaiNome]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="2" width="100" height="20" uuid="251772c9-3240-42d4-b1f5-c416f0ee0cc5"/>
+				<textFieldExpression><![CDATA[$F{PaiCodigo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="2" width="370" height="20" uuid="f3360a4f-c655-452d-aa1e-44da87ec1b7b"/>
+				<textFieldExpression><![CDATA[$F{PaiNome}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
