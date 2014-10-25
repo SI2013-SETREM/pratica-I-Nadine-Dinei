@@ -525,7 +525,7 @@ public class ListJFrame extends javax.swing.JFrame {
                     String column = idCol;
                     
                     String[] join = column.split("\\."); //Verifica se o campo veio de Join
-
+                    System.out.println("Hue" + join.length + " " + column);
                     if (join.length == 1) {
                         clsType = ReflectionUtil.getAttributeType(cls, column);
                         column = mainTable + "_" + column;
@@ -542,6 +542,7 @@ public class ListJFrame extends javax.swing.JFrame {
                         if (tblAlias != null) 
                             column = tblAlias + "_" + column;
                     }
+                    System.out.println("COL HIDE: " + column + ", " + clsType);
                     row[count] = DB.getColumnByType(rs, column, clsType);
                     count++;
                 }
@@ -578,9 +579,17 @@ public class ListJFrame extends javax.swing.JFrame {
                     row[count] = DB.getColumnByType(rs, column, clsType);
                     count++;
                 }
+                
+                String o = "LISTJFRAME ROW [";
+                for (Object ob : row)
+                    o += String.valueOf(ob) + ",";
+                o += "]";
+                System.out.println(o);
+                
                 if (allowUpdate) {
                     row[updColumn] = lblBtnUpdate;
                 }
+                
                 dtm.addRow(row);
             }
             
@@ -588,11 +597,11 @@ public class ListJFrame extends javax.swing.JFrame {
             tblList.getTableHeader().setReorderingAllowed(false);
             TableColumnModel tcm = tblList.getColumnModel();
             
-            for (int i = 0; i < idColumnHidden.size(); i++) {
-                tcm.getColumn(i).setMinWidth(0);
-                tcm.getColumn(i).setPreferredWidth(0);
-                tcm.getColumn(i).setMaxWidth(0);
-            }
+//            for (int i = 0; i < idColumnHidden.size(); i++) {
+//                tcm.getColumn(i).setMinWidth(0);
+//                tcm.getColumn(i).setPreferredWidth(0);
+//                tcm.getColumn(i).setMaxWidth(0);
+//            }
             if (allowUpdate) {
                 tcm.getColumn(updColumn).setResizable(false);
                 tcm.getColumn(updColumn).setPreferredWidth(5);
@@ -628,15 +637,41 @@ public class ListJFrame extends javax.swing.JFrame {
     }
     
     private void deleteRow(int row) {
+        System.out.println("DeleteRow");
         Object[] idCols = new Object[idColumn.length];
         int col = 0;
-        for (String idCol : idColumnHidden) {
-            idCols[col] = tblList.getValueAt(row, col);
-            col++;
+        int colIdHidden = 0;
+        int colIdListed = 0;
+        String o = "idColumn: ";
+        for (Object hue : idColumn) 
+            o += String.valueOf(hue) + ", ";
+        o += "]";
+        System.out.println(o);
+        for (col = 0; col < idColumn.length; col++) {
+            boolean isFound = false;
+            for (; colIdHidden < idColumnHidden.size(); colIdHidden++) {
+                if (idColumn[col].equals(idColumnHidden.get(colIdHidden))) {
+                    idCols[col] = tblList.getValueAt(row, col);
+                    isFound = true;
+                    break;
+                }
+            }
+            if (!isFound) {
+                for (; colIdListed < idColumnListed.size(); colIdListed++) {
+                    if (idColumn[col].equals(idColumnListed.get(colIdListed))) {
+                        idCols[col] = tblList.getValueAt(row, col);
+                        break;
+                    }
+                }
+            }
         }
-        for (Object[] tblCol : listTableFields) {
-            
-        }
+        o = "idCols: ";
+        o += "[";
+        for (Object hue : idCols) 
+            o += String.valueOf(hue) + ", ";
+        o += "]";
+        System.out.println(o);
+        
         System.out.println("Linha col 0: " + tblList.getValueAt(row, 0));
         System.out.println("Linha excluída: " + row);
     }

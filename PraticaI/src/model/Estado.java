@@ -11,7 +11,7 @@ import util.field.FilterFieldText;
  * @author Nadine Anderle
  */
 public class Estado extends ModelTemplate {
-    private Pais pais;
+    private Pais PaiCodigo;
     private String EstSigla;
     private String EstNome;
     
@@ -26,7 +26,7 @@ public class Estado extends ModelTemplate {
     /**
      * @see model.ModelTemplate#idColumn
      */
-    public static String[] idColumn = {"Pais.PaiCodigo", "EstSigla"};
+    public static String[] idColumn = {"PaiCodigo", "EstSigla"};
     /**
      * @see model.ModelTemplate#listTableFields
      */
@@ -46,12 +46,12 @@ public class Estado extends ModelTemplate {
     public Estado() {
     }
 
-    public Pais getPais() {
-        return pais;
+    public Pais getPaiCodigo() {
+        return PaiCodigo;
     }
 
-    public void setPais(Pais pais) {
-        this.pais = pais;
+    public void setPaiCodigo(Pais PaiCodigo) {
+        this.PaiCodigo = PaiCodigo;
     }
 
     public String getEstSigla() {
