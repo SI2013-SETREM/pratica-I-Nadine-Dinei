@@ -3,37 +3,50 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGEM" class="java.lang.String"/>
 	<field name="PaiCodigo" class="java.lang.String"/>
 	<field name="PaiNome" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch"/>
+		<band height="53" splitType="Stretch">
+			<staticText>
+				<reportElement x="158" y="0" width="246" height="53" uuid="70d2b190-367d-4a4a-9d85-108aee4bf5f2"/>
+				<textElement textAlignment="Center">
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[Lista de Países]]></text>
+			</staticText>
+			<image>
+				<reportElement x="19" y="0" width="104" height="53" uuid="9ceb2b73-51ef-4009-85dc-133467ea82ab"/>
+				<imageExpression><![CDATA[$P{IMAGEM}]]></imageExpression>
+			</image>
+		</band>
 	</title>
 	<pageHeader>
-		<band height="35" splitType="Stretch"/>
+		<band height="15" splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="61" splitType="Stretch">
+		<band height="21" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="41" width="100" height="20" uuid="eeb5c97e-75f1-4194-843d-a6019eb1151f"/>
+				<reportElement x="0" y="0" width="100" height="20" uuid="eeb5c97e-75f1-4194-843d-a6019eb1151f"/>
 				<text><![CDATA[PaiCodigo]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="100" y="41" width="370" height="20" uuid="8dae1586-d041-4c43-9c0e-0790934bba4e"/>
+				<reportElement x="100" y="0" width="455" height="20" uuid="8dae1586-d041-4c43-9c0e-0790934bba4e"/>
 				<text><![CDATA[PaiNome]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="125" splitType="Stretch">
+		<band height="24" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="2" width="100" height="20" uuid="251772c9-3240-42d4-b1f5-c416f0ee0cc5"/>
 				<textFieldExpression><![CDATA[$F{PaiCodigo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="2" width="370" height="20" uuid="f3360a4f-c655-452d-aa1e-44da87ec1b7b"/>
+				<reportElement x="100" y="2" width="455" height="20" uuid="f3360a4f-c655-452d-aa1e-44da87ec1b7b"/>
 				<textFieldExpression><![CDATA[$F{PaiNome}]]></textFieldExpression>
 			</textField>
 		</band>
@@ -42,7 +55,16 @@
 		<band height="45" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="54" splitType="Stretch"/>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="455" y="0" width="100" height="20" uuid="ac3c5a82-d5db-448d-b675-f7c95a04cdae"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="355" y="0" width="100" height="20" uuid="7f36d615-c444-4942-8b32-117e4373ea20"/>
+				<text><![CDATA[Número de Páginas:]]></text>
+			</staticText>
+		</band>
 	</pageFooter>
 	<summary>
 		<band height="42" splitType="Stretch"/>
