@@ -1,6 +1,8 @@
 
 package util;
 
+import javax.swing.ImageIcon;
+
 /**
  *  Classe com funções úteis
  * @author Dinei A. Rockenbach

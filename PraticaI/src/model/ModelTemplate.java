@@ -4,6 +4,7 @@ package model;
 /**
  *  Template para os modelos do projeto
  * @author Dinei A. Rockenbach
+ * @author Nadine Anderle
  */
 public abstract class ModelTemplate {
     
@@ -28,6 +29,12 @@ public abstract class ModelTemplate {
      * Ex.: "pais"
      */
     public static String dbTable;
+    
+    /**
+     *  Nome do campo de soft delete, caso houver<br>
+     * Ex.: "UsrDtaDelecao"
+     */
+    public static String softDelete;
     
     /**
      * Nome dos campos-chave da tabela<br>

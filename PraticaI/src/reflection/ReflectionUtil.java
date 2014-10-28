@@ -136,5 +136,12 @@ public class ReflectionUtil {
         else 
             return dbtable;
     }
+    public static String getDBTableName(Object obj) {
+        String dbtable = (String) getAttibute(obj, "dbTable");
+        if (dbtable == null) 
+            return obj.getClass().getSimpleName().toLowerCase();
+        else 
+            return dbtable;
+    }
     
 }

@@ -726,7 +726,10 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLogsActionPerformed
 
     private void btnPaisesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaisesActionPerformed
-        // TODO add your handling code here:
+        reflection.ListJFrame list = new reflection.ListJFrame();
+        list.setClass(model.Pais.class);
+        list.initListComponents();
+        list.setVisible(true);
     }//GEN-LAST:event_btnPaisesActionPerformed
 
     private void btnEstadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEstadosActionPerformed

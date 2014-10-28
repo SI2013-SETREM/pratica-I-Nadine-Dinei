@@ -24,13 +24,17 @@ public class Estado extends ModelTemplate {
      */
     public static String prlTitle = "Estados";
     /**
+     * @see model.ModelTemplate#iconTitle
+     */
+    public static String iconTitle = "flagorange.png";
+    /**
      * @see model.ModelTemplate#idColumn
      */
     public static String[] idColumn = {"PaiCodigo", "EstSigla"};
     /**
      * @see model.ModelTemplate#listTableFields
      */
-    public static String[][] listTableFields = {
+    public static Object[][] listTableFields = {
         {"País", "Pais.PaiNome"},
         {"Sigla","EstSigla"},
         {"Nome", "EstNome"}

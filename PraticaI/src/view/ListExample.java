@@ -14,7 +14,7 @@ public class ListExample extends reflection.ListJFrame {
     public ListExample() {
 //        System.out.println(java.nio.charset.Charset.defaultCharset());
         initComponents();
-        super.setClass(model.Estado.class);
+        super.setClass(model.Pais.class);
         super.initListComponents();
     }
 

@@ -6,6 +6,7 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,7 +15,9 @@ import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -65,6 +68,9 @@ public class ListJFrame extends javax.swing.JFrame {
     // Atributos que vem da classe
     private String mainTable;
     private String[] idColumn;
+    private String sngTitle;
+    private String prlTitle;
+    private String softDelete;
     ArrayList<String> idColumnListed = new ArrayList<>();
     ArrayList<String> idColumnHidden = new ArrayList<>();
     private Object[][] listTableFields;
@@ -85,7 +91,6 @@ public class ListJFrame extends javax.swing.JFrame {
     public static ImageIcon iconDelete = new javax.swing.ImageIcon(Util.getIconUrl("delete.png"));
     
 //    private ArrayList<Field> lstIdFields = new ArrayList<Field>();
-    
     
     /**
      *  Define a classe para a qual se está fazendo a listagem
@@ -119,6 +124,16 @@ public class ListJFrame extends javax.swing.JFrame {
         // A classe permite excluir registros?
         if (ReflectionUtil.isAttributeExists(cls, "allowDelete")) 
             allowDelete = (boolean) ReflectionUtil.getAttibute(cls, "allowDelete");
+        // Título singular
+        if (ReflectionUtil.isAttributeExists(cls, "sngTitle")) 
+            sngTitle = (String) ReflectionUtil.getAttibute(cls, "sngTitle");
+        // Título plural
+        if (ReflectionUtil.isAttributeExists(cls, "prlTitle")) 
+            prlTitle = (String) ReflectionUtil.getAttibute(cls, "prlTitle");
+        // A tabela usa Soft Delete? Se sim, qual é o campo?
+        if (ReflectionUtil.isAttributeExists(cls, "softDelete")) 
+            softDelete = (String) ReflectionUtil.getAttibute(cls, "softDelete");
+        
     }
     public void setWidth(int width) {
         this.width = width;
@@ -130,15 +145,12 @@ public class ListJFrame extends javax.swing.JFrame {
     /**
      * Método que deve ser chamado pelo filho
      */
-    protected void initListComponents() {
+    public void initListComponents() {
         
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         
-        String title = null;
-        if (ReflectionUtil.isAttributeExists(cls, "prlTitle"))
-            title = (String) ReflectionUtil.getAttibute(cls, "prlTitle");
-        if (title != null)
-            setTitle("Lista de " + title);
+        if (prlTitle != null)
+            setTitle("Lista de " + prlTitle);
         else
             setTitle("Listagem de Dados");
         
@@ -151,6 +163,34 @@ public class ListJFrame extends javax.swing.JFrame {
             javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane();
             scrollPane.setViewportView(tblList);
             
+            // Monitora as teclas pressionadas na tabela principal
+            tblList.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyPressed(java.awt.event.KeyEvent evt) {
+                    switch (evt.getKeyCode()) {
+                        case java.awt.event.KeyEvent.VK_DELETE:
+                            deleteRow(tblList.getSelectedRow());
+                            break;
+                    }
+                }
+            });
+            // Monitora os cliques na tabela principal
+            tblList.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    int col = tblList.columnAtPoint(e.getPoint());
+                    int row = tblList.rowAtPoint(e.getPoint());
+//                    System.out.println(col + " - " + dltColumn + " - " + updColumn);
+                    if (col == dltColumn) {
+                        deleteRow(row);
+                    } else if (col == updColumn) {
+                        updateRow(row);
+                    } else if (e.getClickCount() > 1) {
+                        updateRow(row);
+                    }
+                }
+            });
+            
+            // Monitorador do evento Refresh
             java.awt.event.ActionListener alRefresh = new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -407,7 +447,10 @@ public class ListJFrame extends javax.swing.JFrame {
             }
             
             // Filtros
-            sql += " WHERE 1=1"; //Sempre tem WHERE na SQL, aí é só concatenar ADD
+            if (softDelete != null)
+                sql += " WHERE " + softDelete + " IS NULL";
+            else
+                sql += " WHERE 1=1"; //Sempre tem WHERE na SQL, aí é só concatenar AND
             
             ArrayList<Object> filterValues = new ArrayList<>();
             for (FilterField filterField : listFilterFields) {
@@ -480,11 +523,11 @@ public class ListJFrame extends javax.swing.JFrame {
                 rs = DB.executeQuery(sql);
             
             JLabel lblBtnUpdate = new JLabel(iconDelete, SwingConstants.CENTER);
-            lblBtnUpdate.addMouseListener(new MouseAdapter(){
-                public void mouseClicked(MouseEvent e) {
-                    System.out.println("Mouse clicked (# of clicks: " + e.getClickCount() + ")");
-                }
-            });
+//            lblBtnUpdate.addMouseListener(new MouseAdapter(){
+//                public void mouseClicked(MouseEvent e) {
+//                    System.out.println("Mouse clicked (# of clicks: " + e.getClickCount() + ")");
+//                }
+//            });
 
             if (allowUpdate) {
                 colNamesTable[updColumn] = "";
@@ -523,16 +566,17 @@ public class ListJFrame extends javax.swing.JFrame {
                 for (String idCol : idColumnHidden) {
                     Class<?> clsType = Object.class;
                     String column = idCol;
+                    String clsAttr = idCol;
                     
                     String[] join = column.split("\\."); //Verifica se o campo veio de Join
-                    System.out.println("Hue" + join.length + " " + column);
+//                    System.out.println("Hue" + join.length + " " + column);
                     if (join.length == 1) {
                         clsType = ReflectionUtil.getAttributeType(cls, column);
                         column = mainTable + "_" + column;
                     } else {
                         Class clsInJoin = Class.forName("model." + join[join.length-2]);
-                        column = join[join.length-1];
-                        clsType = ReflectionUtil.getAttributeType(clsInJoin, column);
+                        clsAttr = join[join.length-1];
+                        clsType = ReflectionUtil.getAttributeType(clsInJoin, clsAttr);
                         String tblAlias = null;
                         for (Join jJoin : joins) {
                             if (clsInJoin == jJoin.getRightClass()) {
@@ -540,17 +584,23 @@ public class ListJFrame extends javax.swing.JFrame {
                             }
                         }
                         if (tblAlias != null) 
-                            column = tblAlias + "_" + column;
+                            column = tblAlias + "_" + clsAttr;
+                        else
+                            column = mainTable + "_" + clsAttr;
                     }
-                    System.out.println("COL HIDE: " + column + ", " + clsType);
+                    if (clsType.getPackage() == Package.getPackage("model")) // Veio por Join
+                        clsType = ReflectionUtil.getAttributeType(clsType, clsAttr);
+                    //System.out.println("COL HIDE: " + column + ", " + clsType);
                     row[count] = DB.getColumnByType(rs, column, clsType);
                     count++;
                 }
                 for (Object[] col : listTableFields) {
                     Class<?> clsType = Object.class;
                     String column = null;
+                    String clsAttr = null;
                     if (col[1] instanceof String) {
                         column = (String) col[1];
+                        clsAttr = column;
                         String[] join = column.split("\\."); //Verifica se o campo veio de Join
                         
                         if (join.length == 1) {
@@ -558,9 +608,9 @@ public class ListJFrame extends javax.swing.JFrame {
                             column = mainTable + "_" + column;
                         } else {
                             Class clsInJoin = Class.forName("model." + join[join.length-2]);
-                            column = join[join.length-1];
-                            clsType = ReflectionUtil.getAttributeType(clsInJoin, column);
-                            System.out.println("");
+                            clsAttr = join[join.length-1];
+                            clsType = ReflectionUtil.getAttributeType(clsInJoin, clsAttr);
+                            
                             String tblAlias = null;
                             for (Join jJoin : joins) {
                                 if (clsInJoin == jJoin.getRightClass()) {
@@ -568,23 +618,27 @@ public class ListJFrame extends javax.swing.JFrame {
                                 }
                             }
                             if (tblAlias != null) 
-                                column = tblAlias + "_" + column;
-
+                                column = tblAlias + "_" + clsAttr;
+                            else
+                                column = mainTable + "_" + clsAttr;
                         }
                     } else if (col[1] instanceof Join) {
                         Join join = (Join) col[1];
                         clsType = ReflectionUtil.getAttributeType(join.getRightClass(), join.getRightField());
-                        column = join.getRightAlias() + "_" + join.getRightField();
+                        clsAttr = join.getRightField();
+                        column = join.getRightAlias() + "_" + clsAttr;
                     }
+                    if (clsType.getPackage() == Package.getPackage("model")) // Veio por Join
+                        clsType = ReflectionUtil.getAttributeType(clsType, clsAttr);
                     row[count] = DB.getColumnByType(rs, column, clsType);
                     count++;
                 }
                 
-                String o = "LISTJFRAME ROW [";
-                for (Object ob : row)
-                    o += String.valueOf(ob) + ",";
-                o += "]";
-                System.out.println(o);
+//                String o = "LISTJFRAME ROW [";
+//                for (Object ob : row)
+//                    o += String.valueOf(ob) + ",";
+//                o += "]";
+//                System.out.println(o);
                 
                 if (allowUpdate) {
                     row[updColumn] = lblBtnUpdate;
@@ -597,11 +651,11 @@ public class ListJFrame extends javax.swing.JFrame {
             tblList.getTableHeader().setReorderingAllowed(false);
             TableColumnModel tcm = tblList.getColumnModel();
             
-//            for (int i = 0; i < idColumnHidden.size(); i++) {
-//                tcm.getColumn(i).setMinWidth(0);
-//                tcm.getColumn(i).setPreferredWidth(0);
-//                tcm.getColumn(i).setMaxWidth(0);
-//            }
+            for (int i = 0; i < idColumnHidden.size(); i++) {
+                tcm.getColumn(i).setMinWidth(0);
+                tcm.getColumn(i).setPreferredWidth(0);
+                tcm.getColumn(i).setMaxWidth(0);
+            }
             if (allowUpdate) {
                 tcm.getColumn(updColumn).setResizable(false);
                 tcm.getColumn(updColumn).setPreferredWidth(5);
@@ -615,21 +669,6 @@ public class ListJFrame extends javax.swing.JFrame {
                 tcm.getColumn(dltColumn).setCellEditor(null);
             }
             
-            tblList.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    //System.out.println("Mouse clicked (# of clicks: " + e.getClickCount() + ")");
-                    int col = tblList.columnAtPoint(e.getPoint());
-                    int row = tblList.rowAtPoint(e.getPoint());
-                    if (col == dltColumn) {
-                        deleteRow(row);
-                    }
-                    if (col == updColumn) {
-                        updateRow(row);
-                    }
-                }
-            });
-            
         } catch (Exception ex) {
             Logger.getLogger(ListJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -637,47 +676,142 @@ public class ListJFrame extends javax.swing.JFrame {
     }
     
     private void deleteRow(int row) {
-        System.out.println("DeleteRow");
-        Object[] idCols = new Object[idColumn.length];
-        int col = 0;
-        int colIdHidden = 0;
-        int colIdListed = 0;
-        String o = "idColumn: ";
-        for (Object hue : idColumn) 
-            o += String.valueOf(hue) + ", ";
+//        String o = "idColumn: [";
+//        for (Object hue : idColumn) 
+//            o += String.valueOf(hue) + ", ";
+//        o += "]";
+//        o += "\r\n idColumnHidden: [";
+//        for (Object hue : idColumnHidden) 
+//            o += String.valueOf(hue) + ", ";
+//        o += "]";
+//        o += "\r\n idColumnListed: [";
+//        for (Object hue : idColumnListed) 
+//            o += String.valueOf(hue) + ", ";
+//        o += "]";
+//        System.out.println(o);
+        
+        // Pergunta ao usuário se ele deseja realmente cancelar.
+        String msg = "";
+        msg += "Deseja realmente excluir o ";
+        // Precisa identificar o sexo do registro, se for implementar isto (o Estado, a Cidade)
+//        if (sngTitle != null) 
+//            msg += sngTitle;
+//        else
+            msg += "registro";
+        msg += " [";
+        for (int iTblColumn = 0; iTblColumn < listTableFields.length; iTblColumn++) {
+            msg += tblList.getValueAt(row, iTblColumn+idColumnHidden.size()) + ", ";
+        }
+        msg = msg.substring(0, (msg.length()-2)); //Tira a última vírgula
+        msg += "] ?";
+        
+        int option = JOptionPane.showConfirmDialog(this, msg, "Deseja excluir?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, iconDelete);
+        if (option != JOptionPane.YES_OPTION)
+            return;
+        
+        String sql = "";
+        if (softDelete != null)
+            sql += "UPDATE " + mainTable + " SET " + softDelete + " = NOW() WHERE 1=1";
+        else
+            sql += "DELETE FROM " + mainTable + " WHERE 1=1";
+        
+        for (String field : idColumn) 
+            sql += " AND " + field + " = ?";
+        
+        Object[] idCols = getIdCols(row);
+        
+//        Object[] idCols = new Object[idColumn.length]; //Cria um array que armazenará os campos chave da tabela (em ordem)
+//        int colIdHidden = 0; //É definido aqui fora porque as colunas ocultas sempre estarão em ordem, então não precisa navegar por todas elas a cada loop
+//        // Busca os campos de chave
+//        for (int col = 0; col < idColumn.length; col++) {
+//            sql += " AND " + idColumn[col] + " = ?";
+//            
+//            boolean isFound = false;
+//            for (; colIdHidden < idColumnHidden.size(); colIdHidden++) { //Passa por todos os campos chave ocultos
+//                if (idColumn[col].equals(idColumnHidden.get(colIdHidden))) {
+//                    idCols[col] = tblList.getValueAt(row, col);
+//                    isFound = true;
+//                    break;
+//                }
+//            }
+//            if (!isFound) { //Se não encontrou nas colunas ocultas, está nas exibidas
+//                for (int iListed = 0; iListed < idColumnListed.size(); iListed++) { //Passa por todos os campos chave exibidos
+//                    if (idColumn[col].equals(idColumnListed.get(iListed))) { //É este campo que estamos procurando?
+//                        for (int iTblField = 0; iTblField < listTableFields.length; iTblField++) { //Navega nas colunas da tabela
+//                            if (idColumnListed.get(iListed).equals((String) listTableFields[iTblField][1])) { //Esta coluna contêm o campo que estamos procurando?
+//                                idCols[col] = tblList.getValueAt(row, iTblField+idColumnHidden.size());
+//                                isFound = true;
+//                                break;
+//                            }
+//                        }
+//                        if (isFound)
+//                            break;
+//                    }
+//                }
+//            }
+//        }
+        
+        String o = "[";
+        for (Object colcol : idCols) 
+            o += String.valueOf(colcol) + ", ";
         o += "]";
-        System.out.println(o);
-        for (col = 0; col < idColumn.length; col++) {
+        System.out.println("Linha " + row + " excluída: " + o);
+        System.out.println("SQL: " + sql);
+        
+        try {
+            DB.executeUpdate(sql, idCols);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Falha ao excluir o registro!\r\n" + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE, iconDelete);
+        }
+        
+        //@TODO: Talvez seria melhor simplesmente excluir aquela linha da tabela, não?
+        listData();
+    }
+    
+    private void updateRow(int row) {
+        System.out.println("Linha atualizada: " + row);
+        String formName = "view.Frm" + cls.getSimpleName();
+        try {
+            FormJFrame form = (FormJFrame) Class.forName(formName).newInstance();
+            form.flag = "U";
+            form.idCols = getIdCols(row);
+            form.loadUpdate();
+            form.setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(ListJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private Object[] getIdCols(int row) {
+        Object[] idCols = new Object[idColumn.length]; //Cria um array que armazenará os campos chave da tabela (em ordem)
+        int colIdHidden = 0; //É definido aqui fora porque as colunas ocultas sempre estarão em ordem, então não precisa navegar por todas elas a cada loop
+        // Busca os campos de chave
+        for (int col = 0; col < idColumn.length; col++) {
             boolean isFound = false;
-            for (; colIdHidden < idColumnHidden.size(); colIdHidden++) {
+            for (; colIdHidden < idColumnHidden.size(); colIdHidden++) { //Passa por todos os campos chave ocultos
                 if (idColumn[col].equals(idColumnHidden.get(colIdHidden))) {
                     idCols[col] = tblList.getValueAt(row, col);
                     isFound = true;
                     break;
                 }
             }
-            if (!isFound) {
-                for (; colIdListed < idColumnListed.size(); colIdListed++) {
-                    if (idColumn[col].equals(idColumnListed.get(colIdListed))) {
-                        idCols[col] = tblList.getValueAt(row, col);
-                        break;
+            if (!isFound) { //Se não encontrou nas colunas ocultas, está nas exibidas
+                for (int iListed = 0; iListed < idColumnListed.size(); iListed++) { //Passa por todos os campos chave exibidos
+                    if (idColumn[col].equals(idColumnListed.get(iListed))) { //É este campo que estamos procurando?
+                        for (int iTblField = 0; iTblField < listTableFields.length; iTblField++) { //Navega nas colunas da tabela
+                            if (idColumnListed.get(iListed).equals((String) listTableFields[iTblField][1])) { //Esta coluna contêm o campo que estamos procurando?
+                                idCols[col] = tblList.getValueAt(row, iTblField+idColumnHidden.size());
+                                isFound = true;
+                                break;
+                            }
+                        }
+                        if (isFound)
+                            break;
                     }
                 }
             }
         }
-        o = "idCols: ";
-        o += "[";
-        for (Object hue : idCols) 
-            o += String.valueOf(hue) + ", ";
-        o += "]";
-        System.out.println(o);
-        
-        System.out.println("Linha col 0: " + tblList.getValueAt(row, 0));
-        System.out.println("Linha excluída: " + row);
-    }
-    
-    private void updateRow(int row) {
-        System.out.println("Linha atualizada: " + row);
+        return idCols;
     }
 }
 
@@ -685,12 +819,12 @@ class DeleteCellRenderer extends DefaultTableCellRenderer {
     public DeleteCellRenderer() {
         this.setIcon(ListJFrame.iconDelete);
         this.setHorizontalAlignment(SwingConstants.CENTER);
-        this.addMouseListener(new MouseAdapter(){
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("Mouse clicked (# of clicks: " + e.getClickCount() + ")");
-            }
-        });
+//        this.addMouseListener(new MouseAdapter(){
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//                System.out.println("Mouse clicked (# of clicks: " + e.getClickCount() + ")");
+//            }
+//        });
     }
 
     @Override

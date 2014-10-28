@@ -5,20 +5,26 @@
  */
 package view;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import model.Pais;
+import util.DB;
 
 /**
  *
  * @author Nadine
  */
-public class FormPaises extends javax.swing.JFrame {
+public class FrmPais extends reflection.FormJFrame {
 
+    public Pais pais = new Pais();
+    
     /**
      * Creates new form Paises
      */
-    public FormPaises() {
-
+    public FrmPais() {
         initComponents();
         this.setTitle("Manutenção de " + Pais.sngTitle);
         ImageIcon icone = new ImageIcon(util.Util.getImageUrl(Pais.iconTitle, util.ImageSize.P));
@@ -27,8 +33,18 @@ public class FormPaises extends javax.swing.JFrame {
         this.setIconImage(icone.getImage());
         btnSalvar.setIcon(new ImageIcon(util.Util.getImageUrl("tick.png", util.ImageSize.P)));
         btnCancelar.setIcon(new ImageIcon(util.Util.getImageUrl("cancel.png", util.ImageSize.P)));
+        
+        util.Util.setLimitChars(txtPaiAlfa2, 2);
+        util.Util.setLimitChars(txtPaiAlfa3, 3);
     }
-
+    
+    @Override
+    public void loadUpdate() {
+        pais.load((int) idCols[0]);
+        txtPaiAlfa2.setText(pais.getPaiAlfa2());
+        txtPaiAlfa3.setText(pais.getPaiAlfa3());
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -152,7 +168,13 @@ public class FormPaises extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        // TODO add your handling code here:
+        pais.setPaiAlfa2(txtPaiAlfa2.getText());
+        pais.setPaiAlfa3(txtPaiAlfa3.getText());
+        if (flag == "U") {
+            pais.update();
+        } else if (flag == "I") {
+            pais.insert();
+        }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -178,13 +200,13 @@ public class FormPaises extends javax.swing.JFrame {
 //            }
             javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FormPaises.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmPais.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FormPaises.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmPais.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FormPaises.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmPais.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FormPaises.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmPais.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -192,7 +214,7 @@ public class FormPaises extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FormPaises().setVisible(true);
+                new FrmPais().setVisible(true);
             }
         });
     }

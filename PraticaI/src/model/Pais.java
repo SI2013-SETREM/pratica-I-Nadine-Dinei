@@ -1,6 +1,11 @@
 
 package model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import util.DB;
 import util.field.FilterField;
 import util.field.FilterFieldText;
 
@@ -17,13 +22,13 @@ public class Pais extends ModelTemplate {
     private int PaiBacenIbge;
     private int PaiISO3166;
     private String PaiNome;
+    private java.sql.Date PaiDtaDelecao;
     
     /**
      * @see model.ModelTemplate#sngTitle
      */
     public static String sngTitle = "País";
     /**
-     * {@inheritDoc}
      * @see model.ModelTemplate#prlTitle
      */
     public static String prlTitle = "Países";
@@ -31,6 +36,10 @@ public class Pais extends ModelTemplate {
      * @see model.ModelTemplate#iconTitle
      */
     public static String iconTitle = "locate.png";
+    /**
+     * @see model.ModelTemplate#softDelete
+     */
+    public static String softDelete = "PaiDtaDelecao";
     /**
      * @see model.ModelTemplate#idColumn
      */
@@ -106,4 +115,35 @@ public class Pais extends ModelTemplate {
         this.PaiNome = PaiNome;
     }
     
+    public void load(int PaiCodigo) {
+        try {
+            String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " WHERE PaiCodigo = ?";
+            ResultSet rs = DB.executeQuery(sql, new Object[] {PaiCodigo});
+            rs.next();
+            this.setPaiCodigo(rs.getInt("PaiCodigo"));
+            this.setPaiAlfa2(rs.getString("PaiAlfa2"));
+            this.setPaiAlfa3(rs.getString("PaiAlfa3"));
+            // Preenche todos atributos da classe
+        } catch (Exception ex) {
+            Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void update() {
+        try {
+            String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " SET PaiAlfa2 = ?,";
+            sql += " SET PaiAlfa3 = ?";
+            sql += " WHERE PaiCodigo = ?";
+            DB.executeUpdate(sql, new Object[] {PaiAlfa2, PaiAlfa3, PaiCodigo} );
+        } catch (SQLException ex) {
+            Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void insert() {
+        this.setPaiCodigo(0);
+        
+    }
 }
