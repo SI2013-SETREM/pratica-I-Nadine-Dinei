@@ -13,7 +13,7 @@ import model.Pais;
  * @author Nadine
  */
 public class FrmPais extends reflection.FormJFrame {
-    
+
     public Pais pais = new Pais();
 
     /**
@@ -31,7 +31,7 @@ public class FrmPais extends reflection.FormJFrame {
         util.Util.setLimitChars(txtPaiAlfa2, 2);
         util.Util.setLimitChars(txtPaiAlfa3, 3);
     }
-    
+
     @Override
     public void loadUpdate() {
         pais.load((int) idCols[0]);
@@ -64,7 +64,7 @@ public class FrmPais extends reflection.FormJFrame {
         btnSalvar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Sigla Dois Caracteres:");
 
@@ -169,7 +169,7 @@ public class FrmPais extends reflection.FormJFrame {
         pais.setPaiAlfa3(txtPaiAlfa3.getText());
         pais.setPaiBacenIbge(Integer.parseInt(txtPaiIBGE.getText()));
         pais.setPaiISO3166(Integer.parseInt(txtPaiISO3166.getText()));
-        pais.setPaiCodigo(WIDTH);
+        pais.setPaiNome(txtPaiNome.getText());
         if (flag == "U") {
             pais.update();
         } else if (flag == "I") {
