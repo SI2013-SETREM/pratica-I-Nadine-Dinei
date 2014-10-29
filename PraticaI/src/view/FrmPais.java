@@ -13,9 +13,9 @@ import model.Pais;
  * @author Nadine
  */
 public class FrmPais extends reflection.FormJFrame {
-
-    public Pais pais = new Pais();
     
+    public Pais pais = new Pais();
+
     /**
      * Creates new form Paises
      */
@@ -28,7 +28,6 @@ public class FrmPais extends reflection.FormJFrame {
         this.setIconImage(icone.getImage());
         btnSalvar.setIcon(new ImageIcon(util.Util.getImageUrl("tick.png", util.ImageSize.P)));
         btnCancelar.setIcon(new ImageIcon(util.Util.getImageUrl("cancel.png", util.ImageSize.P)));
-        
         util.Util.setLimitChars(txtPaiAlfa2, 2);
         util.Util.setLimitChars(txtPaiAlfa3, 3);
     }
@@ -38,8 +37,11 @@ public class FrmPais extends reflection.FormJFrame {
         pais.load((int) idCols[0]);
         txtPaiAlfa2.setText(pais.getPaiAlfa2());
         txtPaiAlfa3.setText(pais.getPaiAlfa3());
+        txtPaiIBGE.setText(String.valueOf(pais.getPaiBacenIbge()));
+        txtPaiISO3166.setText(String.valueOf(pais.getPaiISO3166()));
+        txtPaiNome.setText(pais.getPaiNome());
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -165,6 +167,9 @@ public class FrmPais extends reflection.FormJFrame {
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         pais.setPaiAlfa2(txtPaiAlfa2.getText());
         pais.setPaiAlfa3(txtPaiAlfa3.getText());
+        pais.setPaiBacenIbge(Integer.parseInt(txtPaiIBGE.getText()));
+        pais.setPaiISO3166(Integer.parseInt(txtPaiISO3166.getText()));
+        pais.setPaiCodigo(WIDTH);
         if (flag == "U") {
             pais.update();
         } else if (flag == "I") {

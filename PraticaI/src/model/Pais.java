@@ -136,10 +136,10 @@ public class Pais extends ModelTemplate {
         try {
             String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " SET PaiAlfa2 = ?,";
-            sql += " SET PaiAlfa3 = ?";
-            sql += "SET PaiBacenIbge=?";
-            sql += " SET PaiISO3166=?";
-            sql += "SET PaiNome=?";
+            sql += " PaiAlfa3 = ?,";
+            sql += " PaiBacenIbge=?,";
+            sql += " PaiISO3166=?,";
+            sql += " PaiNome=? ";
             sql += " WHERE PaiCodigo = ?";
             DB.executeUpdate(sql, new Object[]{PaiAlfa2, PaiAlfa3, PaiBacenIbge, PaiISO3166, PaiNome, PaiCodigo});
         } catch (SQLException ex) {
