@@ -20,9 +20,9 @@ public abstract class DB {
     public static final String DB_DBMS  = "mysql";
     public static final String DB_HOST  = "localhost";
     public static final int    DB_PORT  = 3306;
-    public static final String DB_NAME  = "pratica";
+    public static final String DB_NAME  = "pratica_i";
     public static final String DB_USER  = "root";
-    public static final String DB_PASS  = "root";
+    public static final String DB_PASS  = "";
     
     private static Connection con;
     
@@ -61,28 +61,20 @@ public abstract class DB {
         Statement st = getConnection().createStatement();
         return st.executeQuery(sql);
     }
-    
     public static ResultSet executeQuery(String sql, Object[] parms) throws SQLException {
         PreparedStatement st = getConnection().prepareStatement(sql);
-        int count = 0;
-        for (Object o : parms) {
-            count++;
-            // Como determinar o tipo da variável [http://stackoverflow.com/a/4964359/3136474]
-            if (o instanceof String)
-                st.setString(count, (String) o);
-            else if (o instanceof Integer)
-                st.setInt(count, (Integer) o);
-            else if (o instanceof Double)
-                st.setDouble(count, (Double) o);
-            else if (o instanceof Float)
-                st.setFloat(count, (Float) o);
-        }
+        setParmsByType(st, parms);
         return st.executeQuery();
     }
     
     public static int executeUpdate(String sql) throws SQLException {
         Statement st = getConnection().createStatement();
         return st.executeUpdate(sql);
+    }
+    public static int executeUpdate(String sql, Object[] parms) throws SQLException {
+        PreparedStatement st = getConnection().prepareStatement(sql);
+        setParmsByType(st, parms);
+        return st.executeUpdate();
     }
     
     public static Object getColumnByType(ResultSet rs, String colLabel, Class<?> colType) {
@@ -100,6 +92,28 @@ public abstract class DB {
             Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
         }
         return r;
+    }
+    
+    public static String getWhereByClass(Class<? extends model.ModelTemplate> cls) {
+        String sql = "";
+        
+        return sql;
+    }
+    
+    private static void setParmsByType(PreparedStatement st, Object[] parms) throws SQLException {
+        int count = 0;
+        for (Object o : parms) {
+            count++;
+            // Como determinar o tipo da variável [http://stackoverflow.com/a/4964359/3136474]
+            if (o instanceof String)
+                st.setString(count, (String) o);
+            else if (o instanceof Integer)
+                st.setInt(count, (Integer) o);
+            else if (o instanceof Double)
+                st.setDouble(count, (Double) o);
+            else if (o instanceof Float)
+                st.setFloat(count, (Float) o);
+        }
     }
     
     /**
