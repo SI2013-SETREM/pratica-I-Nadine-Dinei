@@ -1,4 +1,3 @@
-
 package model;
 
 import java.sql.ResultSet;
@@ -10,12 +9,13 @@ import util.field.FilterField;
 import util.field.FilterFieldText;
 
 /**
- *  Classe de País
+ * Classe de País
+ *
  * @author Dinei A. Rockenbach
  * @author Nadine Anderle
  */
 public class Pais extends ModelTemplate {
-    
+
     private int PaiCodigo;
     private String PaiAlfa2;
     private String PaiAlfa3;
@@ -23,7 +23,7 @@ public class Pais extends ModelTemplate {
     private int PaiISO3166;
     private String PaiNome;
     private java.sql.Date PaiDtaDelecao;
-    
+
     /**
      * @see model.ModelTemplate#sngTitle
      */
@@ -48,10 +48,10 @@ public class Pais extends ModelTemplate {
      * @see model.ModelTemplate#listTableFields
      */
     public static Object[][] listTableFields = {
-        {"Nome",  "PaiNome"},
+        {"Nome", "PaiNome"},
         {"Sigla", "PaiAlfa2"}
     };
-    
+
 //    public static FilterField[] listFilterFields = {
 //        {"Nome", "PaiNome", 200},
 //        {"Sigla", "PaiAlfa2", 60}
@@ -63,7 +63,7 @@ public class Pais extends ModelTemplate {
         new FilterFieldText("PaiNome", "Nome", 200),
         new FilterFieldText("PaiAlfa2", "Sigla", 60)
     };
-    
+
     public Pais() {
     }
 
@@ -106,7 +106,7 @@ public class Pais extends ModelTemplate {
     public void setPaiISO3166(int PaiISO3166) {
         this.PaiISO3166 = PaiISO3166;
     }
-    
+
     public String getPaiNome() {
         return PaiNome;
     }
@@ -114,36 +114,41 @@ public class Pais extends ModelTemplate {
     public void setPaiNome(String PaiNome) {
         this.PaiNome = PaiNome;
     }
-    
+
     public void load(int PaiCodigo) {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " WHERE PaiCodigo = ?";
-            ResultSet rs = DB.executeQuery(sql, new Object[] {PaiCodigo});
+            ResultSet rs = DB.executeQuery(sql, new Object[]{PaiCodigo});
             rs.next();
             this.setPaiCodigo(rs.getInt("PaiCodigo"));
             this.setPaiAlfa2(rs.getString("PaiAlfa2"));
             this.setPaiAlfa3(rs.getString("PaiAlfa3"));
-            // Preenche todos atributos da classe
+            this.setPaiBacenIbge(rs.getInt("PaiBacenIbge"));
+            this.setPaiISO3166(rs.getInt("PaiISO3166"));
+            this.setPaiNome(rs.getString("PaiNome"));
         } catch (Exception ex) {
             Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void update() {
         try {
             String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " SET PaiAlfa2 = ?,";
             sql += " SET PaiAlfa3 = ?";
+            sql += "SET PaiBacenIbge=?";
+            sql += " SET PaiISO3166=?";
+            sql += "SET PaiNome=?";
             sql += " WHERE PaiCodigo = ?";
-            DB.executeUpdate(sql, new Object[] {PaiAlfa2, PaiAlfa3, PaiCodigo});
+            DB.executeUpdate(sql, new Object[]{PaiAlfa2, PaiAlfa3, PaiBacenIbge, PaiISO3166, PaiNome, PaiCodigo});
         } catch (SQLException ex) {
             Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void insert() {
         this.setPaiCodigo(0);
-        
+
     }
 }

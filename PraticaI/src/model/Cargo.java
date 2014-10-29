@@ -1,14 +1,51 @@
 
 package model;
 
+import util.field.FilterField;
+import util.field.FilterFieldText;
+
 /**
  *
  * @author Nadine
  */
-public class Cargo {
+public class Cargo extends ModelTemplate{
 
     private int CrgCodigo;
     private String CrgNome;
+    
+/**
+     * @see model.ModelTemplate#sngTitle
+     */
+    public static String sngTitle = "Cargo";
+    /**
+     * @see model.ModelTemplate#prlTitle
+     */
+    public static String prlTitle = "Cargos";
+    /**
+     * @see model.ModelTemplate#iconTitle
+     */
+    public static String iconTitle = "flag.png";
+        /**
+     * @see model.ModelTemplate#idColumn
+     */
+    public static String[] idColumn = {"CrgCodigo"};
+    /**
+     * @see model.ModelTemplate#listTableFields
+     */
+    public static Object[][] listTableFields = {
+        {"Cargo",  "CrgNome"}
+    };
+    
+//    public static FilterField[] listFilterFields = {
+//        {"Nome", "PaiNome", 200},
+//        {"Sigla", "PaiAlfa2", 60}
+//    };
+    /**
+     * @see model.ModelTemplate#listFilterFields
+     */
+    public static FilterField[] listFilterFields = {
+        new FilterFieldText("CrgNome", "Cargo", 200)
+    };
 
     public Cargo() {
     }
