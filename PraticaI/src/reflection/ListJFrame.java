@@ -296,7 +296,7 @@ public class ListJFrame extends javax.swing.JFrame {
             this.setLocationRelativeTo(null);
             
         } catch (Exception ex) {
-            Logger.getLogger(LstTemplate.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ListJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }
