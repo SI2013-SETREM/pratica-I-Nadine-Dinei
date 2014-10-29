@@ -136,7 +136,7 @@ public class Pais extends ModelTemplate {
             sql += " SET PaiAlfa2 = ?,";
             sql += " SET PaiAlfa3 = ?";
             sql += " WHERE PaiCodigo = ?";
-            DB.executeUpdate(sql, new Object[] {PaiAlfa2, PaiAlfa3, PaiCodigo} );
+            DB.executeUpdate(sql, new Object[] {PaiAlfa2, PaiAlfa3, PaiCodigo});
         } catch (SQLException ex) {
             Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
         }
