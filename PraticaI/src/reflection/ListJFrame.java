@@ -78,6 +78,7 @@ public class ListJFrame extends javax.swing.JFrame {
     
     private int width = 500;
     private int height = 300;
+    private final int btnColWidth = 30;
     
     private boolean allowInsert = true;
     private boolean allowUpdate = true;
@@ -197,6 +198,13 @@ public class ListJFrame extends javax.swing.JFrame {
                     listData();
                 }
             };
+            // Monitorador do evento Add
+            java.awt.event.ActionListener alAdd = new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    openForm("I", 0);
+                }
+            };
             
             JButton btnFilter = new JButton();
             btnFilter.setText("Filtrar");
@@ -204,6 +212,11 @@ public class ListJFrame extends javax.swing.JFrame {
             btnFilter.setIcon(iconFilter);
 //            btnFilter.setBorderPainted(false); //Aparentemente, não funciona
 //            btnFilter.setOpaque(true);
+            
+            JButton btnAdd = new JButton();
+            btnAdd.setText("Adicionar");
+            btnAdd.addActionListener(alAdd);
+            btnAdd.setIcon(iconInsert);
             
             if (ReflectionUtil.isAttributeExists(cls, "iconTitle")) {
                 String iconTitle = (String) ReflectionUtil.getAttibute(cls, "iconTitle");
@@ -224,13 +237,22 @@ public class ListJFrame extends javax.swing.JFrame {
             /// HORIZONTAL ///
             pgMain = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
             sgMain = layout.createSequentialGroup()
-                .addContainerGap();
+                .addContainerGap()
+                    ;
             pgContainer = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
             
             ParallelGroup pgMainTable = layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, width, GroupLayout.PREFERRED_SIZE)
+//                .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, width, GroupLayout.PREFERRED_SIZE)
+                .addComponent(scrollPane, 0, width, Short.MAX_VALUE)
                     ;
             
+            
+            if (allowInsert) {
+                ParallelGroup pgAddButton = layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        ;
+                pgContainer.addGroup(pgAddButton);
+            }
             // Filtros
             if (listFilterFields.length > 0) {
                 ParallelGroup pgFilterButton = layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -258,7 +280,8 @@ public class ListJFrame extends javax.swing.JFrame {
             }
             
             sgMain.addGroup(pgContainer);
-            sgMain.addContainerGap(15, Short.MAX_VALUE);
+            //sgMain.addContainerGap(15, Short.MAX_VALUE);
+            sgMain.addContainerGap();
             pgMain.addGroup(sgMain);
             
             layout.setHorizontalGroup(pgMain);
@@ -267,7 +290,11 @@ public class ListJFrame extends javax.swing.JFrame {
             /// VERTICAL ///
             pgMain = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
             sgMain = layout.createSequentialGroup();
-            sgMain.addContainerGap(20, Short.MAX_VALUE);
+            sgMain.addContainerGap(20, 20);
+            
+            ParallelGroup pgButtons = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+            if (allowInsert) 
+                pgButtons.addComponent(btnAdd);
             
             if (listFilterFields.length > 0) {
                 ParallelGroup pgFilters = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
@@ -277,14 +304,18 @@ public class ListJFrame extends javax.swing.JFrame {
                         .addComponent(listFilterFields[i].getJLabel())
                             ;
                 }
+                pgButtons.addComponent(btnFilter);
                 sgMain.addGroup(pgFilters)
                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(btnFilter)
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+//                    .addComponent(btnFilter)
+//                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         ;
             }
+            sgMain.addGroup(pgButtons)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                    ;
             // Tabela principal
-            sgMain.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, height, GroupLayout.PREFERRED_SIZE);
+            sgMain.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, height, Short.MAX_VALUE);
             sgMain.addContainerGap();
             pgMain.addGroup(sgMain);
             
@@ -658,13 +689,17 @@ public class ListJFrame extends javax.swing.JFrame {
             }
             if (allowUpdate) {
                 tcm.getColumn(updColumn).setResizable(false);
-                tcm.getColumn(updColumn).setPreferredWidth(5);
+                tcm.getColumn(updColumn).setMinWidth(btnColWidth);
+//                tcm.getColumn(updColumn).setPreferredWidth(btnColWidth);
+                tcm.getColumn(updColumn).setMaxWidth(btnColWidth);
                 tcm.getColumn(updColumn).setCellRenderer(new UpdateCellRenderer());
                 tcm.getColumn(updColumn).setCellEditor(null);
             }
             if (allowDelete) {
                 tcm.getColumn(dltColumn).setResizable(false);
-                tcm.getColumn(dltColumn).setPreferredWidth(5);
+                tcm.getColumn(dltColumn).setMinWidth(btnColWidth);
+//                tcm.getColumn(dltColumn).setPreferredWidth(btnColWidth);
+                tcm.getColumn(dltColumn).setMaxWidth(btnColWidth);
                 tcm.getColumn(dltColumn).setCellRenderer(new DeleteCellRenderer());
                 tcm.getColumn(dltColumn).setCellEditor(null);
             }
@@ -768,18 +803,26 @@ public class ListJFrame extends javax.swing.JFrame {
         listData();
     }
     
-    private void updateRow(int row) {
-        System.out.println("Linha atualizada: " + row);
+    private void openForm(String flag, int row) {
         String formName = "view.Frm" + cls.getSimpleName();
         try {
             FormJFrame form = (FormJFrame) Class.forName(formName).newInstance();
-            form.flag = "U";
-            form.idCols = getIdCols(row);
-            form.loadUpdate();
+            form.flag = flag;
+            if (flag == "U") {
+                form.idCols = getIdCols(row);
+                form.loadUpdate();
+            } else if (flag == "I") {
+                form.loadInsert();
+            }
             form.setVisible(true);
         } catch (Exception ex) {
             Logger.getLogger(ListJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private void updateRow(int row) {
+        System.out.println("Linha atualizada: " + row);
+        this.openForm("U", row);
     }
     
     private Object[] getIdCols(int row) {
