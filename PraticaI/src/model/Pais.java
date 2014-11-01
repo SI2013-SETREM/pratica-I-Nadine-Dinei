@@ -140,13 +140,21 @@ public class Pais extends ModelTemplate {
             sql += " PaiBacenIbge=?,";
             sql += " PaiISO3166=?,";
             sql += " PaiNome=? ";
-            sql += " WHERE PaiCodigo = ?";
+            sql += " WHERE PaiCodigo = ?;";
             DB.executeUpdate(sql, new Object[]{PaiAlfa2, PaiAlfa3, PaiBacenIbge, PaiISO3166, PaiNome, PaiCodigo});
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     public void insert() {
-        this.setPaiCodigo(0);
+        try {
+            String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " (PaiAlfa2,PaiAlfa3,PaiBacenIbge,PaiISO3166,PaiNome,PaiCodigo)";
+            sql += " VALUES (?,?,?,?,?,?);";
+            DB.executeUpdate(sql, new Object[]{PaiAlfa2, PaiAlfa3, PaiBacenIbge, PaiISO3166, PaiNome, PaiCodigo});
+        } catch (Exception ex) {
+            Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

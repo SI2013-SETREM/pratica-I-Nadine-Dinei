@@ -28,7 +28,7 @@ public class Cargo extends ModelTemplate {
     /**
      * @see model.ModelTemplate#iconTitle
      */
-    public static String iconTitle = "flag.png";
+    public static String iconTitle = "briefcase.png";
     /**
      * @see model.ModelTemplate#idColumn
      */
@@ -70,14 +70,14 @@ public class Cargo extends ModelTemplate {
         this.CrgNome = CrgNome;
     }
 
-    public void load(int CgrCodigo) {
+    public void load(int CrgCodig) {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " WHERE CrgCodigo=?";
-            ResultSet rs = DB.executeQuery(sql, new Object[]{CrgCodigo});
+            ResultSet rs = DB.executeQuery(sql, new Object[]{CrgCodig});
             rs.next();
-            this.setCrgCodigo(CrgCodigo);
-            this.setCrgNome(CrgNome);
+            this.setCrgCodigo(rs.getInt("CrgCodigo"));
+            this.setCrgNome(rs.getString("CrgNome"));
         } catch (Exception ex) {
             Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -85,7 +85,7 @@ public class Cargo extends ModelTemplate {
 
     public void update() {
         try {
-            String sql = "UPDATE" + reflection.ReflectionUtil.getDBTableName(this);
+            String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " SET CrgNome = ?";
             sql += " WHERE CrgCodigo=?";
             DB.executeUpdate(sql, new Object[]{CrgNome, CrgCodigo});
@@ -95,6 +95,13 @@ public class Cargo extends ModelTemplate {
     }
 
     public void insert() {
-        this.setCrgCodigo(CrgCodigo);
+        try {
+            String sql = "insert into " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " (CrgNome,CrgCodigo)";
+            sql += " values (?,?)";
+            DB.executeUpdate(sql, new Object[]{CrgNome, CrgCodigo});
+        } catch (Exception ex) {
+            Logger.getLogger(Cargo.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

@@ -1,12 +1,18 @@
 package model;
 
+import java.sql.ResultSet;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import util.DB;
+import util.field.FilterField;
+import util.field.FilterFieldText;
 
 /**
  *
  * @author Nadine
  */
-public class Pessoa {
+public class Pessoa extends ModelTemplate {
 
     private int PesCodigo;
     private String PesNome;
@@ -21,6 +27,41 @@ public class Pessoa {
     private int PesIsUsuario;
     private int PesIsFornecedor;
     private Date PesDtaDelecao;
+
+    /**
+     * @see model.ModelTemplate#sngTitle
+     */
+    public static String sngTitle = "Pessoa";
+    /**
+     * @see model.ModelTemplate#prlTitle
+     */
+    public static String prlTitle = "Pessoas";
+    /**
+     * @see model.ModelTemplate#iconTitle
+     */
+    public static String iconTitle = "pessoas2.png";
+    /**
+     * @see model.ModelTemplate#softDelete
+     */
+    public static String softDelete = "PesDtaDelecao";
+    /**
+     * @see model.ModelTemplate#idColumn
+     */
+    public static String[] idColumn = {"PesCodigo"};
+    /**
+     * @see model.ModelTemplate#listTableFields
+     */
+    public static Object[][] listTableFields = {
+        {"Nome", "PesNome"},
+        {"CPF/CNPJ", "PesCPFCNPJ"},
+        {"Dta Nasc", "PesDtaNascimento"}};
+
+    /**
+     * @see model.ModelTemplate#listFilterFields
+     */
+    public static FilterField[] listFilterFields = {
+        new FilterFieldText("PesNome", "Nome", 200),
+        new FilterFieldText("PesCPFCNPJ", "CPF/CNPJ", 60),};
 
     public Pessoa() {
     }
@@ -129,4 +170,25 @@ public class Pessoa {
         this.PesDtaDelecao = PesDtaDelecao;
     }
 
+    public void load(int PesCodigo) {
+        try {
+            String sql = "SELECT * FROM where PesCodigo=?";
+            ResultSet rs;
+            rs = DB.executeQuery(sql, new Object[]{PesCodigo});
+            rs.next();
+            this.setPesCPFCNPJ(rs.getString("PesCPFCNPJ"));
+            this.setPesDtaNascimento(rs.getDate("PesDtaNascimento"));
+            this.setPesEmlCodigo((PessoaEmail) rs.getObject("PesEmlCodigo"));
+            this.setPesIsCliente(rs.getInt("PesIsCliente"));
+            this.setPesIsFornecedor(rs.getInt("PesIsFornecedor"));
+            this.setPesIsFuncionario(rs.getInt("PesIsFuncionario"));
+            this.setPesIsUsuario(rs.getInt(rs.getInt("PesIsUsuario")));
+            this.setPesNome(rs.getString("PesNome"));
+            this.setPesRG(rs.getString("PesRG"));
+            this.setPesSexo(rs.getInt("PesSexo"));
+            this.setPesTipoPessoa((char) rs.getObject("PesTipoPessoa"));
+        } catch (Exception ex) {
+            Logger.getLogger(Pessoa.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

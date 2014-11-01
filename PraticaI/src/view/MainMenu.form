@@ -32,8 +32,8 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="jTabbedMenu" min="-2" pref="132" max="-2" attributes="0"/>
-              <EmptySpace min="0" pref="262" max="32767" attributes="0"/>
+              <Component id="jTabbedMenu" min="-2" pref="120" max="-2" attributes="0"/>
+              <EmptySpace min="0" pref="274" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -85,7 +85,7 @@
                           <Component id="btnEfetuarLancamento" min="-2" max="-2" attributes="0"/>
                           <Component id="btnFecharCaixa" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="14" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -242,7 +242,7 @@
                           <Component id="btnPlanoContas" min="-2" max="-2" attributes="0"/>
                           <Component id="btnLancamento" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="14" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -396,7 +396,7 @@
                           <Component id="btnClientes" min="-2" max="-2" attributes="0"/>
                           <Component id="btnVendas" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="14" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -527,7 +527,7 @@
                                   <Component id="btnFuncionarios" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="btnPessoas" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="18" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -769,16 +769,21 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="btnCidades" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnEstados" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnPaises" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnLogs" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnConfiguracoes" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="btnCidades" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btnPaises" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btnLogs" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btnConfiguracoes" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          </Group>
+                          <Component id="btnEstados" alignment="1" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="14" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

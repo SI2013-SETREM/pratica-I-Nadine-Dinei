@@ -1,5 +1,8 @@
 package model;
 
+import java.sql.ResultSet;
+import util.DB;
+
 /**
  *
  * @author Nadine
@@ -37,4 +40,15 @@ public class PessoaEmail {
         this.PesEmlEmail = PesEmlEmail;
     }
 
+    public void load(int PesEmlCodigo, int PesCod) {
+        try {
+            String sql ="select * from pessoaemail where PesCodigo=? and PesEmlCodigo=?;";
+            ResultSet rs= DB.executeQuery(sql,new Object[]{PesCod,PesEmlCodigo});
+            rs.next();
+            this.setPesCodigo((Pessoa) rs.getObject("PesCodigo"));
+            this.setPesEmlCodigo(rs.getInt("PesEmlCodigo"));
+            this.setPesEmlEmail(rs.getString("PesEmlEmail"));
+        } catch (Exception e) {
+        }
+    }
 }

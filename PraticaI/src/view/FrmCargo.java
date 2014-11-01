@@ -5,26 +5,41 @@
  */
 package view;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import model.Cargo;
+import util.DB;
 
 /**
  *
  * @author Nadine
  */
-public class FrmCargo extends javax.swing.JFrame {
+public class FrmCargo extends reflection.FormJFrame {
+
+    public Cargo cargo = new Cargo();
 
     /**
      * Creates new form FormCargo
      */
     public FrmCargo() {
         initComponents();
-        this.setTitle("Manutenção De Cargo");
-        ImageIcon icone = new ImageIcon(util.Util.getImageUrl("flag.png", util.ImageSize.P));
+        this.setTitle("Manutenção De " + Cargo.sngTitle);
+        ImageIcon icone = new ImageIcon(util.Util.getImageUrl(Cargo.iconTitle, util.ImageSize.P));
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setIconImage(icone.getImage());
         btnSalvar.setIcon(new ImageIcon(util.Util.getImageUrl("tick.png", util.ImageSize.P)));
         btnCancelar.setIcon(new ImageIcon(util.Util.getImageUrl("cancel.png", util.ImageSize.P)));
+        util.Util.setLimitChars(txtCargo, 150);
+    }
+
+    @Override
+    public void loadUpdate() {
+        cargo.load((int) idCols[0]);
+        txtCargo.setText(cargo.getCrgNome());
     }
 
     /**
@@ -37,11 +52,11 @@ public class FrmCargo extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel2 = new javax.swing.JLabel();
-        txtNomeCidade = new javax.swing.JTextField();
+        txtCargo = new javax.swing.JTextField();
         btnSalvar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel2.setText("Nome Cargo:");
 
@@ -53,6 +68,11 @@ public class FrmCargo extends javax.swing.JFrame {
         });
 
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -64,7 +84,7 @@ public class FrmCargo extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNomeCidade))
+                        .addComponent(txtCargo))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 138, Short.MAX_VALUE)
                         .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -78,7 +98,7 @@ public class FrmCargo extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(txtNomeCidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCargo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancelar)
@@ -90,9 +110,30 @@ public class FrmCargo extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        // TODO add your handling code here:
-        
+        cargo.setCrgNome(txtCargo.getText());
+        if (flag == "U") {
+            cargo.update();
+            this.dispose();
+        } else if (flag == "I") {
+            try {
+                String sql = "select max(CrgCodigo)+1 as CrgCodigo from cargo";
+                ResultSet rs;
+                rs = DB.executeQuery(sql);
+                rs.next();
+                cargo.setCrgCodigo(rs.getInt("CrgCodigo"));
+                cargo.insert();
+                this.dispose();
+            } catch (Exception ex) {
+                Logger.getLogger(FrmCargo.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -135,6 +176,6 @@ public class FrmCargo extends javax.swing.JFrame {
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JTextField txtNomeCidade;
+    private javax.swing.JTextField txtCargo;
     // End of variables declaration//GEN-END:variables
 }

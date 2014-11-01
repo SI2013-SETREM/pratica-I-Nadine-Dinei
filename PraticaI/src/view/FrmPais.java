@@ -5,15 +5,21 @@
  */
 package view;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import model.Pais;
+import util.DB;
 
 /**
  *
  * @author Nadine
  */
 public class FrmPais extends reflection.FormJFrame {
-    
+
     public Pais pais = new Pais();
 
     /**
@@ -30,8 +36,11 @@ public class FrmPais extends reflection.FormJFrame {
         btnCancelar.setIcon(new ImageIcon(util.Util.getImageUrl("cancel.png", util.ImageSize.P)));
         util.Util.setLimitChars(txtPaiAlfa2, 2);
         util.Util.setLimitChars(txtPaiAlfa3, 3);
+        util.Util.setLimitChars(txtPaiIBGE, 5);
+        util.Util.setLimitChars(txtPaiISO3166, 5);
+        util.Util.setLimitChars(txtPaiNome, 200);
     }
-    
+
     @Override
     public void loadUpdate() {
         pais.load((int) idCols[0]);
@@ -173,9 +182,19 @@ public class FrmPais extends reflection.FormJFrame {
         if (flag == "U") {
             pais.update();
             this.dispose();
-            
+
         } else if (flag == "I") {
-            pais.insert();
+            try {
+                String sql = "select max(paicodigo)+1 as PaiCodigo from pais";
+                ResultSet rs;
+                rs = DB.executeQuery(sql);
+                rs.next();
+                pais.setPaiCodigo(rs.getInt("PaiCodigo"));
+                pais.insert();
+                this.dispose();
+            } catch (Exception ex) {
+                Logger.getLogger(FrmPais.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
