@@ -16,11 +16,11 @@ public class Pessoa extends ModelTemplate {
 
     private int PesCodigo;
     private String PesNome;
-    private PessoaEmail PesEmlCodigo;
+    private PessoaEmail[] PesEmlCodigo;
     private int PesSexo;
     private String PesCPFCNPJ;
     private String PesRG;
-    private char PesTipoPessoa;
+    private String PesTipoPessoa;
     private Date PesDtaNascimento;
     private int PesIsFuncionario;
     private int PesIsCliente;
@@ -54,14 +54,16 @@ public class Pessoa extends ModelTemplate {
     public static Object[][] listTableFields = {
         {"Nome", "PesNome"},
         {"CPF/CNPJ", "PesCPFCNPJ"},
-        {"Dta Nasc", "PesDtaNascimento"}};
+        {"Dta Nasc", "PesDtaNascimento"}
+    };
 
     /**
      * @see model.ModelTemplate#listFilterFields
      */
     public static FilterField[] listFilterFields = {
         new FilterFieldText("PesNome", "Nome", 200),
-        new FilterFieldText("PesCPFCNPJ", "CPF/CNPJ", 60),};
+        new FilterFieldText("PesCPFCNPJ", "CPF/CNPJ", 60),
+    };
 
     public Pessoa() {
     }
@@ -82,11 +84,11 @@ public class Pessoa extends ModelTemplate {
         this.PesNome = PesNome;
     }
 
-    public PessoaEmail getPesEmlCodigo() {
+    public PessoaEmail[] getPesEmlCodigo() {
         return PesEmlCodigo;
     }
 
-    public void setPesEmlCodigo(PessoaEmail PesEmlCodigo) {
+    public void setPesEmlCodigo(PessoaEmail[] PesEmlCodigo) {
         this.PesEmlCodigo = PesEmlCodigo;
     }
 
@@ -114,11 +116,11 @@ public class Pessoa extends ModelTemplate {
         this.PesRG = PesRG;
     }
 
-    public char getPesTipoPessoa() {
+    public String getPesTipoPessoa() {
         return PesTipoPessoa;
     }
 
-    public void setPesTipoPessoa(char PesTipoPessoa) {
+    public void setPesTipoPessoa(String PesTipoPessoa) {
         this.PesTipoPessoa = PesTipoPessoa;
     }
 
@@ -170,25 +172,28 @@ public class Pessoa extends ModelTemplate {
         this.PesDtaDelecao = PesDtaDelecao;
     }
 
-    public void load(int PesCodigo) {
+    public boolean load(int PesCodigo) {
         try {
-            String sql = "SELECT * FROM where PesCodigo=?";
-            ResultSet rs;
-            rs = DB.executeQuery(sql, new Object[]{PesCodigo});
-            rs.next();
-            this.setPesCPFCNPJ(rs.getString("PesCPFCNPJ"));
-            this.setPesDtaNascimento(rs.getDate("PesDtaNascimento"));
-            this.setPesEmlCodigo((PessoaEmail) rs.getObject("PesEmlCodigo"));
-            this.setPesIsCliente(rs.getInt("PesIsCliente"));
-            this.setPesIsFornecedor(rs.getInt("PesIsFornecedor"));
-            this.setPesIsFuncionario(rs.getInt("PesIsFuncionario"));
-            this.setPesIsUsuario(rs.getInt(rs.getInt("PesIsUsuario")));
-            this.setPesNome(rs.getString("PesNome"));
-            this.setPesRG(rs.getString("PesRG"));
-            this.setPesSexo(rs.getInt("PesSexo"));
-            this.setPesTipoPessoa((char) rs.getObject("PesTipoPessoa"));
+            String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " WHERE PesCodigo = ?";
+            ResultSet rs = DB.executeQuery(sql, new Object[]{PesCodigo});
+            if (rs.next()) {
+                this.setPesCPFCNPJ(rs.getString("PesCPFCNPJ"));
+                this.setPesDtaNascimento(rs.getDate("PesDtaNascimento"));
+                this.setPesEmlCodigo(PessoaEmail.getAll(this));
+                this.setPesIsCliente(rs.getInt("PesIsCliente"));
+                this.setPesIsFornecedor(rs.getInt("PesIsFornecedor"));
+                this.setPesIsFuncionario(rs.getInt("PesIsFuncionario"));
+                this.setPesIsUsuario(rs.getInt(rs.getInt("PesIsUsuario")));
+                this.setPesNome(rs.getString("PesNome"));
+                this.setPesRG(rs.getString("PesRG"));
+                this.setPesSexo(rs.getInt("PesSexo"));
+                this.setPesTipoPessoa(rs.getString("PesTipoPessoa"));
+                return true;
+            }
         } catch (Exception ex) {
             Logger.getLogger(Pessoa.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
     }
 }

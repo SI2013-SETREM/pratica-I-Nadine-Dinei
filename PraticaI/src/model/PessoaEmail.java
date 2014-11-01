@@ -1,6 +1,9 @@
 package model;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.DB;
 
 /**
@@ -49,6 +52,26 @@ public class PessoaEmail {
             this.setPesEmlCodigo(rs.getInt("PesEmlCodigo"));
             this.setPesEmlEmail(rs.getString("PesEmlEmail"));
         } catch (Exception e) {
+            Logger.getLogger(PessoaEmail.class.getName()).log(Level.SEVERE, null, e);
         }
+    }
+    
+    public static PessoaEmail[] getAll(Pessoa PesCodigo) {
+        ArrayList<PessoaEmail> list = new ArrayList<>();
+        String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(PessoaEmail.class);
+        sql += " WHERE PesCodigo = ?";
+        try {
+            ResultSet rs = DB.executeQuery(sql, new Object[]{PesCodigo.getPesCodigo()});
+            while (rs.next()) {
+                PessoaEmail pe = new PessoaEmail();
+                pe.setPesCodigo(PesCodigo);
+                pe.setPesEmlCodigo(rs.getInt("PesEmlCodigo"));
+                pe.setPesEmlEmail(rs.getString("PesEmlEmail"));
+                list.add(pe);
+            }
+        } catch (Exception e) {
+            Logger.getLogger(PessoaEmail.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return (PessoaEmail[]) list.toArray(new PessoaEmail[list.size()]);
     }
 }
