@@ -13,7 +13,7 @@ import model.Pais;
  * @author Nadine
  */
 public class FrmPais extends reflection.FormJFrame {
-
+    
     public Pais pais = new Pais();
 
     /**
@@ -31,7 +31,7 @@ public class FrmPais extends reflection.FormJFrame {
         util.Util.setLimitChars(txtPaiAlfa2, 2);
         util.Util.setLimitChars(txtPaiAlfa3, 3);
     }
-
+    
     @Override
     public void loadUpdate() {
         pais.load((int) idCols[0]);
@@ -172,6 +172,8 @@ public class FrmPais extends reflection.FormJFrame {
         pais.setPaiNome(txtPaiNome.getText());
         if (flag == "U") {
             pais.update();
+            this.dispose();
+            
         } else if (flag == "I") {
             pais.insert();
         }

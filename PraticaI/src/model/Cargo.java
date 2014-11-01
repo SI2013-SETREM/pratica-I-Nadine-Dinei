@@ -1,6 +1,10 @@
-
 package model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import util.DB;
 import util.field.FilterField;
 import util.field.FilterFieldText;
 
@@ -8,12 +12,12 @@ import util.field.FilterFieldText;
  *
  * @author Nadine
  */
-public class Cargo extends ModelTemplate{
+public class Cargo extends ModelTemplate {
 
     private int CrgCodigo;
     private String CrgNome;
-    
-/**
+
+    /**
      * @see model.ModelTemplate#sngTitle
      */
     public static String sngTitle = "Cargo";
@@ -25,7 +29,7 @@ public class Cargo extends ModelTemplate{
      * @see model.ModelTemplate#iconTitle
      */
     public static String iconTitle = "flag.png";
-        /**
+    /**
      * @see model.ModelTemplate#idColumn
      */
     public static String[] idColumn = {"CrgCodigo"};
@@ -33,9 +37,9 @@ public class Cargo extends ModelTemplate{
      * @see model.ModelTemplate#listTableFields
      */
     public static Object[][] listTableFields = {
-        {"Cargo",  "CrgNome"}
+        {"Cargo", "CrgNome"}
     };
-    
+
 //    public static FilterField[] listFilterFields = {
 //        {"Nome", "PaiNome", 200},
 //        {"Sigla", "PaiAlfa2", 60}
@@ -66,4 +70,31 @@ public class Cargo extends ModelTemplate{
         this.CrgNome = CrgNome;
     }
 
+    public void load(int CgrCodigo) {
+        try {
+            String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " WHERE CrgCodigo=?";
+            ResultSet rs = DB.executeQuery(sql, new Object[]{CrgCodigo});
+            rs.next();
+            this.setCrgCodigo(CrgCodigo);
+            this.setCrgNome(CrgNome);
+        } catch (Exception ex) {
+            Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void update() {
+        try {
+            String sql = "UPDATE" + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " SET CrgNome = ?";
+            sql += " WHERE CrgCodigo=?";
+            DB.executeUpdate(sql, new Object[]{CrgNome, CrgCodigo});
+        } catch (Exception ex) {
+            Logger.getLogger(Cargo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void insert() {
+        this.setCrgCodigo(CrgCodigo);
+    }
 }

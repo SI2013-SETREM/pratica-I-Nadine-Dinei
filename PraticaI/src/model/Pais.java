@@ -146,9 +146,7 @@ public class Pais extends ModelTemplate {
             Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
     public void insert() {
         this.setPaiCodigo(0);
-
     }
 }
