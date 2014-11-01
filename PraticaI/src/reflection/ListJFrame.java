@@ -15,7 +15,6 @@ import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.LayoutStyle;
@@ -202,7 +201,7 @@ public class ListJFrame extends javax.swing.JFrame {
             java.awt.event.ActionListener alAdd = new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    openForm("I", 0);
+                    insertRow();
                 }
             };
             
@@ -540,6 +539,16 @@ public class ListJFrame extends javax.swing.JFrame {
                     } else if (clsType == Float.class) {
                         sql += operator;
                         filterValues.add(Float.parseFloat(filterField.getSQLValue()));
+                    } else if (clsType == java.sql.Date.class) {
+                        //@TODO
+                        sql += operator;
+                        filterValues.add(filterField.getSQLValue());
+                    } else if (clsType == java.sql.Time.class) {
+                        //@TODO
+                        
+                    } else if (clsType == java.sql.Timestamp.class) {
+                        //@TODO
+                        
                     }
                     sql += " ?";
                 }
@@ -662,6 +671,7 @@ public class ListJFrame extends javax.swing.JFrame {
                     if (clsType.getPackage() == Package.getPackage("model")) // Veio por Join
                         clsType = ReflectionUtil.getAttributeType(clsType, clsAttr);
                     row[count] = DB.getColumnByType(rs, column, clsType);
+                    row[count] = DB.formatColumn(row[count]);
                     count++;
                 }
                 
@@ -803,26 +813,68 @@ public class ListJFrame extends javax.swing.JFrame {
         listData();
     }
     
+    /**
+     *  Abre o formulário para alterar o registro
+     * @param row Linha da tabela do registro a ser atualizado
+     */
+    private void updateRow(int row) {
+        this.openForm(DB.FLAG_UPDATE, row);
+    }
+    
+    /**
+     *  Abre o formulário para inserir um novo registro
+     */
+    private void insertRow() {
+        this.openForm(DB.FLAG_INSERT);
+    }
+    
+    /**
+     *  Abre o formulário vinculado à listagem
+     * @param flag Uma das constantes DB.FLAG_XXX
+     */
+    private void openForm(String flag) {
+        openForm(flag, 0);
+    }
+    /**
+     *  Abre o formulário vinculado à listagem
+     * @param flag Uma das constantes DB.FLAG_XXX
+     * @param row Linha da tabela caso deva carregar algum registro
+     */
     private void openForm(String flag, int row) {
         String formName = "view.Frm" + cls.getSimpleName();
         try {
-            FormJFrame form = (FormJFrame) Class.forName(formName).newInstance();
-            form.flag = flag;
-            if (flag == "U") {
-                form.idCols = getIdCols(row);
-                form.loadUpdate();
-            } else if (flag == "I") {
-                form.loadInsert();
+            Class<?> frmClass = Class.forName(formName);
+            if (FormJFrame.class.isAssignableFrom(frmClass)) {
+                FormJFrame form = (FormJFrame) Class.forName(formName).newInstance();
+                form.flag = flag;
+                switch (flag) {
+                    case DB.FLAG_UPDATE:
+                        form.idCols = getIdCols(row);
+                        form.loadUpdate();
+                        break;
+                    case DB.FLAG_INSERT:
+                        form.loadInsert();
+                        break;
+                }
+                form.setVisible(true);
+            } else if (FormJDialog.class.isAssignableFrom(frmClass)) {
+                FormJDialog form = (FormJDialog) Class.forName(formName).newInstance();
+                form.setModal(true);
+                form.flag = flag;
+                switch (flag) {
+                    case DB.FLAG_UPDATE:
+                        form.idCols = getIdCols(row);
+                        form.loadUpdate();
+                        break;
+                    case DB.FLAG_INSERT:
+                        form.loadInsert();
+                        break;
+                }
+                form.setVisible(true);
             }
-            form.setVisible(true);
         } catch (Exception ex) {
             Logger.getLogger(ListJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-    private void updateRow(int row) {
-        System.out.println("Linha atualizada: " + row);
-        this.openForm("U", row);
     }
     
     private Object[] getIdCols(int row) {

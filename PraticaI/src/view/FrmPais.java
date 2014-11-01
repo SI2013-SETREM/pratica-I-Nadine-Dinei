@@ -18,14 +18,16 @@ import util.DB;
  *
  * @author Nadine
  */
-public class FrmPais extends reflection.FormJFrame {
+public class FrmPais extends reflection.FormJDialog {
 
     public Pais pais = new Pais();
 
-    /**
-     * Creates new form Paises
-     */
     public FrmPais() {
+        this(null, true);
+    }
+
+    public FrmPais(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
         this.setTitle("Manutenção de " + Pais.sngTitle);
         ImageIcon icone = new ImageIcon(util.Util.getImageUrl(Pais.iconTitle, util.ImageSize.P));
@@ -179,23 +181,8 @@ public class FrmPais extends reflection.FormJFrame {
         pais.setPaiBacenIbge(Integer.parseInt(txtPaiIBGE.getText()));
         pais.setPaiISO3166(Integer.parseInt(txtPaiISO3166.getText()));
         pais.setPaiNome(txtPaiNome.getText());
-        if (flag == "U") {
-            pais.update();
-            this.dispose();
-
-        } else if (flag == "I") {
-            try {
-                String sql = "select max(paicodigo)+1 as PaiCodigo from pais";
-                ResultSet rs;
-                rs = DB.executeQuery(sql);
-                rs.next();
-                pais.setPaiCodigo(rs.getInt("PaiCodigo"));
-                pais.insert();
-                this.dispose();
-            } catch (Exception ex) {
-                Logger.getLogger(FrmPais.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        pais.save();
+        this.dispose();
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -235,7 +222,7 @@ public class FrmPais extends reflection.FormJFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FrmPais().setVisible(true);
+                new FrmPais(null, false).setVisible(true);
             }
         });
     }

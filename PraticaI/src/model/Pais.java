@@ -1,7 +1,6 @@
 package model;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.DB;
@@ -15,15 +14,17 @@ import util.field.FilterFieldText;
  * @author Nadine Anderle
  */
 public class Pais extends ModelTemplate {
-
+    
     private int PaiCodigo;
     private String PaiAlfa2;
     private String PaiAlfa3;
     private int PaiBacenIbge;
     private int PaiISO3166;
     private String PaiNome;
-    private java.sql.Date PaiDtaDelecao;
-
+    private java.sql.Timestamp PaiDtaDelecao;
+    
+    private String flag = DB.FLAG_INSERT;
+    
     /**
      * @see model.ModelTemplate#sngTitle
      */
@@ -115,46 +116,75 @@ public class Pais extends ModelTemplate {
         this.PaiNome = PaiNome;
     }
 
-    public void load(int PaiCodigo) {
+    public String getFlag() {
+        return flag;
+    }
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
+    
+    
+
+    public boolean load(int PaiCodigo) {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " WHERE PaiCodigo = ?";
             ResultSet rs = DB.executeQuery(sql, new Object[]{PaiCodigo});
-            rs.next();
-            this.setPaiCodigo(rs.getInt("PaiCodigo"));
-            this.setPaiAlfa2(rs.getString("PaiAlfa2"));
-            this.setPaiAlfa3(rs.getString("PaiAlfa3"));
-            this.setPaiBacenIbge(rs.getInt("PaiBacenIbge"));
-            this.setPaiISO3166(rs.getInt("PaiISO3166"));
-            this.setPaiNome(rs.getString("PaiNome"));
+            if (rs.next()) {
+                this.setPaiCodigo(rs.getInt("PaiCodigo"));
+                this.setPaiAlfa2(rs.getString("PaiAlfa2"));
+                this.setPaiAlfa3(rs.getString("PaiAlfa3"));
+                this.setPaiBacenIbge(rs.getInt("PaiBacenIbge"));
+                this.setPaiISO3166(rs.getInt("PaiISO3166"));
+                this.setPaiNome(rs.getString("PaiNome"));
+                flag = DB.FLAG_UPDATE;
+                return true;
+            }
         } catch (Exception ex) {
             Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
     }
-
-    public void update() {
-        try {
-            String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
-            sql += " SET PaiAlfa2 = ?,";
-            sql += " PaiAlfa3 = ?,";
-            sql += " PaiBacenIbge=?,";
-            sql += " PaiISO3166=?,";
-            sql += " PaiNome=? ";
-            sql += " WHERE PaiCodigo = ?;";
-            DB.executeUpdate(sql, new Object[]{PaiAlfa2, PaiAlfa3, PaiBacenIbge, PaiISO3166, PaiNome, PaiCodigo});
-        } catch (Exception ex) {
-            Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
+    
+    public boolean save() {
+        switch(flag) {
+            case DB.FLAG_INSERT:
+                insert();
+            case DB.FLAG_UPDATE:
+                update();
         }
+        return false;
     }
-
-    public void insert() {
+    
+    public boolean insert() {
+        this.setPaiCodigo(Sequencial.getNextSequencial(this.getClass()));
+        String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
+        sql += " (PaiAlfa2,PaiAlfa3,PaiBacenIbge,PaiISO3166,PaiNome,PaiCodigo)";
+        sql += " VALUES (?,?,?,?,?,?);";
         try {
-            String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
-            sql += " (PaiAlfa2,PaiAlfa3,PaiBacenIbge,PaiISO3166,PaiNome,PaiCodigo)";
-            sql += " VALUES (?,?,?,?,?,?);";
             DB.executeUpdate(sql, new Object[]{PaiAlfa2, PaiAlfa3, PaiBacenIbge, PaiISO3166, PaiNome, PaiCodigo});
+            flag = DB.FLAG_UPDATE;
+            return true;
         } catch (Exception ex) {
-            Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Sequencial.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
+    }
+    
+    public boolean update() {
+        String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
+        sql += " SET PaiAlfa2 = ?,";
+        sql += " PaiAlfa3 = ?,";
+        sql += " PaiBacenIbge=?,";
+        sql += " PaiISO3166=?,";
+        sql += " PaiNome=? ";
+        sql += " WHERE PaiCodigo = ?";
+        try {
+            DB.executeUpdate(sql, new Object[]{PaiAlfa2, PaiAlfa3, PaiBacenIbge, PaiISO3166, PaiNome, PaiCodigo});
+            return true;
+        } catch (Exception ex) {
+            Logger.getLogger(Sequencial.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 }

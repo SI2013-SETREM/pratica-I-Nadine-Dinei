@@ -17,12 +17,13 @@ import java.util.logging.Logger;
  */
 public abstract class DB {
     
-    public static final String DB_DBMS  = "mysql";
-    public static final String DB_HOST  = "localhost";
-    public static final int    DB_PORT  = 3306;
-    public static final String DB_NAME  = "pratica_i";
-    public static final String DB_USER  = "root";
-    public static final String DB_PASS  = "root";
+    public static final String FLAG_UPDATE = "U";
+    public static final String FLAG_INSERT = "I";
+    public static final String FLAG_DELETE = "D";
+    // Ainda não utilizadas
+//    public static final String FLAG_LIST = "L";
+//    public static final String FLAG_FILTER = "F";
+//    public static final String FLAG_ORDER = "O";
     
     private static Connection con;
     
@@ -30,7 +31,7 @@ public abstract class DB {
         if (con == null) {
             // Sempre dá o erro Class Not Found
 //            try {
-//                Class.forName("org." + DB_DBMS + ".jdbc.Driver");
+//                Class.forName("org." + Config.DB_DBMS + ".jdbc.Driver");
 //            } catch (ClassNotFoundException ex) {
 //                System.err.println("Erro na Conexão: Class Not Found '" + ex.getMessage() + "'");
 //            } catch (Exception ex) {
@@ -38,7 +39,7 @@ public abstract class DB {
 //            }
             
             try {
-                con = DriverManager.getConnection(getDsn(), DB_USER, DB_PASS);
+                con = DriverManager.getConnection(getDsn(), Config.DB_USER, Config.DB_PASS);
                 Util.debug(DB.class.getName() + " - " + getDsn());
             } catch (SQLException ex) {
                 System.err.println("ERRO NO DSN: " + getDsn() + " - " + ex.getErrorCode() + " - " + ex.getMessage());
@@ -88,17 +89,50 @@ public abstract class DB {
                 r = rs.getDouble(colLabel);
             else if (colType == Float.class)
                 r = rs.getFloat(colLabel);
+            else if (colType == java.sql.Date.class)
+                r = rs.getDate(colLabel);
+            else if (colType == java.sql.Time.class)
+                r = rs.getTime(colLabel);
+            else if (colType == java.sql.Timestamp.class)
+                r = rs.getTimestamp(colLabel);
         } catch (SQLException ex) {
+            // Comentar esta linha:
             Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
+            // Se der erro deve retornar null
         }
         return r;
     }
-    
-    public static String getWhereByClass(Class<? extends model.ModelTemplate> cls) {
-        String sql = "";
-        
-        return sql;
+    public static String formatColumn(Object data) {
+        String r = "";
+//        System.out.println(data + " - " + data.getClass());
+        if (data instanceof String)
+            r = (String) data;
+        else if (data instanceof Integer)
+            r = String.valueOf(data);
+        else if (data instanceof Double)
+            r = String.valueOf(data);
+        else if (data instanceof Float)
+            r = String.valueOf(data);
+        else if (data instanceof java.sql.Date) {
+            r = java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM).format(((java.sql.Date) data));
+        } else if (data instanceof java.sql.Time) {
+            //@TODO
+            r = ((java.sql.Time) data).toString();
+        } else if (data instanceof java.sql.Timestamp) {
+            //@TODO
+            r = ((java.sql.Timestamp) data).toString();
+        }
+        return r;
     }
+//    public static String getDisplayColumnByType(ResultSet rs, String colLabel, Class<?> colType) {
+//    }
+    
+    
+//    public static String getWhereByClass(Class<? extends model.ModelTemplate> cls) {
+//        String sql = "";
+//        
+//        return sql;
+//    }
     
     private static void setParmsByType(PreparedStatement st, Object[] parms) throws SQLException {
         int count = 0;
@@ -113,6 +147,12 @@ public abstract class DB {
                 st.setDouble(count, (Double) o);
             else if (o instanceof Float)
                 st.setFloat(count, (Float) o);
+            else if (o instanceof java.sql.Date)
+                st.setDate(count, (java.sql.Date) o);
+            else if (o instanceof java.sql.Time)
+                st.setTime(count, (java.sql.Time) o);
+            else if (o instanceof java.sql.Timestamp)
+                st.setTimestamp(count, (java.sql.Timestamp) o);
         }
     }
     
@@ -121,12 +161,12 @@ public abstract class DB {
      * @return DSN
      */
     private static String getDsn() {
-        String dsn = "jdbc:" + DB_DBMS + "://" + DB_HOST;
-        if (DB_PORT != 0) {
-            dsn += ":" + DB_PORT;
+        String dsn = "jdbc:" + Config.DB_DBMS + "://" + Config.DB_HOST;
+        if (Config.DB_PORT != 0) {
+            dsn += ":" + Config.DB_PORT;
         }
-        dsn += "/" + DB_NAME;
-        dsn += "?useUnicode=true&characterEncoding=UTF-8";
+        dsn += "/" + Config.DB_NAME;
+//        dsn += "?useUnicode=true&characterEncoding=UTF-8";
 //        dsn += "?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&connectionCollation=utf8_general_ci";
         return dsn;
     }

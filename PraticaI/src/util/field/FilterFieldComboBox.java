@@ -155,6 +155,13 @@ public class FilterFieldComboBox extends FilterField {
                 return ((int) id == 0);
             else if (id instanceof Float)
                 return ((int) id == 0);
+            // Existe combo box de data? Acho que não.
+//            else if (id instanceof java.sql.Date)
+//                return true;
+//            else if (id instanceof java.sql.Time)
+//                return true;
+//            else if (id instanceof java.sql.Timestamp)
+//                return true;
         }
         return true;
     }
