@@ -1,6 +1,13 @@
 
 package model;
 
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import reflection.ReflectionUtil;
+import util.DB;
+
 /**
  *  Template para os modelos do projeto
  * @author Dinei A. Rockenbach
@@ -84,5 +91,32 @@ public abstract class ModelTemplate {
 //    public static String getListSQL() {
 //        return "SELECT #FIELDS# FROM #MAINTABLE# #JOINS# WHERE 1=1 #CONDITIONS#";
 //    }
+    
+    protected static java.util.ArrayList<Object> getAll(Class<? extends ModelTemplate> cls) {
+        java.util.ArrayList<Object> list = new java.util.ArrayList<>();
+        try {
+            String sql = "SELECT * FROM " + ReflectionUtil.getDBTableName(cls);
+            String softDel = null;
+            if (ReflectionUtil.isAttributeExists(cls, "softDelete")) 
+                softDel = (String) ReflectionUtil.getAttibute(cls, "softDelete");
+            if (softDel != null)
+                sql += " WHERE " + softDel + " IS NULL";
+            java.sql.ResultSet rs = DB.executeQuery(sql);
+            while (rs.next()) {
+                Object obj = cls.newInstance();
+                ResultSetMetaData rsmd = rs.getMetaData();
+                for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                    String attr = rsmd.getColumnName(i);
+                    Class<?> clsType = ReflectionUtil.getAttributeType(cls, attr);
+                    Object val = DB.getColumnByType(rs, attr, clsType);
+                    ReflectionUtil.getMethod(obj, "set" + attr, new Object[]{val});
+                }
+                list.add(obj);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ModelTemplate.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
     
 }

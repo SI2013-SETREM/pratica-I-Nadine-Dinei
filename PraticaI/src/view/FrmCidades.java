@@ -5,7 +5,11 @@
  */
 package view;
 
+import java.util.ArrayList;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import model.Estado;
+import util.field.ComboBoxItem;
 
 /**
  *
@@ -25,6 +29,12 @@ public class FrmCidades extends javax.swing.JFrame {
         this.setIconImage(icone.getImage());
         btnSalvar.setIcon(new ImageIcon(util.Util.getImageUrl("tick.png", util.ImageSize.P)));
         btnCancelar.setIcon(new ImageIcon(util.Util.getImageUrl("cancel.png", util.ImageSize.P)));
+        
+        ArrayList<Estado> list = model.Estado.getAll();
+        ArrayList<ComboBoxItem> options = new ArrayList<>();
+        for (Estado est : list) 
+            options.add(new ComboBoxItem(est.getEstSigla(), est.getEstNome()));
+        jComboBox1.setModel(new DefaultComboBoxModel((ComboBoxItem[]) options.toArray(new ComboBoxItem[options.size()])));
     }
 
     /**

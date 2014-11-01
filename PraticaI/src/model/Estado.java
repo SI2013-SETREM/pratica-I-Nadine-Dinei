@@ -73,5 +73,12 @@ public class Estado extends ModelTemplate {
     public void setEstNome(String EstNome) {
         this.EstNome = EstNome;
     }
+    
+    public static java.util.ArrayList<Estado> getAll() {
+        java.util.ArrayList<Estado> list = new java.util.ArrayList<>();
+        for (Object o : ModelTemplate.getAll(Estado.class)) 
+            list.add((Estado) o);
+        return list;
+    }
 
 }

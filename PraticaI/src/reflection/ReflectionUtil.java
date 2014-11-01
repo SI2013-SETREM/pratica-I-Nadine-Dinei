@@ -55,6 +55,9 @@ public class ReflectionUtil {
         }
         return null;
     }
+    public static Class<?> getAttributeType(Object obj, String attr) {
+        return getAttributeType(obj.getClass(), attr);
+    }
     
     public static boolean isAttributeExists(Class<?> cls, String attr) {
         try {
@@ -94,10 +97,39 @@ public class ReflectionUtil {
         return null;
     }
     public static Object getMethod(Object obj, String method) {
+        return getMethod(obj, method, new Object[]{});
+    }
+    public static Object getMethod(Object obj, String method, Object[] args) {
         try {
-            Method func = obj.getClass().getMethod(method);
-            func.setAccessible(true);
-            return func.invoke(obj);
+            Method func = null;
+            switch (args.length) {
+                case 2:
+                case 1:
+                    Class<?> clsType = getAttributeType(obj, method.replaceAll("^set", ""));
+                    func = obj.getClass().getMethod(method, clsType);
+                    break;
+                case 0:
+                default:
+                    func = obj.getClass().getMethod(method);
+                    break;
+            }
+            if (func != null) {
+                func.setAccessible(true);
+                Object r;
+                switch (args.length) {
+                    case 2:
+                        r = func.invoke(obj, args[0], args[1]);
+                        break;
+                    case 1:
+                        r = func.invoke(obj, args[0]);
+                        break;
+                    case 0:
+                    default:
+                        r = func.invoke(obj);
+                        break;
+                }
+                return r;
+            }
         } catch (NoSuchMethodException ex) {
             //Nestes casos, retorna null
         } catch (Exception ex) {
