@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,8 +63,7 @@ public class Pessoa extends ModelTemplate {
      */
     public static FilterField[] listFilterFields = {
         new FilterFieldText("PesNome", "Nome", 200),
-        new FilterFieldText("PesCPFCNPJ", "CPF/CNPJ", 60),
-    };
+        new FilterFieldText("PesCPFCNPJ", "CPF/CNPJ", 60),};
 
     public Pessoa() {
     }
@@ -196,4 +196,21 @@ public class Pessoa extends ModelTemplate {
         }
         return false;
     }
+    public static Pessoa[] listBusca() {
+        ArrayList<Pessoa> list = new ArrayList<>();
+        String sql = "select PesNome,PesCPFCNPJ from pessoa;";
+        try {
+            ResultSet rs = DB.executeQuery(sql);
+            while (rs.next()) {
+                Pessoa p = new Pessoa();
+                p.setPesCPFCNPJ(rs.getString("PesCPFCNPJ"));
+                p.setPesNome(rs.getString("PesNome"));
+                list.add(p);
+            }
+        } catch (Exception ex) {
+
+        }
+        return (Pessoa[]) list.toArray(new Pessoa[list.size()]);
+    }
+
 }
