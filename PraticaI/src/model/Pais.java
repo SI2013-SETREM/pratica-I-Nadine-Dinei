@@ -50,7 +50,7 @@ public class Pais extends ModelTemplate {
      */
     public static Object[][] listTableFields = {
         {"Nome", "PaiNome"},
-        {"Sigla", "PaiAlfa2"}
+        {"Sigla", "PaiAlfa2"},
     };
 
 //    public static FilterField[] listFilterFields = {
@@ -62,7 +62,7 @@ public class Pais extends ModelTemplate {
      */
     public static FilterField[] listFilterFields = {
         new FilterFieldText("PaiNome", "Nome", 200),
-        new FilterFieldText("PaiAlfa2", "Sigla", 60)
+        new FilterFieldText("PaiAlfa2", "Sigla", 60),
     };
 
     public Pais() {
@@ -123,8 +123,6 @@ public class Pais extends ModelTemplate {
         this.flag = flag;
     }
     
-    
-
     public boolean load(int PaiCodigo) {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
@@ -160,7 +158,7 @@ public class Pais extends ModelTemplate {
         this.setPaiCodigo(Sequencial.getNextSequencial(this.getClass()));
         String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
         sql += " (PaiAlfa2,PaiAlfa3,PaiBacenIbge,PaiISO3166,PaiNome,PaiCodigo)";
-        sql += " VALUES (?,?,?,?,?,?);";
+        sql += " VALUES (?,?,?,?,?,?)";
         try {
             DB.executeUpdate(sql, new Object[]{PaiAlfa2, PaiAlfa3, PaiBacenIbge, PaiISO3166, PaiNome, PaiCodigo});
             flag = DB.FLAG_UPDATE;

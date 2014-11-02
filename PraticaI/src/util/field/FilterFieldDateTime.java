@@ -8,12 +8,12 @@ import javax.swing.JFormattedTextField;
 import util.Config;
 
 /**
- *  Campo de filtro de data
+ *
  * @author Dinei A. Rockenbach
  * @author Nadine Anderle
  */
-public class FilterFieldDate extends FilterField {
-    
+public class FilterFieldDateTime extends FilterField {
+
     public static final int TYPE_NORMAL = 1;
     //@TODO
 //    public static final int TYPE_MONTH = 2;
@@ -22,14 +22,14 @@ public class FilterFieldDate extends FilterField {
     private int type = TYPE_NORMAL;
     private JFormattedTextField jComponent;
     
-    public FilterFieldDate() {
+    public FilterFieldDateTime() {
         super();
     }
-    public FilterFieldDate(String field, String label) {
+    public FilterFieldDateTime(String field, String label) {
         super(field, label);
         this.setType(TYPE_NORMAL);
     }
-    public FilterFieldDate(String field, String label, int type) {
+    public FilterFieldDateTime(String field, String label, int type) {
         this(label, field);
         this.setType(type);
     }
@@ -43,7 +43,7 @@ public class FilterFieldDate extends FilterField {
         //Calcula o tamanho necessário para aparecer o formato desejado
         switch (type) {
             case TYPE_NORMAL:
-                width = 65;
+                width = 115;
                 break;
 //            case TYPE_MONTH:
 //                width = 50;
@@ -56,9 +56,9 @@ public class FilterFieldDate extends FilterField {
     public JFormattedTextField getJComponent() {
         if (this.jComponent == null) {
             try {
-                javax.swing.text.MaskFormatter mask = new javax.swing.text.MaskFormatter(Config.MASK_DATE);
+                javax.swing.text.MaskFormatter mf = new javax.swing.text.MaskFormatter(Config.MASK_DATETIME);
                 this.jComponent = new JFormattedTextField(
-                        new javax.swing.text.DefaultFormatterFactory(mask)
+                        new javax.swing.text.DefaultFormatterFactory(mf)
                 );
             } catch (ParseException ex) {
                 Logger.getLogger(FilterFieldDate.class.getName()).log(Level.SEVERE, null, ex);
@@ -68,13 +68,15 @@ public class FilterFieldDate extends FilterField {
     }
 
     @Override
-    public java.sql.Date getValue() {
-        java.sql.Date date = null;
+    public java.sql.Timestamp getValue() {
+        java.sql.Timestamp date = null;
         if (!isEmpty()) {
             String text = this.getJComponent().getText();
-            String[] dateParts = text.split("/");
+            String[] dateTime = text.split("\\s");
+            String[] dateParts = dateTime[0].split("/");
+            System.out.println(text + " - " + dateTime.length + " - " + dateParts.length);
             try {
-                date = java.sql.Date.valueOf(dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]);
+                date = java.sql.Timestamp.valueOf(dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0] + " " + dateTime[1]);
             } catch (IllegalArgumentException ex) {
                 // Retorna null
             }
@@ -90,8 +92,8 @@ public class FilterFieldDate extends FilterField {
     @Override
     public boolean isEmpty() {
         return ("".equals(this.getJComponent().getText()) 
-                //|| "/  /".equals(this.getJComponent().getText().trim()))
-                || Config.MASK_DATE.replaceAll("[^/:\\s]", " ").trim().equals(this.getJComponent().getText().trim()));
+                //|| Config.MASK_DATETIME.replaceAll("#", " ").trim().equals(this.getJComponent().getText().trim())
+                || Config.MASK_DATETIME.replaceAll("[^/:\\s]", " ").trim().equals(this.getJComponent().getText().trim()));
     }
 
 }

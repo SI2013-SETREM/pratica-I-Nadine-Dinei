@@ -302,6 +302,13 @@ public class ListJFrame extends javax.swing.JFrame {
                         .addComponent(listFilterFields[i].getJComponent(), GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addComponent(listFilterFields[i].getJLabel())
                             ;
+                    // Segunda linha
+//                    if (true) {
+//                        sgMain.addGroup(pgFilters)
+//                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+//                                ;
+//                        pgFilters = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
+//                    }
                 }
                 pgButtons.addComponent(btnFilter);
                 sgMain.addGroup(pgFilters)
@@ -539,16 +546,14 @@ public class ListJFrame extends javax.swing.JFrame {
                     } else if (clsType == Float.class) {
                         sql += operator;
                         filterValues.add(Float.parseFloat(filterField.getSQLValue()));
-                    } else if (clsType == java.sql.Date.class) {
-                        //@TODO
+                        
+                        // Estes entram no padrão do else abaixo
+//                    } else if (clsType == java.sql.Date.class) {
+//                    } else if (clsType == java.sql.Timestamp.class) {
+//                    } else if (clsType == java.sql.Time.class) {
+                    } else {
                         sql += operator;
                         filterValues.add(filterField.getSQLValue());
-                    } else if (clsType == java.sql.Time.class) {
-                        //@TODO
-                        
-                    } else if (clsType == java.sql.Timestamp.class) {
-                        //@TODO
-                        
                     }
                     sql += " ?";
                 }

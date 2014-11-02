@@ -59,6 +59,11 @@ public abstract class FilterField {
         return this.jLabel;
     }
     
+    //@TODO
+//    public int getTotalWidth() {
+//        return getWidth() + (this.getLabel().length()*5);
+//    }
+    
     public abstract JComponent getJComponent();
     public abstract Object getValue();
     public abstract String getSQLValue();

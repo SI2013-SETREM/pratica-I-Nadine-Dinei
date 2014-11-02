@@ -104,7 +104,6 @@ public abstract class DB {
     }
     public static String formatColumn(Object data) {
         String r = "";
-//        System.out.println(data + " - " + data.getClass());
         if (data instanceof String)
             r = (String) data;
         else if (data instanceof Integer)
@@ -113,20 +112,14 @@ public abstract class DB {
             r = String.valueOf(data);
         else if (data instanceof Float)
             r = String.valueOf(data);
-        else if (data instanceof java.sql.Date) {
-            r = java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM).format(((java.sql.Date) data));
-        } else if (data instanceof java.sql.Time) {
-            //@TODO
-            r = ((java.sql.Time) data).toString();
-        } else if (data instanceof java.sql.Timestamp) {
-            //@TODO
-            r = ((java.sql.Timestamp) data).toString();
-        }
+        else if (data instanceof java.sql.Date)
+            r = java.text.DateFormat.getDateInstance(Config.FORMAT_DATE).format((java.sql.Date) data);
+        else if (data instanceof java.sql.Time)
+            r = java.text.DateFormat.getTimeInstance(Config.FORMAT_TIME).format((java.sql.Time) data);
+        else if (data instanceof java.sql.Timestamp)
+            r = java.text.DateFormat.getDateTimeInstance(Config.FORMAT_DATE, Config.FORMAT_TIME).format((java.sql.Timestamp) data);
         return r;
     }
-//    public static String getDisplayColumnByType(ResultSet rs, String colLabel, Class<?> colType) {
-//    }
-    
     
 //    public static String getWhereByClass(Class<? extends model.ModelTemplate> cls) {
 //        String sql = "";

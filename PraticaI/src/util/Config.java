@@ -8,8 +8,33 @@ package util;
  */
 public abstract class Config {
     
+    /**
+     *  Pasta para buscar as imagens
+     */
     public static String imageFolder = "assets";
     
+    /**
+     *  Formato de exibição de datas
+     * @see util.field.FilterFieldDate
+     */
+    public static final int FORMAT_DATE = java.text.DateFormat.MEDIUM;
+    public static final String MASK_DATE = "##/##/####";
+    
+    /**
+     *  Formato de exibição de horas
+     */
+    public static final int FORMAT_TIME = java.text.DateFormat.MEDIUM;
+    public static final String MASK_TIME = "##:##:##";
+    
+    /**
+     *  Formato de exibição de data/hora
+     * @see util.field.FilterFieldDateTime
+     */
+    public static final String MASK_DATETIME = MASK_DATE + " " + MASK_TIME;
+    
+    /**
+     *  Configurações para acesso ao banco de dados
+     */
     public static final String DB_DBMS  = "mysql";
     public static final String DB_HOST  = "localhost";
     public static final int    DB_PORT  = 3306;
