@@ -196,9 +196,22 @@ public class Pessoa extends ModelTemplate {
         }
         return false;
     }
+
     public static Pessoa[] listBusca() {
         ArrayList<Pessoa> list = new ArrayList<>();
-        String sql = "select PesNome,PesCPFCNPJ from pessoa;";
+        String sql = "select "
+                + "PesNome,"
+                + "PesCPFCNPJ,"
+                + "PesEmlCodigo,"
+                + "PesCodigo,"
+                + "PesSexo,"
+                + "PesRG,"
+                + "PesTipoPessoa,"
+                + "PesDtaNascimento,"
+                + "PesIsFuncionario,"
+                + "PesIsCliente,"
+                + "PesIsUsuario,"
+                + "PesIsFornecedor from pessoa;";
         try {
             ResultSet rs = DB.executeQuery(sql);
             while (rs.next()) {

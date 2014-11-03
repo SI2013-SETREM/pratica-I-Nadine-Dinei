@@ -20,11 +20,12 @@ public class bscPessoa extends javax.swing.JDialog {
     public bscPessoa(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        System.out.println(tblPessoa.getColumn(2));
     }
 
     public void list() {
-        DefaultTableModel dados = (DefaultTableModel) tblPessoa.getModel();
-        dados.setNumRows(0);
+       // DefaultTableModel dados = (DefaultTableModel) tblPessoa.getModel();
+    //    dados.setNumRows(0);
 
     }
 
@@ -53,10 +54,35 @@ public class bscPessoa extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Nome", "CPF/CNPJ"
+                "Nome", "CPF/CNPJ", "Título", "Título 4", "Título 5", "Título 6", "Título 7", "Título 8", "Título 9", "Título 10", "Título 11", "Título 12"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                true, true, false, false, true, true, true, true, true, true, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblPessoa.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tblPessoa);
+        if (tblPessoa.getColumnModel().getColumnCount() > 0) {
+            tblPessoa.getColumnModel().getColumn(0).setPreferredWidth(100);
+            tblPessoa.getColumnModel().getColumn(1).setPreferredWidth(50);
+            tblPessoa.getColumnModel().getColumn(2).setResizable(false);
+            tblPessoa.getColumnModel().getColumn(2).setPreferredWidth(0);
+            tblPessoa.getColumnModel().getColumn(3).setResizable(false);
+            tblPessoa.getColumnModel().getColumn(3).setPreferredWidth(0);
+            tblPessoa.getColumnModel().getColumn(4).setResizable(false);
+            tblPessoa.getColumnModel().getColumn(5).setResizable(false);
+            tblPessoa.getColumnModel().getColumn(6).setResizable(false);
+            tblPessoa.getColumnModel().getColumn(7).setResizable(false);
+            tblPessoa.getColumnModel().getColumn(8).setResizable(false);
+            tblPessoa.getColumnModel().getColumn(9).setResizable(false);
+            tblPessoa.getColumnModel().getColumn(10).setResizable(false);
+            tblPessoa.getColumnModel().getColumn(11).setResizable(false);
+        }
 
         jButton1.setText("Selecionar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -93,7 +119,7 @@ public class bscPessoa extends javax.swing.JDialog {
     }//GEN-LAST:event_formWindowOpened
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
