@@ -264,7 +264,7 @@ public class ListJFrame extends javax.swing.JFrame {
                         ((javax.swing.JTextField) listFilterFields[i].getJComponent()).addActionListener(alRefresh);
                     }
                     sgFilters
-                        .addGap(6, 6, 6)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(listFilterFields[i].getJLabel())
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(listFilterFields[i].getJComponent(), GroupLayout.PREFERRED_SIZE, listFilterFields[i].getWidth(), GroupLayout.PREFERRED_SIZE)
@@ -808,11 +808,16 @@ public class ListJFrame extends javax.swing.JFrame {
         System.out.println("Linha " + row + " excluída: " + o);
         System.out.println("SQL: " + sql);
         
+        //@TODO talvez seria melhor fazer tudo orientado a objetos, e instanciar o objeto e fazer um metodo delete em cada model...
+//        if (ReflectionUtil.isMethodExists(cls, "onDelete")) {
+//            ReflectionUtil.getMethod(cls, "onDelete", idCols);
+//        }
         try {
             DB.executeUpdate(sql, idCols);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Falha ao excluir o registro!\r\n" + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE, iconDelete);
         }
+//        ReflectionUtil.isMethodExists(cls, "afterDelete");
         
         //@TODO: Talvez seria melhor simplesmente excluir aquela linha da tabela, não?
         listData();

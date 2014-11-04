@@ -6,6 +6,8 @@
 package view;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import reflection.ListJFrame;
 
 /**
  *
@@ -13,6 +15,8 @@ import javax.swing.ImageIcon;
  */
 public class MainMenu extends javax.swing.JFrame {
 
+    public model.Usuario usuario;
+    
     /**
      * Creates new form MainMenu
      */
@@ -23,7 +27,7 @@ public class MainMenu extends javax.swing.JFrame {
         btnEfetuarLancamento.setIcon(new ImageIcon(util.Util.getImageUrl("moneydollar.png", util.ImageSize.M)));
         btnFecharCaixa.setIcon(new ImageIcon(util.Util.getImageUrl("accept.png", util.ImageSize.M)));
         btnContatos.setIcon(new ImageIcon(util.Util.getImageUrl("email.png", util.ImageSize.M)));
-        btnSair.setIcon(new ImageIcon(util.Util.getImageUrl("exit.png", util.ImageSize.M)));
+        btnSair.setIcon(new ImageIcon(util.Util.getImageUrl("doorout.png", util.ImageSize.M)));
         btnLancamento.setIcon(new ImageIcon(util.Util.getImageUrl("moneydollar.png", util.ImageSize.M)));
         btnPlanoContas.setIcon(new ImageIcon(util.Util.getImageUrl("category.png", util.ImageSize.M)));
         btnContasCapital.setIcon(new ImageIcon(util.Util.getImageUrl("safe.png", util.ImageSize.M)));
@@ -43,6 +47,8 @@ public class MainMenu extends javax.swing.JFrame {
         btnPaises.setIcon(new ImageIcon(util.Util.getImageUrl("locate.png", util.ImageSize.M)));
         btnEstados.setIcon(new ImageIcon(util.Util.getImageUrl("flagorange.png", util.ImageSize.M)));
         btnCidades.setIcon(new ImageIcon(util.Util.getImageUrl("flag.png", util.ImageSize.M)));
+        
+//        btnPaisesActionPerformed(null);
     }
 
     /**
@@ -711,7 +717,7 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnClientes1ActionPerformed
 
     private void btnPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPessoasActionPerformed
-        reflection.ListJFrame list = new reflection.ListJFrame();
+        ListJFrame list = new ListJFrame();
         list.setClass(model.Pessoa.class);
         list.initListComponents();
         list.setVisible(true);
@@ -722,7 +728,10 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnFuncionariosActionPerformed
 
     private void btnUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuariosActionPerformed
-        // TODO add your handling code here:
+        ListJFrame list = new ListJFrame();
+        list.setClass(model.Usuario.class);
+        list.initListComponents();
+        list.setVisible(true);
     }//GEN-LAST:event_btnUsuariosActionPerformed
 
     private void btnConfiguracoesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfiguracoesActionPerformed
@@ -747,7 +756,19 @@ public class MainMenu extends javax.swing.JFrame {
     private void btnCidadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCidadesActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnCidadesActionPerformed
-
+    
+    private void openList(String FncNome, Class<? extends model.ModelTemplate> cls) {
+        boolean[] acessos = usuario.verificaAcesso(FncNome);
+        if (acessos[model.Usuario.IDX_VISUALIZAR]) {
+            reflection.ListJFrame list = new reflection.ListJFrame();
+            list.setClass(cls);
+            list.initListComponents();
+            list.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "Usuário sem acesso ao objeto '" + FncNome + "'", "Sem acesso", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */

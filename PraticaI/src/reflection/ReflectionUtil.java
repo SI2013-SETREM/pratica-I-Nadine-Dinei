@@ -43,6 +43,9 @@ public class ReflectionUtil {
         return null;
     }
     
+    public static Class<?> getAttributeType(Object obj, String attr) {
+        return getAttributeType(obj.getClass(), attr);
+    }
     public static Class<?> getAttributeType(Class<?> cls, String attr) {
         try {
             Field attribute = cls.getField(attr);
@@ -54,9 +57,6 @@ public class ReflectionUtil {
             Logger.getLogger(ReflectionUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
-    }
-    public static Class<?> getAttributeType(Object obj, String attr) {
-        return getAttributeType(obj.getClass(), attr);
     }
     
     public static boolean isAttributeExists(Class<?> cls, String attr) {
@@ -85,10 +85,40 @@ public class ReflectionUtil {
     
     // Trabalhando com métodos
     public static Object getMethod(Class<?> cls, String method) {
+        return getMethod(cls, method, new Object[]{});
+    }
+    public static Object getMethod(Class<?> cls, String method, Object[] args) {
+        //@TODO navegar nos args descobrindo o tipo
         try {
-            Method func = cls.getMethod(method);
-            func.setAccessible(true);
-            return func.invoke(null);
+            Method func = null;
+            switch (args.length) {
+                case 2:
+                case 1:
+                    Class<?> clsType = getAttributeType(cls, method.replaceAll("^set", ""));
+                    func = cls.getMethod(method, clsType);
+                    break;
+                case 0:
+                default:
+                    func = cls.getMethod(method);
+                    break;
+            }
+            if (func != null) {
+                func.setAccessible(true);
+                Object r;
+                switch (args.length) {
+                    case 2:
+                        r = func.invoke(null, args[0], args[1]);
+                        break;
+                    case 1:
+                        r = func.invoke(null, args[0]);
+                        break;
+                    case 0:
+                    default:
+                        r = func.invoke(null);
+                        break;
+                }
+                return r;
+            }
         } catch (NoSuchMethodException ex) {
             //Nestes casos, retorna null
         } catch (Exception ex) {
@@ -96,6 +126,7 @@ public class ReflectionUtil {
         }
         return null;
     }
+    
     public static Object getMethod(Object obj, String method) {
         return getMethod(obj, method, new Object[]{});
     }
@@ -151,9 +182,13 @@ public class ReflectionUtil {
         return null;
     }
     
+    //@TOOD preciso de uma checagem de método com parâmetros
     public static boolean isMethodExists(Object obj, String method) {
+        return isMethodExists(obj.getClass(), method);
+    }
+    public static boolean isMethodExists(Class<?> cls, String method) {
         try {
-            obj.getClass().getMethod(method);
+            cls.getMethod(method);
             return true;
         } catch (NoSuchMethodException ex) {
             return false;
