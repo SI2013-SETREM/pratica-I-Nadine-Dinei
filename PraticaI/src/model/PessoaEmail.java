@@ -12,7 +12,7 @@ import util.field.FilterFieldText;
  *
  * @author Nadine
  */
-public class PessoaEmail {
+public class PessoaEmail extends ModelTemplate {
 
     private Pessoa PesCodigo;
     private int PesEmlCodigo;
@@ -48,7 +48,6 @@ public class PessoaEmail {
 //        {"Nome", "PaiNome"},
 //        {"Sigla", "PaiAlfa2"},
 //    };
-
 //    public static FilterField[] listFilterFields = {
 //        {"Nome", "PaiNome", 200},
 //        {"Sigla", "PaiAlfa2", 60}

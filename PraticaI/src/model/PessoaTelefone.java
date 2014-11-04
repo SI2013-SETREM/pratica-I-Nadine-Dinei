@@ -11,7 +11,7 @@ import util.DB;
  *
  * @author Nadine
  */
-public class PessoaTelefone {
+public class PessoaTelefone extends ModelTemplate{
     private Pessoa PesCodigo;
     private int PesFonCodigo;
     private String PesFonDescricao;

@@ -17,7 +17,7 @@ import util.DB;
  *
  * @author Nadine
  */
-public class FrmCargo extends reflection.FormJFrame {
+public class FrmCargo extends reflection.FormJDialog {
 
     public Cargo cargo = new Cargo();
 

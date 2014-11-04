@@ -5,17 +5,31 @@
  */
 package view;
 
+import model.Pessoa;
+import javax.swing.ImageIcon;
+import reflection.FormJFrame;
+
 /**
  *
  * @author Nadine
+ * @author Dinei
  */
-public class FrmFuncionario extends javax.swing.JFrame {
+public class FrmFuncionario extends FormJFrame {
 
     /**
-     * Creates new form FormFuncionarios
+     * Creates new form FrmPessoa
      */
     public FrmFuncionario() {
+        System.out.println("Pessoa");
         initComponents();
+        this.setTitle("Manutenção de " + Pessoa.sngTitle);
+        ImageIcon icone = new ImageIcon(util.Util.getImageUrl(Pessoa.iconTitle, util.ImageSize.P));
+        this.setResizable(false);
+        this.setLocationRelativeTo(null);
+        this.setIconImage(icone.getImage());
+        btnSalvar.setIcon(new ImageIcon(util.Util.getImageUrl("tick.png", util.ImageSize.P)));
+        btnCancelar.setIcon(new ImageIcon(util.Util.getImageUrl("cancel.png", util.ImageSize.P)));
+        util.Util.setLimitChars(txtNome, 150);
     }
 
     /**
@@ -27,39 +41,332 @@ public class FrmFuncionario extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btnBuscaPessoa = new javax.swing.JButton();
-        lblPessoa = new javax.swing.JLabel();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        btnCancelar = new javax.swing.JButton();
+        CadastroCliente = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        txtNome = new javax.swing.JTextField();
+        pnlPessoa = new javax.swing.JPanel();
+        rdbFisica = new javax.swing.JRadioButton();
+        rdbJuridica = new javax.swing.JRadioButton();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        txtCpfCnpj = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtRG = new javax.swing.JTextField();
+        pnlSexo = new javax.swing.JPanel();
+        rdbFeminino = new javax.swing.JRadioButton();
+        rdbMasculino = new javax.swing.JRadioButton();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        txtDataNascimento = new javax.swing.JFormattedTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblTelefone = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblEndereco = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tblEmail = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
-        lblPessoa1 = new javax.swing.JLabel();
-        btnBuscaCargo = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        btnEndereco = new javax.swing.JButton();
+        btnAdicionarTelefone = new javax.swing.JButton();
+        btnAdicionarEmail = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        txtSalario = new javax.swing.JTextField();
+        txtSalario1 = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        btnSalvar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        btnBuscaPessoa.setText("...");
-        btnBuscaPessoa.addActionListener(new java.awt.event.ActionListener() {
+        btnCancelar.setText("Cancelar");
+
+        CadastroCliente.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel1.setText("Nome:");
+
+        pnlPessoa.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        rdbFisica.setText("Física");
+
+        rdbJuridica.setText("Jurídica");
+
+        jLabel11.setText("Pessoa");
+
+        javax.swing.GroupLayout pnlPessoaLayout = new javax.swing.GroupLayout(pnlPessoa);
+        pnlPessoa.setLayout(pnlPessoaLayout);
+        pnlPessoaLayout.setHorizontalGroup(
+            pnlPessoaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlPessoaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(rdbJuridica)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(rdbFisica)
+                .addGap(12, 12, 12))
+        );
+        pnlPessoaLayout.setVerticalGroup(
+            pnlPessoaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlPessoaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(rdbJuridica)
+                .addComponent(rdbFisica)
+                .addComponent(jLabel11))
+        );
+
+        jLabel4.setText("CPF/CNPJ:");
+
+        jLabel5.setText("RG:");
+
+        pnlSexo.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        rdbFeminino.setText("Feminino");
+
+        rdbMasculino.setText("Masculino");
+
+        jLabel10.setText("Sexo:");
+
+        javax.swing.GroupLayout pnlSexoLayout = new javax.swing.GroupLayout(pnlSexo);
+        pnlSexo.setLayout(pnlSexoLayout);
+        pnlSexoLayout.setHorizontalGroup(
+            pnlSexoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlSexoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(rdbMasculino)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(rdbFeminino)
+                .addGap(12, 12, 12))
+        );
+        pnlSexoLayout.setVerticalGroup(
+            pnlSexoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlSexoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(rdbMasculino)
+                .addComponent(rdbFeminino)
+                .addComponent(jLabel10))
+        );
+
+        jLabel12.setText("Data Nascimento:");
+
+        txtDataNascimento.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+
+        tblTelefone.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Telefone"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tblTelefone);
+        if (tblTelefone.getColumnModel().getColumnCount() > 0) {
+            tblTelefone.getColumnModel().getColumn(0).setResizable(false);
+            tblTelefone.getColumnModel().getColumn(0).setPreferredWidth(20);
+        }
+
+        tblEndereco.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Descrição", "Endereço"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(tblEndereco);
+        if (tblEndereco.getColumnModel().getColumnCount() > 0) {
+            tblEndereco.getColumnModel().getColumn(0).setResizable(false);
+            tblEndereco.getColumnModel().getColumn(0).setPreferredWidth(20);
+            tblEndereco.getColumnModel().getColumn(1).setResizable(false);
+        }
+
+        tblEmail.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "E-mail"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(tblEmail);
+        if (tblEmail.getColumnModel().getColumnCount() > 0) {
+            tblEmail.getColumnModel().getColumn(0).setResizable(false);
+            tblEmail.getColumnModel().getColumn(0).setPreferredWidth(20);
+        }
+
+        jLabel2.setText("Endereço:");
+
+        jLabel7.setText("E-mail:");
+
+        jLabel13.setText("Telefone:");
+
+        btnEndereco.setText("Adicionar");
+
+        btnAdicionarTelefone.setText("Adicionar");
+        btnAdicionarTelefone.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscaPessoaActionPerformed(evt);
+                btnAdicionarTelefoneActionPerformed(evt);
             }
         });
 
-        lblPessoa.setText("Selecione uma pessoa...");
+        btnAdicionarEmail.setText("Adicionar");
 
-        jLabel1.setText("Pessoa:");
+        jLabel6.setText("Salário:");
 
-        jLabel2.setText("Pessoa:");
+        jLabel8.setText("PIS/PASEP:");
 
-        lblPessoa1.setText("Selecione um cargo");
+        javax.swing.GroupLayout CadastroClienteLayout = new javax.swing.GroupLayout(CadastroCliente);
+        CadastroCliente.setLayout(CadastroClienteLayout);
+        CadastroClienteLayout.setHorizontalGroup(
+            CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CadastroClienteLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pnlPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(CadastroClienteLayout.createSequentialGroup()
+                        .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel12)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(CadastroClienteLayout.createSequentialGroup()
+                                .addComponent(txtDataNascimento, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(69, 69, 69)
+                                .addComponent(pnlSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(CadastroClienteLayout.createSequentialGroup()
+                        .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnEndereco)
+                            .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel2)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnAdicionarEmail)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnAdicionarTelefone)
+                            .addComponent(jLabel13)
+                            .addComponent(jLabel7)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(CadastroClienteLayout.createSequentialGroup()
+                        .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, CadastroClienteLayout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, CadastroClienteLayout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtCpfCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtRG, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSalario1, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        CadastroClienteLayout.setVerticalGroup(
+            CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CadastroClienteLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel12)
+                        .addComponent(txtDataNascimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pnlSexo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(1, 1, 1)
+                .addComponent(pnlPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(txtCpfCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(txtRG, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel8)
+                        .addComponent(txtSalario1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel6)
+                        .addComponent(txtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CadastroClienteLayout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnAdicionarTelefone)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CadastroClienteLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEndereco)
+                    .addComponent(btnAdicionarEmail))
+                .addContainerGap())
+        );
 
-        btnBuscaCargo.setText("...");
-        btnBuscaCargo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscaCargoActionPerformed(evt);
-            }
-        });
-
-        jLabel3.setText("Salário:");
+        btnSalvar.setText("Salvar");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -67,50 +374,32 @@ public class FrmFuncionario extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBuscaPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblPessoa1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBuscaCargo, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel3))
-                .addContainerGap(99, Short.MAX_VALUE))
+                .addComponent(CadastroCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 525, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 10, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnCancelar)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(CadastroCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(btnBuscaPessoa)
-                    .addComponent(lblPessoa))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(btnBuscaCargo)
-                    .addComponent(lblPessoa1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
-                .addContainerGap(217, Short.MAX_VALUE))
+                    .addComponent(btnSalvar)
+                    .addComponent(btnCancelar)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnBuscaPessoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscaPessoaActionPerformed
+    private void btnAdicionarTelefoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarTelefoneActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnBuscaPessoaActionPerformed
-
-    private void btnBuscaCargoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscaCargoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnBuscaCargoActionPerformed
+    }//GEN-LAST:event_btnAdicionarTelefoneActionPerformed
 
     /**
      * @param args the command line arguments
@@ -139,6 +428,12 @@ public class FrmFuncionario extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -149,12 +444,41 @@ public class FrmFuncionario extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnBuscaCargo;
-    private javax.swing.JButton btnBuscaPessoa;
+    private javax.swing.JPanel CadastroCliente;
+    private javax.swing.JButton btnAdicionarEmail;
+    private javax.swing.JButton btnAdicionarTelefone;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnEndereco;
+    private javax.swing.JButton btnSalvar;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel lblPessoa;
-    private javax.swing.JLabel lblPessoa1;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JPanel pnlPessoa;
+    private javax.swing.JPanel pnlSexo;
+    private javax.swing.JRadioButton rdbFeminino;
+    private javax.swing.JRadioButton rdbFisica;
+    private javax.swing.JRadioButton rdbJuridica;
+    private javax.swing.JRadioButton rdbMasculino;
+    private javax.swing.JTable tblEmail;
+    private javax.swing.JTable tblEndereco;
+    private javax.swing.JTable tblTelefone;
+    private javax.swing.JTextField txtCpfCnpj;
+    private javax.swing.JFormattedTextField txtDataNascimento;
+    private javax.swing.JTextField txtNome;
+    private javax.swing.JTextField txtRG;
+    private javax.swing.JTextField txtSalario;
+    private javax.swing.JTextField txtSalario1;
     // End of variables declaration//GEN-END:variables
 }

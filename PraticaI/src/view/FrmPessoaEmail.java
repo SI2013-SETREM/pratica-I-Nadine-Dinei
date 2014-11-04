@@ -7,12 +7,13 @@ package view;
 
 import javax.swing.ImageIcon;
 import model.PessoaEmail;
+import reflection.FormJDialog;
 
 /**
  *
  * @author Nadine
  */
-public class FrmPessoaEmail extends javax.swing.JDialog {
+public class FrmPessoaEmail extends FormJDialog {
 
     
     /**

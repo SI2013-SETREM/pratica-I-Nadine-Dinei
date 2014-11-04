@@ -4,7 +4,7 @@ package model;
  *
  * @author Nadine
  */
-public class ContaCapital {
+public class ContaCapital extends ModelTemplate{
 
     private int CntCodigo;
     private String CntNome;

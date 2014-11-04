@@ -7,12 +7,13 @@ package view;
 
 import javax.swing.ImageIcon;
 import model.Pais;
+import reflection.FormJDialog;
 
 /**
  *
  * @author Nadine
  */
-public class FrmPais extends reflection.FormJDialog {
+public class FrmPais extends FormJDialog {
 
     public Pais pais = new Pais();
 

@@ -6,7 +6,7 @@ import java.util.Date;
  *
  * @author Nadine
  */
-public class FechamentoCaixa {
+public class FechamentoCaixa extends ModelTemplate {
 
     private int CntCodigo;
     private int FchCodigo;

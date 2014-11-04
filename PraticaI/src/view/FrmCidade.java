@@ -8,32 +8,36 @@ package view;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import model.Cidade;
 import model.Estado;
+import reflection.FormJDialog;
+import reflection.FormJFrame;
 import util.field.ComboBoxItem;
 
 /**
  *
  * @author Nadine
  */
-public class FrmCidade extends javax.swing.JFrame {
+public class FrmCidade extends FormJDialog {
 
     /**
      * Creates new form FormCidades
      */
     public FrmCidade() {
         initComponents();
-        this.setTitle("Manutenção De Cidades");
-        ImageIcon icone = new ImageIcon(util.Util.getImageUrl("flag.png", util.ImageSize.P));
+        this.setTitle("Manutenção De "+Cidade.sngTitle);
+        ImageIcon icone = new ImageIcon(util.Util.getImageUrl(Cidade.iconTitle, util.ImageSize.P));
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setIconImage(icone.getImage());
         btnSalvar.setIcon(new ImageIcon(util.Util.getImageUrl("tick.png", util.ImageSize.P)));
         btnCancelar.setIcon(new ImageIcon(util.Util.getImageUrl("cancel.png", util.ImageSize.P)));
-        
+
         ArrayList<Estado> list = model.Estado.getAll();
         ArrayList<ComboBoxItem> options = new ArrayList<>();
-        for (Estado est : list) 
+        for (Estado est : list) {
             options.add(new ComboBoxItem(est.getEstSigla(), est.getEstNome()));
+        }
         jComboBox1.setModel(new DefaultComboBoxModel((ComboBoxItem[]) options.toArray(new ComboBoxItem[options.size()])));
     }
 
@@ -113,7 +117,7 @@ public class FrmCidade extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        
+
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**

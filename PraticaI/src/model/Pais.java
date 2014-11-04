@@ -14,7 +14,7 @@ import util.field.FilterFieldText;
  * @author Nadine Anderle
  */
 public class Pais extends ModelTemplate {
-    
+
     private int PaiCodigo;
     private String PaiAlfa2;
     private String PaiAlfa3;
@@ -22,9 +22,9 @@ public class Pais extends ModelTemplate {
     private int PaiISO3166;
     private String PaiNome;
     private java.sql.Timestamp PaiDtaDelecao;
-    
+
     private String flag = DB.FLAG_INSERT;
-    
+
     /**
      * @see model.ModelTemplate#sngTitle
      */
@@ -50,8 +50,7 @@ public class Pais extends ModelTemplate {
      */
     public static Object[][] listTableFields = {
         {"Nome", "PaiNome"},
-        {"Sigla", "PaiAlfa2"},
-    };
+        {"Sigla", "PaiAlfa2"},};
 
 //    public static FilterField[] listFilterFields = {
 //        {"Nome", "PaiNome", 200},
@@ -62,8 +61,7 @@ public class Pais extends ModelTemplate {
      */
     public static FilterField[] listFilterFields = {
         new FilterFieldText("PaiNome", "Nome", 200),
-        new FilterFieldText("PaiAlfa2", "Sigla", 60),
-    };
+        new FilterFieldText("PaiAlfa2", "Sigla", 60),};
 
     public Pais() {
     }
@@ -119,10 +117,11 @@ public class Pais extends ModelTemplate {
     public String getFlag() {
         return flag;
     }
+
     public void setFlag(String flag) {
         this.flag = flag;
     }
-    
+
     public boolean load(int PaiCodigo) {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
@@ -143,9 +142,9 @@ public class Pais extends ModelTemplate {
         }
         return false;
     }
-    
+
     public boolean save() {
-        switch(flag) {
+        switch (flag) {
             case DB.FLAG_INSERT:
                 insert();
             case DB.FLAG_UPDATE:
@@ -153,7 +152,7 @@ public class Pais extends ModelTemplate {
         }
         return false;
     }
-    
+
     public boolean insert() {
         this.setPaiCodigo(Sequencial.getNextSequencial(this.getClass()));
         String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
@@ -168,7 +167,7 @@ public class Pais extends ModelTemplate {
         }
         return false;
     }
-    
+
     public boolean update() {
         String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
         sql += " SET PaiAlfa2 = ?,";
@@ -184,5 +183,34 @@ public class Pais extends ModelTemplate {
             Logger.getLogger(Sequencial.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    public static Pais getPais(int Pai) {
+        try {
+          String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(Pais.class);
+        sql += " WHERE PesCodigo = ?";
+            ResultSet rs = DB.executeQuery(sql, new Object[]{Pai});
+            if (rs.next()) {
+                Pais p=new Pais();
+                p.setPaiCodigo(rs.getInt("PaiCodigo"));
+                p.setPaiAlfa3(rs.getString("PaiAlfa3"));
+                p.setPaiBacenIbge(rs.getInt("PaiBacenIbge"));
+                p.setPaiAlfa2(rs.getString("PaiAlfa2"));
+                p.setPaiISO3166(rs.getInt("PaiISO3166"));
+                p.setPaiNome(rs.getString("PaiNome"));
+                return p;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public static java.util.ArrayList<Pais> getAll() {
+        java.util.ArrayList<Pais> list = new java.util.ArrayList<>();
+        for (Object o : ModelTemplate.getAll(Pais.class)) {
+            list.add((Pais) o);
+        }
+        return list;
     }
 }

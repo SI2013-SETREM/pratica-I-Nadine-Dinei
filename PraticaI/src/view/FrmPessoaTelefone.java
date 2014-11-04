@@ -7,12 +7,13 @@ package view;
 
 import javax.swing.ImageIcon;
 import model.PessoaTelefone;
+import reflection.FormJDialog;
 
 /**
  *
  * @author Nadine
  */
-public class FrmPessoaTelefone extends javax.swing.JDialog {
+public class FrmPessoaTelefone extends FormJDialog {
 
     /**
      * Creates new form FrmTelefone
