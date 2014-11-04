@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
@@ -176,6 +177,7 @@ public class Pessoa extends ModelTemplate {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " WHERE PesCodigo = ?";
+            System.out.println(sql + PesCodigo);
             ResultSet rs = DB.executeQuery(sql, new Object[]{PesCodigo});
             if (rs.next()) {
                 this.setPesCPFCNPJ(rs.getString("PesCPFCNPJ"));
@@ -184,7 +186,7 @@ public class Pessoa extends ModelTemplate {
                 this.setPesIsCliente(rs.getInt("PesIsCliente"));
                 this.setPesIsFornecedor(rs.getInt("PesIsFornecedor"));
                 this.setPesIsFuncionario(rs.getInt("PesIsFuncionario"));
-                this.setPesIsUsuario(rs.getInt(rs.getInt("PesIsUsuario")));
+                this.setPesIsUsuario(rs.getInt("PesIsUsuario"));
                 this.setPesNome(rs.getString("PesNome"));
                 this.setPesRG(rs.getString("PesRG"));
                 this.setPesSexo(rs.getInt("PesSexo"));
@@ -199,29 +201,18 @@ public class Pessoa extends ModelTemplate {
 
     public static Pessoa[] listBusca() {
         ArrayList<Pessoa> list = new ArrayList<>();
-        String sql = "select "
-                + "PesNome,"
-                + "PesCPFCNPJ,"
-                + "PesEmlCodigo,"
-                + "PesCodigo,"
-                + "PesSexo,"
-                + "PesRG,"
-                + "PesTipoPessoa,"
-                + "PesDtaNascimento,"
-                + "PesIsFuncionario,"
-                + "PesIsCliente,"
-                + "PesIsUsuario,"
-                + "PesIsFornecedor from pessoa;";
+        String sql = "SELECT PesCodigo, PesNome, PesCPFCNPJ FROM pessoa";
         try {
             ResultSet rs = DB.executeQuery(sql);
             while (rs.next()) {
                 Pessoa p = new Pessoa();
-                p.setPesCPFCNPJ(rs.getString("PesCPFCNPJ"));
+                p.setPesCodigo(rs.getInt("PesCodigo"));
                 p.setPesNome(rs.getString("PesNome"));
+                p.setPesCPFCNPJ(rs.getString("PesCPFCNPJ"));
                 list.add(p);
             }
-        } catch (Exception ex) {
-
+        } catch (SQLException ex) {
+            Logger.getLogger(Pessoa.class.getName()).log(Level.SEVERE, null, ex);
         }
         return (Pessoa[]) list.toArray(new Pessoa[list.size()]);
     }

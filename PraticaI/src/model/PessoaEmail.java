@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.DB;
+import util.field.FilterField;
+import util.field.FilterFieldText;
 
 /**
  *
@@ -16,6 +18,48 @@ public class PessoaEmail {
     private int PesEmlCodigo;
     private String PesEmlEmail;
 
+    private String flag = DB.FLAG_INSERT;
+
+    /**
+     * @see model.ModelTemplate#sngTitle
+     */
+    public static String sngTitle = "E-mail";
+    /**
+     * @see model.ModelTemplate#prlTitle
+     */
+    public static String prlTitle = "E-mail's";
+    /**
+     * @see model.ModelTemplate#iconTitle
+     */
+    public static String iconTitle = "email.png";
+    /**
+     * @see model.ModelTemplate#softDelete
+     */
+    public static String softDelete = "";
+    /**
+     * @see model.ModelTemplate#idColumn
+     */
+    public static String[] idColumn = {"PesCodigo", "PesEmlCodigo"};
+
+    /**
+     * @see model.ModelTemplate#listTableFields
+     */
+//    public static Object[][] listTableFields = {
+//        {"Nome", "PaiNome"},
+//        {"Sigla", "PaiAlfa2"},
+//    };
+
+//    public static FilterField[] listFilterFields = {
+//        {"Nome", "PaiNome", 200},
+//        {"Sigla", "PaiAlfa2", 60}
+//    };
+    /**
+     * @see model.ModelTemplate#listFilterFields
+     */
+//    public static FilterField[] listFilterFields = {
+//        new FilterFieldText("PaiNome", "Nome", 200),
+//        new FilterFieldText("PaiAlfa2", "Sigla", 60),
+//    };
     public PessoaEmail() {
     }
 
@@ -45,8 +89,8 @@ public class PessoaEmail {
 
     public void load(int PesEmlCodigo, int PesCod) {
         try {
-            String sql ="select * from pessoaemail where PesCodigo=? and PesEmlCodigo=?;";
-            ResultSet rs= DB.executeQuery(sql,new Object[]{PesCod,PesEmlCodigo});
+            String sql = "select * from pessoaemail where PesCodigo=? and PesEmlCodigo=?;";
+            ResultSet rs = DB.executeQuery(sql, new Object[]{PesCod, PesEmlCodigo});
             rs.next();
             this.setPesCodigo((Pessoa) rs.getObject("PesCodigo"));
             this.setPesEmlCodigo(rs.getInt("PesEmlCodigo"));
@@ -55,7 +99,7 @@ public class PessoaEmail {
             Logger.getLogger(PessoaEmail.class.getName()).log(Level.SEVERE, null, e);
         }
     }
-    
+
     public static PessoaEmail[] getAll(Pessoa PesCodigo) {
         ArrayList<PessoaEmail> list = new ArrayList<>();
         String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(PessoaEmail.class);

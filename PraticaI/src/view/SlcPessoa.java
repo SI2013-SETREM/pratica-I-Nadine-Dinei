@@ -12,21 +12,23 @@ import model.Pessoa;
  *
  * @author Nadine
  */
-public class bscPessoa extends javax.swing.JDialog {
+public class SlcPessoa extends javax.swing.JDialog {
 
     /**
      * Creates new form bscPessoa
      */
-    public bscPessoa(java.awt.Frame parent, boolean modal) {
+    public SlcPessoa(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        System.out.println(tblPessoa.getColumn(2));
+
     }
 
     public void list() {
-       // DefaultTableModel dados = (DefaultTableModel) tblPessoa.getModel();
-    //    dados.setNumRows(0);
-
+        DefaultTableModel dados = (DefaultTableModel) tblPessoa.getModel();
+        dados.setNumRows(0);
+        for (Pessoa p : Pessoa.listBusca()) {
+            dados.addRow(new String[]{String.valueOf(p.getPesCodigo()), p.getPesNome(), p.getPesCPFCNPJ()});
+        }
     }
 
     /**
@@ -40,7 +42,7 @@ public class bscPessoa extends javax.swing.JDialog {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPessoa = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        btnSelecionar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -54,11 +56,11 @@ public class bscPessoa extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Nome", "CPF/CNPJ", "Título", "Título 4", "Título 5", "Título 6", "Título 7", "Título 8", "Título 9", "Título 10", "Título 11", "Título 12"
+                "PesCodigo", "Nome", "CPF/CNPJ"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, true, false, false, true, true, true, true, true, true, true, true
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -66,28 +68,24 @@ public class bscPessoa extends javax.swing.JDialog {
             }
         });
         tblPessoa.getTableHeader().setReorderingAllowed(false);
+        tblPessoa.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblPessoaMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblPessoa);
         if (tblPessoa.getColumnModel().getColumnCount() > 0) {
-            tblPessoa.getColumnModel().getColumn(0).setPreferredWidth(100);
-            tblPessoa.getColumnModel().getColumn(1).setPreferredWidth(50);
-            tblPessoa.getColumnModel().getColumn(2).setResizable(false);
-            tblPessoa.getColumnModel().getColumn(2).setPreferredWidth(0);
-            tblPessoa.getColumnModel().getColumn(3).setResizable(false);
-            tblPessoa.getColumnModel().getColumn(3).setPreferredWidth(0);
-            tblPessoa.getColumnModel().getColumn(4).setResizable(false);
-            tblPessoa.getColumnModel().getColumn(5).setResizable(false);
-            tblPessoa.getColumnModel().getColumn(6).setResizable(false);
-            tblPessoa.getColumnModel().getColumn(7).setResizable(false);
-            tblPessoa.getColumnModel().getColumn(8).setResizable(false);
-            tblPessoa.getColumnModel().getColumn(9).setResizable(false);
-            tblPessoa.getColumnModel().getColumn(10).setResizable(false);
-            tblPessoa.getColumnModel().getColumn(11).setResizable(false);
+            tblPessoa.getColumnModel().getColumn(0).setMinWidth(0);
+            tblPessoa.getColumnModel().getColumn(0).setPreferredWidth(0);
+            tblPessoa.getColumnModel().getColumn(0).setMaxWidth(0);
+            tblPessoa.getColumnModel().getColumn(1).setPreferredWidth(290);
+            tblPessoa.getColumnModel().getColumn(2).setPreferredWidth(100);
         }
 
-        jButton1.setText("Selecionar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnSelecionar.setText("Selecionar");
+        btnSelecionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnSelecionarActionPerformed(evt);
             }
         });
 
@@ -96,19 +94,21 @@ public class bscPessoa extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton1)))
+                        .addComponent(btnSelecionar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1))
+                .addComponent(btnSelecionar))
         );
 
         pack();
@@ -118,9 +118,15 @@ public class bscPessoa extends javax.swing.JDialog {
         list();
     }//GEN-LAST:event_formWindowOpened
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
+        Pes.load(Integer.parseInt(String.valueOf(tblPessoa.getValueAt(tblPessoa.getSelectedRow(), 0))));
+        this.dispose();
+    }//GEN-LAST:event_btnSelecionarActionPerformed
 
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void tblPessoaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblPessoaMouseClicked
+        if (evt.getClickCount() > 1)
+            btnSelecionarActionPerformed(null);
+    }//GEN-LAST:event_tblPessoaMouseClicked
 
     /**
      * @param args the command line arguments
@@ -139,20 +145,21 @@ public class bscPessoa extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(bscPessoa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SlcPessoa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(bscPessoa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SlcPessoa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(bscPessoa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SlcPessoa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(bscPessoa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SlcPessoa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                bscPessoa dialog = new bscPessoa(new javax.swing.JFrame(), true);
+                SlcPessoa dialog = new SlcPessoa(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -173,7 +180,7 @@ public class bscPessoa extends javax.swing.JDialog {
     }
     private Pessoa Pes = new Pessoa();
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnSelecionar;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblPessoa;
     // End of variables declaration//GEN-END:variables

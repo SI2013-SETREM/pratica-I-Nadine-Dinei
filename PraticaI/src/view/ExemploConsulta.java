@@ -20,12 +20,12 @@ package view;
  *
  * @author Nadine
  */
-public class ConsultaPaises extends javax.swing.JFrame {
+public class ExemploConsulta extends javax.swing.JFrame {
 
     /**
      * Creates new form ConsultaPaises
      */
-    public ConsultaPaises() {
+    public ExemploConsulta() {
         initComponents();
     }
 
@@ -76,7 +76,7 @@ public class ConsultaPaises extends javax.swing.JFrame {
 //            JasperViewer jv = new JasperViewer(p);
 //            jv.setVisible(true);
 //        } catch (Exception ex) {
-//            Logger.getLogger(ConsultaPaises.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(ExemploConsulta.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -99,20 +99,21 @@ public class ConsultaPaises extends javax.swing.JFrame {
 //            }
             javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ConsultaPaises.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ExemploConsulta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ConsultaPaises.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ExemploConsulta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ConsultaPaises.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ExemploConsulta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ConsultaPaises.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ExemploConsulta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ConsultaPaises().setVisible(true);
+                new ExemploConsulta().setVisible(true);
             }
         });
     }
