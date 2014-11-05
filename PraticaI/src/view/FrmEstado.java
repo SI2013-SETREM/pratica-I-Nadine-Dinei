@@ -19,6 +19,8 @@ import util.field.ComboBoxItem;
  */
 public class FrmEstado extends FormJDialog {
 
+    public Estado estado = new Estado();
+
     /**
      * Creates new form Estados
      */
@@ -40,6 +42,14 @@ public class FrmEstado extends FormJDialog {
             options.add(new ComboBoxItem(pai.getPaiAlfa2(), pai.getPaiNome()));
         }
         cmbPais.setModel(new DefaultComboBoxModel((ComboBoxItem[]) options.toArray(new ComboBoxItem[options.size()])));
+    }
+
+    @Override
+    public void loadUpdate() {
+        estado.load((int) idCols[0], (int) idCols[1]);
+        txtNomeEstado.setText(estado.getEstNome());
+        txtSiglaEstado.setText(estado.getEstSigla());
+      
     }
 
     /**

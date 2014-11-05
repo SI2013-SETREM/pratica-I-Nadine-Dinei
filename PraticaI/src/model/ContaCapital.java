@@ -1,10 +1,13 @@
 package model;
 
+import util.field.FilterField;
+import util.field.FilterFieldText;
+
 /**
  *
  * @author Nadine
  */
-public class ContaCapital extends ModelTemplate{
+public class ContaCapital extends ModelTemplate {
 
     private int CntCodigo;
     private String CntNome;
@@ -13,6 +16,36 @@ public class ContaCapital extends ModelTemplate{
     private String CntBncTitular;
     private int CntPadrao;
     private double CntSaldo;
+    /**
+     * @see model.ModelTemplate#sngTitle
+     */
+    public static String sngTitle = "Conta Capital";
+    /**
+     * @see model.ModelTemplate#prlTitle
+     */
+    public static String prlTitle = "Contas de Capital";
+    /**
+     * @see model.ModelTemplate#iconTitle
+     */
+    public static String iconTitle = "safe.png";
+    /**
+     * @see model.ModelTemplate#idColumn
+     */
+    public static String[] idColumn = {"CntCodigo"};
+    /**
+     * @see model.ModelTemplate#listTableFields
+     */
+    public static Object[][] listTableFields = {
+        {"Descrição", "CntNome"},
+        {"Saldo", "CntSaldo"}
+    };
+
+    /**
+     * @see model.ModelTemplate#listFilterFields
+     */
+    public static FilterField[] listFilterFields = {
+        new FilterFieldText("CntNome", "Descrição", 200)
+    };
 
     public ContaCapital() {
     }

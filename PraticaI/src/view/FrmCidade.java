@@ -12,6 +12,7 @@ import model.Cidade;
 import model.Estado;
 import reflection.FormJDialog;
 import reflection.FormJFrame;
+import util.Util;
 import util.field.ComboBoxItem;
 
 /**
@@ -32,7 +33,7 @@ public class FrmCidade extends FormJDialog {
         this.setIconImage(icone.getImage());
         btnSalvar.setIcon(new ImageIcon(util.Util.getImageUrl("tick.png", util.ImageSize.P)));
         btnCancelar.setIcon(new ImageIcon(util.Util.getImageUrl("cancel.png", util.ImageSize.P)));
-
+        Util.setLimitChars(txtNomeCidade, 200);
         ArrayList<Estado> list = model.Estado.getAll();
         ArrayList<ComboBoxItem> options = new ArrayList<>();
         for (Estado est : list) {
@@ -57,7 +58,7 @@ public class FrmCidade extends FormJDialog {
         jComboBox1 = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel2.setText("Nome Cidade:");
 

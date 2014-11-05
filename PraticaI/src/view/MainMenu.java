@@ -678,7 +678,10 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPlanoContasActionPerformed
 
     private void btnContasCapitalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContasCapitalActionPerformed
-        // TODO add your handling code here:
+        reflection.ListJFrame list = new reflection.ListJFrame();
+        list.setClass(model.ContaCapital.class);
+        list.initListComponents();
+        list.setVisible(true);
     }//GEN-LAST:event_btnContasCapitalActionPerformed
 
     private void btnFechaCaixa2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFechaCaixa2ActionPerformed

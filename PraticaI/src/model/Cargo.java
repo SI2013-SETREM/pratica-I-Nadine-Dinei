@@ -40,10 +40,6 @@ public class Cargo extends ModelTemplate {
         {"Cargo", "CrgNome"}
     };
 
-//    public static FilterField[] listFilterFields = {
-//        {"Nome", "PaiNome", 200},
-//        {"Sigla", "PaiAlfa2", 60}
-//    };
     /**
      * @see model.ModelTemplate#listFilterFields
      */
