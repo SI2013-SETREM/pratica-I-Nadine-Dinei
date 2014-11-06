@@ -1,12 +1,17 @@
-
 package model;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import util.DB;
 
 /**
  *
  * @author Dinei A. Rockenbach
  * @author Nadine Anderle
  */
-public class Cidade extends ModelTemplate{
+public class Cidade extends ModelTemplate {
 
     private Estado estado;
     private int CidCodigo;
@@ -33,8 +38,8 @@ public class Cidade extends ModelTemplate{
     public static String[] idColumn = {"Estado.Pais.PaiCodigo", "Estado.EstSigla", "CidCodigo"};
     /**
      * @see model.ModelTemplate#listTableFields
-     */   
-    
+     */
+
     public static String[][] listTableFields = {
         {"País", "Estado", "Nome"}, //Rótulo da coluna
         {"Estado.Pais.PaiNome", "Estado.EstNome", "CidNome"}, //Nome do campo no banco / atributo do model
@@ -82,6 +87,17 @@ public class Cidade extends ModelTemplate{
     public static void setListTableFields(String[][] listTableFields) {
         Cidade.listTableFields = listTableFields;
     }
-    
-    
+
+    public boolean load(int PaiCodigo, String EstSigla, int CidCodigo) {
+        String sql = "Select * from" + reflection.ReflectionUtil.getDBTableName(this)
+                + " where PaiCodigo=? and EstSigla =? and CidCodigo=?";
+        try {
+            ResultSet rs = DB.executeQuery(sql, new Object[]{PaiCodigo, EstSigla, CidCodigo});
+        } catch (Exception ex) {
+            Logger.getLogger(Cidade.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+
+    }
+
 }

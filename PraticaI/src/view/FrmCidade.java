@@ -10,6 +10,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import model.Cidade;
 import model.Estado;
+import model.Pais;
 import reflection.FormJDialog;
 import reflection.FormJFrame;
 import util.Util;
@@ -21,12 +22,15 @@ import util.field.ComboBoxItem;
  */
 public class FrmCidade extends FormJDialog {
 
+    ArrayList<ComboBoxItem> cboxItensEstado = new ArrayList<>();
+    ArrayList<ComboBoxItem> cboxItensPais = new ArrayList<>();
+
     /**
      * Creates new form FormCidades
      */
     public FrmCidade() {
         initComponents();
-        this.setTitle("Manutenção De "+Cidade.sngTitle);
+        this.setTitle("Manutenção De " + Cidade.sngTitle);
         ImageIcon icone = new ImageIcon(util.Util.getImageUrl(Cidade.iconTitle, util.ImageSize.P));
         this.setResizable(false);
         this.setLocationRelativeTo(null);
@@ -34,19 +38,25 @@ public class FrmCidade extends FormJDialog {
         btnSalvar.setIcon(new ImageIcon(util.Util.getImageUrl("tick.png", util.ImageSize.P)));
         btnCancelar.setIcon(new ImageIcon(util.Util.getImageUrl("cancel.png", util.ImageSize.P)));
         Util.setLimitChars(txtNomeCidade, 200);
-        ArrayList<Estado> list = model.Estado.getAll();
-        ArrayList<ComboBoxItem> options = new ArrayList<>();
-        for (Estado est : list) {
-            options.add(new ComboBoxItem(est.getEstSigla(), est.getEstNome()));
+
+        ArrayList<Pais> listP = model.Pais.getAll();
+        for (Pais p : listP) {
+            cboxItensPais.add(new ComboBoxItem(p.getPaiCodigo(), p.getPaiNome()));
         }
-        jComboBox1.setModel(new DefaultComboBoxModel((ComboBoxItem[]) options.toArray(new ComboBoxItem[options.size()])));
+        cmbPais.setModel(new DefaultComboBoxModel((ComboBoxItem[]) cboxItensPais.toArray(new ComboBoxItem[cboxItensPais.size()])));
+        ComboBoxItem i = cboxItensPais.get(cmbPais.getSelectedIndex());
+        ArrayList<Estado> list = model.Estado.getAlll(Pais.getPais((int) i.getId()));
+        for (Estado est : list) {
+            cboxItensEstado.add(new ComboBoxItem(est.getEstSigla(), est.getEstNome()));
+        }
+        cmbEstado.setModel(new DefaultComboBoxModel((ComboBoxItem[]) cboxItensEstado.toArray(new ComboBoxItem[cboxItensEstado.size()])));
+
     }
 
     @Override
     public void loadUpdate() {
-        super.loadUpdate(); //To change body of generated methods, choose Tools | Templates.
+        
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -61,8 +71,10 @@ public class FrmCidade extends FormJDialog {
         txtNomeCidade = new javax.swing.JTextField();
         btnSalvar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox();
+        cmbEstado = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        cmbPais = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -72,13 +84,21 @@ public class FrmCidade extends FormJDialog {
 
         btnCancelar.setText("Cancelar");
 
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        cmbEstado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                cmbEstadoActionPerformed(evt);
             }
         });
 
         jLabel3.setText("Estado:");
+
+        jLabel4.setText("País:");
+
+        cmbPais.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbPaisActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -87,7 +107,7 @@ public class FrmCidade extends FormJDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(0, 185, Short.MAX_VALUE)
                         .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -95,11 +115,13 @@ public class FrmCidade extends FormJDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel3))
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cmbPais, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtNomeCidade)
-                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(cmbEstado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -107,9 +129,13 @@ public class FrmCidade extends FormJDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbPais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addGap(9, 9, 9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtNomeCidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -123,9 +149,13 @@ public class FrmCidade extends FormJDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+    private void cmbEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbEstadoActionPerformed
 
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    }//GEN-LAST:event_cmbEstadoActionPerformed
+
+    private void cmbPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbPaisActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbPaisActionPerformed
 
     /**
      * @param args the command line arguments
@@ -169,9 +199,11 @@ public class FrmCidade extends FormJDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnSalvar;
-    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JComboBox cmbEstado;
+    private javax.swing.JComboBox cmbPais;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JTextField txtNomeCidade;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import reflection.ReflectionUtil;
 import util.DB;
 import util.field.FilterField;
 import util.field.FilterFieldDynamicCombo;
@@ -81,10 +82,20 @@ public class Estado extends ModelTemplate {
         this.EstNome = EstNome;
     }
 
-    public static java.util.ArrayList<Estado> getAll() {
+    public static java.util.ArrayList<Estado> getAlll(Pais pai) {
+        Estado est = new Estado();
         java.util.ArrayList<Estado> list = new java.util.ArrayList<>();
-        for (Object o : ModelTemplate.getAll(Estado.class)) {
-            list.add((Estado) o);
+        String sql = "Select * from estado where 1=1 and PaiCodigo =?";
+        try {
+            ResultSet rs = DB.executeQuery(sql, new Object[]{pai.getPaiCodigo()});
+            while (rs.next()) {
+                est.setEstNome(rs.getString("EstNome"));
+                est.setEstSigla(rs.getString("EstSigla"));
+                est.setPaiCodigo(Pais.getPais(rs.getInt("PaiCodigo")));
+                list.add(est);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Estado.class.getName()).log(Level.SEVERE, null, ex);
         }
         return list;
     }
