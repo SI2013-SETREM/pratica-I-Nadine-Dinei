@@ -93,6 +93,11 @@ public class Cidade extends ModelTemplate {
                 + " where PaiCodigo=? and EstSigla =? and CidCodigo=?";
         try {
             ResultSet rs = DB.executeQuery(sql, new Object[]{PaiCodigo, EstSigla, CidCodigo});
+            if(rs.next()){
+            this.setCidCodigo(rs.getInt("CidCodigo"));
+            this.setCidNome(rs.getString("CidNome"));
+            this.setEstado(Estado.getEstado(EstSigla, PaiCodigo));
+            }
         } catch (Exception ex) {
             Logger.getLogger(Cidade.class.getName()).log(Level.SEVERE, null, ex);
         }

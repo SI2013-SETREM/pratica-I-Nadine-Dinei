@@ -187,11 +187,11 @@ public class Pais extends ModelTemplate {
 
     public static Pais getPais(int Pai) {
         try {
-          String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(Pais.class);
-        sql += " WHERE PaiCodigo = ?";
+            String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(Pais.class);
+            sql += " WHERE PaiCodigo = ?";
             ResultSet rs = DB.executeQuery(sql, new Object[]{Pai});
             if (rs.next()) {
-                Pais p=new Pais();
+                Pais p = new Pais();
                 p.setPaiCodigo(rs.getInt("PaiCodigo"));
                 p.setPaiAlfa3(rs.getString("PaiAlfa3"));
                 p.setPaiBacenIbge(rs.getInt("PaiBacenIbge"));

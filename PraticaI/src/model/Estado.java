@@ -85,8 +85,8 @@ public class Estado extends ModelTemplate {
     public static java.util.ArrayList<Estado> getAlll(Pais pai) {
         Estado est = new Estado();
         java.util.ArrayList<Estado> list = new java.util.ArrayList<>();
-        String sql = "Select * from estado where 1=1 and PaiCodigo =?";
         try {
+            String sql = "Select * from " + reflection.ReflectionUtil.getDBTableName(Estado.class)+" where 1=1 and PaiCodigo =?";
             ResultSet rs = DB.executeQuery(sql, new Object[]{pai.getPaiCodigo()});
             while (rs.next()) {
                 est.setEstNome(rs.getString("EstNome"));
@@ -152,6 +152,23 @@ public class Estado extends ModelTemplate {
                 update();
         }
         return false;
+    }
+
+    public static Estado getEstado(String EstSigla, int PaiCodigo) {
+        try {
+            String sql = "Select * from " + reflection.ReflectionUtil.getDBTableName(Estado.class)
+                    + " where EstSigla=? and PaiCodigo=?";
+            ResultSet rs = DB.executeQuery(sql, new Object[]{EstSigla, PaiCodigo});
+            if (rs.next()) {
+                Estado estado = new Estado();
+                estado.setEstNome(rs.getString("EstNome"));
+                estado.setEstSigla(rs.getString("EstSigla"));
+                estado.setPaiCodigo(Pais.getPais(rs.getInt("PaiCodigo")));
+            }
+        } catch (Exception e) {
+            Logger.getLogger(Estado.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return null;
     }
 
 }
