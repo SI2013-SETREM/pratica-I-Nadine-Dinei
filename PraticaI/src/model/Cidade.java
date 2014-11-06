@@ -13,8 +13,8 @@ import util.DB;
  */
 public class Cidade extends ModelTemplate {
 
-    private Pais pais;
-    private Estado estado;
+    private Pais PaiCodigo;
+    private Estado EstSigla;
     private int CidCodigo;
     private String CidNome;
 
@@ -37,32 +37,33 @@ public class Cidade extends ModelTemplate {
     /**
      * @see model.ModelTemplate#idColumn
      */
-    public static String[] idColumn = {"Estado.Pais.PaiCodigo", "Estado.EstSigla", "CidCodigo"};
+    public static String[] idColumn = {"Pais.PaiCodigo", "Estado.EstSigla", "CidCodigo"};
     /**
      * @see model.ModelTemplate#listTableFields
      */
 
     public static String[][] listTableFields = {
-        {"País", "Estado", "Nome"}, //Rótulo da coluna
-        {"Estado.Pais.PaiNome", "Estado.EstNome", "CidNome"}, //Nome do campo no banco / atributo do model
+        {"País", "Pais.PaiNome"},
+        {"Estado", "Estado.EstNome"},
+        {"Nome", "CidNome"},
     };
 
     public Cidade() {
     }
 
-    public Pais getPais() {
-        return pais;
+    public Pais getPaiCodigo() {
+        return PaiCodigo;
     }
 
-    public void setPais(Pais pais) {
-        this.pais = pais;
+    public void setPaiCodigo(Pais PaiCodigo) {
+        this.PaiCodigo = PaiCodigo;
     }
-    public Estado getEstado() {
-        return estado;
+    public Estado getEstSigla() {
+        return EstSigla;
     }
 
-    public void setEstado(Estado estado) {
-        this.estado = estado;
+    public void setEstSigla(Estado EstSigla) {
+        this.EstSigla = EstSigla;
     }
 
     public int getCidCodigo() {
@@ -102,11 +103,12 @@ public class Cidade extends ModelTemplate {
                 + " where PaiCodigo=? and EstSigla =? and CidCodigo=?";
         try {
             ResultSet rs = DB.executeQuery(sql, new Object[]{PaiCodigo, EstSigla, CidCodigo});
-            if(rs.next()){
-            this.setCidCodigo(rs.getInt("CidCodigo"));
-            this.setCidNome(rs.getString("CidNome"));
-            this.setEstado(Estado.getEstado(rs.getString("EstSigla"),rs.getInt("PaiCodigo")));
-            this.setPais(Pais.getPais(rs.getInt("PaiCodigo")));
+            if (rs.next()) {
+                this.setCidCodigo(rs.getInt("CidCodigo"));
+                this.setCidNome(rs.getString("CidNome"));
+                this.setEstSigla(Estado.getEstado(rs.getString("EstSigla"),rs.getInt("PaiCodigo")));
+//                this.setPaiCodigo(Pais.getPais(rs.getInt("PaiCodigo")));
+                this.setPaiCodigo(this.getEstSigla().getPaiCodigo());
             }
         } catch (Exception ex) {
             Logger.getLogger(Cidade.class.getName()).log(Level.SEVERE, null, ex);

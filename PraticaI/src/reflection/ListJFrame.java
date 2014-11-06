@@ -116,8 +116,8 @@ public class ListJFrame extends javax.swing.JFrame {
                 idColumnHidden.add(idCol);
         }
         // Tem ordenação definida?
-        if (ReflectionUtil.isAttributeExists(cls, "orderBy"))
-            orderBy = "ORDER BY " + (String) ReflectionUtil.getAttibute(cls, "orderBy");
+        if (ReflectionUtil.isAttributeExists(cls, "orderBy")) 
+            orderBy = (String) ReflectionUtil.getAttibute(cls, "orderBy");
         // A classe permite inserir registros?
         if (ReflectionUtil.isAttributeExists(cls, "allowInsert")) 
             allowInsert = (boolean) ReflectionUtil.getAttibute(cls, "allowInsert");
@@ -412,6 +412,7 @@ public class ListJFrame extends javax.swing.JFrame {
                         Class clsInJoin = cls;
                         int c = 0;
                         String fieldToSelect = "";
+                        Join joinToUse = null;
                         for (String tbl : fieldParts) {
                             c++;
                             if (c == fieldParts.length) {
@@ -421,6 +422,7 @@ public class ListJFrame extends javax.swing.JFrame {
                                 boolean isJoinExists = false;
                                 for (Join join : joins) {
                                     if (clsJoin == join.getRightClass()) {
+                                        joinToUse = join;
                                         isJoinExists = true;
                                         break;
                                     }
@@ -434,8 +436,9 @@ public class ListJFrame extends javax.swing.JFrame {
                                 clsInJoin = clsJoin;
                             }
                         }
-                        Join lastJoin = joins.get(joins.size()-1);
-                        lstSelectFields.add(lastJoin.getRightAlias() + "." + fieldToSelect + " AS " + lastJoin.getRightAlias() + "_" + fieldToSelect);
+                        if (joinToUse == null)
+                            joinToUse = joins.get(joins.size()-1);
+                        lstSelectFields.add(joinToUse.getRightAlias() + "." + fieldToSelect + " AS " + joinToUse.getRightAlias() + "_" + fieldToSelect);
                     }
                 } else if (field[1] instanceof Join) {
                     Join join = (Join) field[1];
@@ -482,12 +485,11 @@ public class ListJFrame extends javax.swing.JFrame {
             }
 
             // Faz os JOIN na SQL
-            for (Join join : joins) {
+            for (Join join : joins) 
                 sql += " " + join.getJoinSQL();
-            }
             
             // Filtros
-            if (softDelete != null)
+            if (softDelete != null && !"".equals(softDelete))
                 sql += " WHERE " + softDelete + " IS NULL";
             else
                 sql += " WHERE 1=1"; //Sempre tem WHERE na SQL, aí é só concatenar AND
@@ -562,7 +564,8 @@ public class ListJFrame extends javax.swing.JFrame {
                 }
             }
             
-            sql += " " + orderBy;
+            if (orderBy != null && !"".equals(orderBy))
+                sql += " ORDER BY " + orderBy;
             
             Util.debug(this.getClass().getName() + " - SQL:" + sql);
 
