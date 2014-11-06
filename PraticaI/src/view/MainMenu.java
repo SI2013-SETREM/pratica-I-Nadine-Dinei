@@ -6,9 +6,7 @@
 package view;
 
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import reflection.ListJFrame;
-import reflection.ReflectionUtil;
 
 /**
  *
@@ -765,18 +763,21 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEstadosActionPerformed
 
     private void btnCidadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCidadesActionPerformed
-        // TODO add your handling code here:
+        reflection.ListJFrame list = new reflection.ListJFrame();
+        list.setClass(model.Cidade.class);
+        list.initListComponents();
+        list.setVisible(true);
     }//GEN-LAST:event_btnCidadesActionPerformed
 
     private void openList(String FncNome, Class<? extends model.ModelTemplate> cls) {
 //        FncNome = (String) ReflectionUtil.getAttibute(cls, "fncNome");
-        
+
 //        boolean[] acessos = usuario.verificaAcesso(FncNome);
 //        if (acessos[model.Usuario.IDX_VISUALIZAR]) {
-            reflection.ListJFrame list = new reflection.ListJFrame();
-            list.setClass(cls);
-            list.initListComponents();
-            list.setVisible(true);
+        reflection.ListJFrame list = new reflection.ListJFrame();
+        list.setClass(cls);
+        list.initListComponents();
+        list.setVisible(true);
 //        } else {
 //            JOptionPane.showMessageDialog(this, "Usuário sem acesso ao objeto '" + FncNome + "'", "Sem acesso", JOptionPane.WARNING_MESSAGE);
 //        }

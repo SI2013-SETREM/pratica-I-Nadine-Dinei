@@ -13,9 +13,11 @@ import util.DB;
  */
 public class Cidade extends ModelTemplate {
 
+    private Pais pais;
     private Estado estado;
     private int CidCodigo;
     private String CidNome;
+
     /**
      * @see model.ModelTemplate#sngTitle
      */
@@ -48,6 +50,13 @@ public class Cidade extends ModelTemplate {
     public Cidade() {
     }
 
+    public Pais getPais() {
+        return pais;
+    }
+
+    public void setPais(Pais pais) {
+        this.pais = pais;
+    }
     public Estado getEstado() {
         return estado;
     }
@@ -96,7 +105,8 @@ public class Cidade extends ModelTemplate {
             if(rs.next()){
             this.setCidCodigo(rs.getInt("CidCodigo"));
             this.setCidNome(rs.getString("CidNome"));
-            this.setEstado(Estado.getEstado(EstSigla, PaiCodigo));
+            this.setEstado(Estado.getEstado(rs.getString("EstSigla"),rs.getInt("PaiCodigo")));
+            this.setPais(Pais.getPais(rs.getInt("PaiCodigo")));
             }
         } catch (Exception ex) {
             Logger.getLogger(Cidade.class.getName()).log(Level.SEVERE, null, ex);

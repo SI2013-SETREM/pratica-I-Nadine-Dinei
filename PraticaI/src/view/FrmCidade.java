@@ -12,7 +12,6 @@ import model.Cidade;
 import model.Estado;
 import model.Pais;
 import reflection.FormJDialog;
-import reflection.FormJFrame;
 import util.Util;
 import util.field.ComboBoxItem;
 
@@ -21,6 +20,8 @@ import util.field.ComboBoxItem;
  * @author Nadine
  */
 public class FrmCidade extends FormJDialog {
+
+    Cidade cidade = new Cidade();
 
     ArrayList<ComboBoxItem> cboxItensEstado = new ArrayList<>();
     ArrayList<ComboBoxItem> cboxItensPais = new ArrayList<>();
@@ -55,7 +56,18 @@ public class FrmCidade extends FormJDialog {
 
     @Override
     public void loadUpdate() {
-        
+        cidade.load((int) idCols[0], (String) idCols[1], (int) idCols[2]);
+        txtNomeCidade.setText(cidade.getCidNome());
+        for (ComboBoxItem cbi : cboxItensPais) {
+            if ((int) cbi.getId() == (int) idCols[0]) {
+                cmbPais.getModel().setSelectedItem(cbi);
+            }
+        }
+        for (ComboBoxItem cbi : cboxItensEstado) {
+            if ((String) cbi.getId() == (String) idCols[1]) {
+                cmbEstado.getModel().setSelectedItem(cbi);
+            }
+        }
     }
 
     /**
