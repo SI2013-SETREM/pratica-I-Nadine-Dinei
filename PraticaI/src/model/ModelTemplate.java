@@ -59,6 +59,11 @@ public abstract class ModelTemplate {
     public static Object[][] listTableFields = {};
     
     /**
+     *  Ordenação da listagem
+     */
+    public static String orderBy;
+    
+    /**
      *  Joins extras que devem ser feitos
      */
     public static util.sql.Join[] extraJoins = {};

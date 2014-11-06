@@ -72,5 +72,13 @@ public class PlanoContas extends ModelTemplate {
     public void setPlanoContasPai(PlanoContas planocontas) {
         this.planocontas = planocontas;
     }
+    
+    public static java.util.ArrayList<PlanoContas> getAll() {
+        java.util.ArrayList<PlanoContas> list = new java.util.ArrayList<>();
+        for (Object o : ModelTemplate.getAll(PlanoContas.class)) {
+            list.add((PlanoContas) o);
+        }
+        return list;
+    }
 
 }

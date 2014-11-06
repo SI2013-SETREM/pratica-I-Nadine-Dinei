@@ -97,6 +97,7 @@ public abstract class DB {
                 r = rs.getTimestamp(colLabel);
         } catch (SQLException ex) {
             // Comentar esta linha:
+            System.out.println("ERRO tentando recuperar a coluna " + colLabel + " do tipo " + colType.getName());
             Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
             // Se der erro deve retornar null
         }

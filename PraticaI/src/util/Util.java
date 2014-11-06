@@ -1,6 +1,9 @@
 
 package util;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+
 /**
  *  Classe com funções úteis
  * @author Dinei A. Rockenbach
@@ -15,11 +18,29 @@ public abstract class Util {
         debug(String.valueOf(msg));
     }
     
+    public static void setMoneyField(final javax.swing.JTextField txtToFormat) {
+        txtToFormat.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                txtToFormat.setText("R$ " + txtToFormat.getText());
+            }
+            @Override
+            public void focusGained(FocusEvent e) {
+                txtToFormat.setText(txtToFormat.getText().replaceAll("[^0-9,]", ""));
+            }
+        });
+        txtToFormat.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                txtToFormat.setText(txtToFormat.getText().replaceAll("[^0-9,]", ""));
+            }
+        });
+    }
+    
     public static void setLimitChars(final javax.swing.JTextField txtToLimit, final int charLimit) {
         txtToLimit.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyTyped(java.awt.event.KeyEvent e) {
-                System.out.println("keyTyped: " + txtToLimit.getText());
                 if (e.getKeyChar() == (char) java.awt.event.KeyEvent.VK_ENTER
                     || e.getKeyChar() == (char) java.awt.event.KeyEvent.VK_BACK_SPACE)
                     return;

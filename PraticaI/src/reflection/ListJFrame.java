@@ -73,6 +73,7 @@ public class ListJFrame extends javax.swing.JFrame {
     ArrayList<String> idColumnListed = new ArrayList<>();
     ArrayList<String> idColumnHidden = new ArrayList<>();
     private Object[][] listTableFields;
+    private String orderBy;
     private FilterField[] listFilterFields;
     
     private int width = 500;
@@ -114,7 +115,9 @@ public class ListJFrame extends javax.swing.JFrame {
             if (!isSelected)
                 idColumnHidden.add(idCol);
         }
-        
+        // Tem ordenação definida?
+        if (ReflectionUtil.isAttributeExists(cls, "orderBy"))
+            orderBy = "ORDER BY " + (String) ReflectionUtil.getAttibute(cls, "orderBy");
         // A classe permite inserir registros?
         if (ReflectionUtil.isAttributeExists(cls, "allowInsert")) 
             allowInsert = (boolean) ReflectionUtil.getAttibute(cls, "allowInsert");
@@ -558,7 +561,9 @@ public class ListJFrame extends javax.swing.JFrame {
                     sql += " ?";
                 }
             }
-
+            
+            sql += " " + orderBy;
+            
             Util.debug(this.getClass().getName() + " - SQL:" + sql);
 
             ResultSet rs;
@@ -717,6 +722,15 @@ public class ListJFrame extends javax.swing.JFrame {
                 tcm.getColumn(dltColumn).setMaxWidth(btnColWidth);
                 tcm.getColumn(dltColumn).setCellRenderer(new DeleteCellRenderer());
                 tcm.getColumn(dltColumn).setCellEditor(null);
+            }
+            
+            for (int i = 0; i < listTableFields.length; i++) {
+                Object[] field = listTableFields[i];
+                if (field.length > 2) {
+                    tcm.getColumn(i + idColumnHidden.size()).setResizable(false);
+                    tcm.getColumn(i + idColumnHidden.size()).setMinWidth((int) field[2]);
+                    tcm.getColumn(i + idColumnHidden.size()).setMinWidth((int) field[2]);
+                }
             }
             
         } catch (Exception ex) {

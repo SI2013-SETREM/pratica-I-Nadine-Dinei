@@ -14,12 +14,12 @@ public class ContaCapital extends ModelTemplate {
     private String CntBncNumero;
     private String CntBncAgencia;
     private String CntBncTitular;
-    private int CntPadrao;
+    private boolean CntPadrao;
     private double CntSaldo;
     /**
      * @see model.ModelTemplate#sngTitle
      */
-    public static String sngTitle = "Conta Capital";
+    public static String sngTitle = "Conta de Capital";
     /**
      * @see model.ModelTemplate#prlTitle
      */
@@ -90,11 +90,11 @@ public class ContaCapital extends ModelTemplate {
         this.CntBncTitular = CntBncTitular;
     }
 
-    public int getCntPadrao() {
+    public boolean getCntPadrao() {
         return CntPadrao;
     }
 
-    public void setCntPadrao(int CntPadrao) {
+    public void setCntPadrao(boolean CntPadrao) {
         this.CntPadrao = CntPadrao;
     }
 
@@ -104,6 +104,15 @@ public class ContaCapital extends ModelTemplate {
 
     public void setCntSaldo(double CntSaldo) {
         this.CntSaldo = CntSaldo;
+    }
+    
+    
+    public static java.util.ArrayList<ContaCapital> getAll() {
+        java.util.ArrayList<ContaCapital> list = new java.util.ArrayList<>();
+        for (Object o : ModelTemplate.getAll(ContaCapital.class)) {
+            list.add((ContaCapital) o);
+        }
+        return list;
     }
 
 }
