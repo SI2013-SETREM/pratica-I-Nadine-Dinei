@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view;
 
 import java.util.ArrayList;
@@ -20,6 +15,7 @@ import util.field.ComboBoxItem;
 public class FrmEstado extends FormJDialog {
 
     public Estado estado = new Estado();
+    private ArrayList<ComboBoxItem> cboxItensPaises = new ArrayList<>();
 
     /**
      * Creates new form Estados
@@ -37,19 +33,23 @@ public class FrmEstado extends FormJDialog {
         util.Util.setLimitChars(txtSiglaEstado, 2);
 
         ArrayList<Pais> list = model.Pais.getAll();
-        ArrayList<ComboBoxItem> options = new ArrayList<>();
         for (Pais pai : list) {
-            options.add(new ComboBoxItem(pai.getPaiAlfa2(), pai.getPaiNome()));
+            cboxItensPaises.add(new ComboBoxItem(pai.getPaiCodigo(), pai.getPaiNome()));
         }
-        cmbPais.setModel(new DefaultComboBoxModel((ComboBoxItem[]) options.toArray(new ComboBoxItem[options.size()])));
+        cmbPais.setModel(new DefaultComboBoxModel((ComboBoxItem[]) cboxItensPaises.toArray(new ComboBoxItem[cboxItensPaises.size()])));
     }
 
     @Override
     public void loadUpdate() {
-        estado.load((int) idCols[0], (int) idCols[1]);
+        estado.load((int) idCols[0], (String) idCols[1]);
         txtNomeEstado.setText(estado.getEstNome());
         txtSiglaEstado.setText(estado.getEstSigla());
-      
+
+        for (ComboBoxItem cbi : cboxItensPaises) {
+            if ((int) cbi.getId() == estado.getPaiCodigo().getPaiCodigo()) {
+                cmbPais.getModel().setSelectedItem(cbi);
+            }
+        }
     }
 
     /**
@@ -79,8 +79,18 @@ public class FrmEstado extends FormJDialog {
         jLabel3.setText("Nome:");
 
         btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -134,6 +144,20 @@ public class FrmEstado extends FormJDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        ComboBoxItem i = cboxItensPaises.get(cmbPais.getSelectedIndex());
+        System.out.println(i.getId());
+        estado.setEstNome(txtNomeEstado.getText());
+        estado.setEstSigla(txtSiglaEstado.getText());
+        estado.setPaiCodigo(Pais.getPais((int) i.getId()));
+        estado.save();
+        this.dispose();
+    }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments

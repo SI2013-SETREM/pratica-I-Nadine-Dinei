@@ -188,7 +188,7 @@ public class Pais extends ModelTemplate {
     public static Pais getPais(int Pai) {
         try {
           String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(Pais.class);
-        sql += " WHERE PesCodigo = ?";
+        sql += " WHERE PaiCodigo = ?";
             ResultSet rs = DB.executeQuery(sql, new Object[]{Pai});
             if (rs.next()) {
                 Pais p=new Pais();

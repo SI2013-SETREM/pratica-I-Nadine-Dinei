@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.DB;
@@ -15,7 +16,6 @@ import util.field.FilterFieldText;
  */
 public class Estado extends ModelTemplate {
 
-    
     private Pais PaiCodigo;
     private String EstSigla;
     private String EstNome;
@@ -62,6 +62,7 @@ public class Estado extends ModelTemplate {
 
     public void setPaiCodigo(Pais PaiCodigo) {
         this.PaiCodigo = PaiCodigo;
+        System.out.println(PaiCodigo);
     }
 
     public String getEstSigla() {
@@ -88,20 +89,57 @@ public class Estado extends ModelTemplate {
         return list;
     }
 
-    public boolean load(int EstCodigo, int PaiCodigo) {
+    public boolean load(int PaiCodigo, String EstCodigo) {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
-            sql += " WHERE EstSigla = ? and PaiCodigo=?";
-            ResultSet rs = DB.executeQuery(sql, new Object[]{EstCodigo, PaiCodigo});
+            sql += " WHERE  PaiCodigo = ? and EstSigla= ?";
+            ResultSet rs = DB.executeQuery(sql, new Object[]{PaiCodigo, EstCodigo});
             if (rs.next()) {
                 this.setEstNome(rs.getString("EstNome"));
                 this.setEstSigla(rs.getString("EstSigla"));
                 this.setPaiCodigo(Pais.getPais(PaiCodigo));
+                flag = DB.FLAG_UPDATE;
             }
         } catch (Exception ex) {
             Logger.getLogger(Estado.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        return false;
+    }
+
+    public boolean insert() {
+        String sql = " INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this)
+                + " (PaiCodigo, EstSigla, EstNome)"
+                + " VALUES (?, ?, ?)";
+        try {
+            DB.executeUpdate(sql, new Object[]{PaiCodigo.getPaiCodigo(), EstSigla, EstNome});
+            flag = DB.FLAG_UPDATE;
+            return true;
+        } catch (Exception ex) {
+            Logger.getLogger(Estado.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public boolean update() {
+        try {
+            String sql = "update " + reflection.ReflectionUtil.getDBTableName(this) + " set "
+                    + " PaiCodigo=?, EstSigla=?, EstNome=? where PaiCodigo=? and EstSigla=?";
+            DB.executeUpdate(sql, new Object[]{PaiCodigo.getPaiCodigo(), EstSigla, EstNome, PaiCodigo.getPaiCodigo(), EstSigla});
+            return true;
+        } catch (Exception e) {
+            Logger.getLogger(Estado.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
+
+    public boolean save() {
+        switch (flag) {
+            case DB.FLAG_INSERT:
+                insert();
+            case DB.FLAG_UPDATE:
+                update();
+        }
         return false;
     }
 
