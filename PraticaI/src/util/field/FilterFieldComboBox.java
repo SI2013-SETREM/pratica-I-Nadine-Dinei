@@ -152,12 +152,11 @@ public class FilterFieldComboBox extends FilterField {
                 return true;
             if (id instanceof String)
                 return "".equals((String) id);
-            else if (id instanceof Integer)
+            else if (id instanceof Integer || id instanceof Double || id instanceof Float)
                 return ((int) id == 0);
-            else if (id instanceof Double)
-                return ((int) id == 0);
-            else if (id instanceof Float)
-                return ((int) id == 0);
+            else if (id instanceof Boolean)
+                return (boolean) id;
+            
             // Existe combo box de data? Acho que não.
 //            else if (id instanceof java.sql.Date)
 //                return true;

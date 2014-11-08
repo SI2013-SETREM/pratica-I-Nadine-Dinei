@@ -15,6 +15,7 @@ import javax.swing.event.ListDataListener;
 import model.ContaCapital;
 import model.Lancamento;
 import model.PlanoContas;
+import util.ImageSize;
 import util.field.ComboBoxItem;
 
 /**
@@ -25,7 +26,14 @@ public class FrmLancamento extends reflection.FormJDialog {
     
     private ArrayList<ComboBoxItem> cboxItensContaCapital = new ArrayList<>();
     private ArrayList<ComboBoxItem> cboxItensPlanoContas = new ArrayList<>();
-    public Lancamento lancamento;
+    public Lancamento lancamento = new Lancamento();
+    private int LanTipo = Lancamento.TIPO_ENTRADA;
+    
+    private ImageIcon imgEntrada = new ImageIcon(util.Util.getImageUrl("moneyadd.png", ImageSize.M));
+    private ImageIcon imgEntradaP = new ImageIcon(util.Util.getImageUrl("moneyadd.png", ImageSize.P));
+    private ImageIcon imgSaida = new ImageIcon(util.Util.getImageUrl("moneydelete.png", ImageSize.M));
+    private ImageIcon imgSaidaP = new ImageIcon(util.Util.getImageUrl("moneydelete.png", ImageSize.P));
+    private ImageIcon imgTransferencia = new ImageIcon(util.Util.getImageUrl("companygenerosity.png", ImageSize.M));
     
     public FrmLancamento() {
         initComponents();
@@ -39,6 +47,9 @@ public class FrmLancamento extends reflection.FormJDialog {
         util.Util.setMoneyField(txtLanValor);
         util.Util.setLimitChars(txtLanDescricao, 200);
         util.Util.setLimitChars(txtLanDocumento, 50);
+        
+//        this.setEntrada();
+        this.setSaida();
         
         ComboBoxItem sel = null;
         for (ContaCapital cc : ContaCapital.getAll()) {
@@ -58,7 +69,28 @@ public class FrmLancamento extends reflection.FormJDialog {
         cmbPlanoContas.setModel(new DefaultComboBoxModel((ComboBoxItem[]) cboxItensPlanoContas.toArray(new ComboBoxItem[cboxItensPlanoContas.size()])));
         
     }
-
+    
+    public void setEntrada() {
+        LanTipo = Lancamento.TIPO_ENTRADA;
+        
+        lblImg.setIcon(imgEntrada);
+        lblLanTipo.setText("Entrada");
+        lblLanTipo.setForeground(new java.awt.Color(50, 127, 60));
+//        btnTrocaLanTipo.setText("Saída");
+        btnTrocaLanTipo.setText("");
+        btnTrocaLanTipo.setIcon(imgSaidaP);
+    }
+    public void setSaida() {
+        LanTipo = Lancamento.TIPO_SAIDA;
+        
+        lblImg.setIcon(imgSaida);
+        lblLanTipo.setText("Saída");
+        lblLanTipo.setForeground(new java.awt.Color(190, 25, 25));
+//        btnTrocaLanTipo.setText("Entrada");
+        btnTrocaLanTipo.setText("");
+        btnTrocaLanTipo.setIcon(imgEntradaP);
+    }
+    
     @Override
     public void loadInsert() {
         lancamento = new Lancamento();
@@ -81,7 +113,9 @@ public class FrmLancamento extends reflection.FormJDialog {
 //        lancamento.load();
     }
     
-    
+    public void save() {
+        lancamento.setLanTipo(LanTipo);
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -93,14 +127,13 @@ public class FrmLancamento extends reflection.FormJDialog {
     private void initComponents() {
 
         btnGrpLanTipo = new javax.swing.ButtonGroup();
+        btnGrpLanEfetivado = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         cmbContaCapital = new javax.swing.JComboBox();
         btnSalvar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         cmbPlanoContas = new javax.swing.JComboBox();
-        LanTipo_Entrada = new javax.swing.JRadioButton();
-        LanTipo_Saida = new javax.swing.JRadioButton();
         txtLanDataHora = new javax.swing.JFormattedTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -109,7 +142,11 @@ public class FrmLancamento extends reflection.FormJDialog {
         txtLanDescricao = new javax.swing.JTextField();
         txtLanDocumento = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        chkLanEfetivado = new javax.swing.JCheckBox();
+        lblLanTipo = new javax.swing.JLabel();
+        btnTrocaLanTipo = new javax.swing.JButton();
+        lblImg = new javax.swing.JLabel();
+        rdoEfetivado = new javax.swing.JRadioButton();
+        rdoPendente = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -131,15 +168,6 @@ public class FrmLancamento extends reflection.FormJDialog {
 
         jLabel2.setText("Plano de Contas:");
 
-        btnGrpLanTipo.add(LanTipo_Entrada);
-        LanTipo_Entrada.setForeground(new java.awt.Color(50, 127, 60));
-        LanTipo_Entrada.setSelected(true);
-        LanTipo_Entrada.setText("Entrada");
-
-        btnGrpLanTipo.add(LanTipo_Saida);
-        LanTipo_Saida.setForeground(new java.awt.Color(255, 101, 101));
-        LanTipo_Saida.setText("Saída");
-
         try {
             txtLanDataHora.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/#### ##:##:##")));
         } catch (java.text.ParseException ex) {
@@ -150,12 +178,30 @@ public class FrmLancamento extends reflection.FormJDialog {
 
         jLabel4.setText("Valor:");
 
+        txtLanValor.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        txtLanValor.setText("R$ 0,00");
+
         jLabel5.setText("Descrição:");
 
-        jLabel6.setText("Documento Vinculado:");
+        jLabel6.setText("Doc. Vinculado:");
 
-        chkLanEfetivado.setSelected(true);
-        chkLanEfetivado.setText("Efetivado");
+        lblLanTipo.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        lblLanTipo.setText("Tipo");
+
+        btnTrocaLanTipo.setText("Troca");
+        btnTrocaLanTipo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTrocaLanTipoActionPerformed(evt);
+            }
+        });
+
+        btnGrpLanEfetivado.add(rdoEfetivado);
+        rdoEfetivado.setSelected(true);
+        rdoEfetivado.setText("Efetivado");
+
+        btnGrpLanEfetivado.add(rdoPendente);
+        rdoPendente.setForeground(new java.awt.Color(63, 63, 63));
+        rdoPendente.setText("Pendente");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -165,75 +211,80 @@ public class FrmLancamento extends reflection.FormJDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblImg, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblLanTipo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnTrocaLanTipo))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtLanValor, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtLanDataHora, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(rdoEfetivado)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(rdoPendente))))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(txtLanDescricao, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(cmbPlanoContas, javax.swing.GroupLayout.Alignment.LEADING, 0, 245, Short.MAX_VALUE))
+                            .addComponent(txtLanDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtLanDescricao))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cmbPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtLanValor))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(LanTipo_Entrada)
-                                .addGap(18, 18, 18)
-                                .addComponent(LanTipo_Saida))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtLanDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtLanDataHora, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(chkLanEfetivado)))
-                        .addGap(0, 35, Short.MAX_VALUE)))
+                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lblLanTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblImg, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnTrocaLanTipo))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtLanDataHora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(chkLanEfetivado))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(LanTipo_Entrada)
-                    .addComponent(LanTipo_Saida))
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(txtLanValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2)
-                        .addComponent(cmbPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(rdoEfetivado)
+                        .addComponent(rdoPendente)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cmbPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(txtLanDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(txtLanDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtLanDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
                     .addComponent(btnCancelar))
@@ -248,8 +299,19 @@ public class FrmLancamento extends reflection.FormJDialog {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        
+        this.save();
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnTrocaLanTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTrocaLanTipoActionPerformed
+        switch (LanTipo) {
+            case Lancamento.TIPO_ENTRADA:
+                this.setSaida();
+                break;
+            case Lancamento.TIPO_SAIDA:
+                this.setEntrada();
+                break;
+        }
+    }//GEN-LAST:event_btnTrocaLanTipoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -295,12 +357,11 @@ public class FrmLancamento extends reflection.FormJDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JRadioButton LanTipo_Entrada;
-    private javax.swing.JRadioButton LanTipo_Saida;
     private javax.swing.JButton btnCancelar;
+    private javax.swing.ButtonGroup btnGrpLanEfetivado;
     private javax.swing.ButtonGroup btnGrpLanTipo;
     private javax.swing.JButton btnSalvar;
-    private javax.swing.JCheckBox chkLanEfetivado;
+    private javax.swing.JButton btnTrocaLanTipo;
     private javax.swing.JComboBox cmbContaCapital;
     private javax.swing.JComboBox cmbPlanoContas;
     private javax.swing.JLabel jLabel1;
@@ -309,6 +370,10 @@ public class FrmLancamento extends reflection.FormJDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel lblImg;
+    private javax.swing.JLabel lblLanTipo;
+    private javax.swing.JRadioButton rdoEfetivado;
+    private javax.swing.JRadioButton rdoPendente;
     private javax.swing.JFormattedTextField txtLanDataHora;
     private javax.swing.JTextField txtLanDescricao;
     private javax.swing.JTextField txtLanDocumento;

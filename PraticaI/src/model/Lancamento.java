@@ -176,6 +176,14 @@ public class Lancamento extends ModelTemplate {
     public void setLanEfetivado(boolean LanEfetivado) {
         this.LanEfetivado = LanEfetivado;
     }
+
+    public String getFlag() {
+        return flag;
+    }
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
+    
     
     public boolean load() {
         try {

@@ -5,6 +5,7 @@
  */
 package view;
 
+import java.util.Locale;
 import javax.swing.ImageIcon;
 import reflection.ListJFrame;
 
@@ -20,6 +21,11 @@ public class MainMenu extends javax.swing.JFrame {
      * Creates new form MainMenu
      */
     public MainMenu() {
+        Locale.setDefault(new Locale("pt", "BR"));
+//        for (Locale l : Locale.getAvailableLocales()) {
+//            System.out.println(l.getDisplayCountry() + " - " + l.getCountry() + " - " + l.getLanguage() + " - " + l.getVariant());
+//        }
+        
         initComponents();
         this.setLocationRelativeTo(null);
         this.setExtendedState(MAXIMIZED_BOTH);
@@ -652,7 +658,9 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void btnEfetuarLancamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEfetuarLancamentoActionPerformed
-        // TODO add your handling code here:
+        FrmLancamento frm = new FrmLancamento();
+        frm.loadInsert();
+        frm.setVisible(true);
     }//GEN-LAST:event_btnEfetuarLancamentoActionPerformed
 
     private void btnFecharCaixaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharCaixaActionPerformed

@@ -545,12 +545,15 @@ public class ListJFrame extends javax.swing.JFrame {
                     } else if (clsType == Integer.class || clsType == int.class) {
                         sql += operator;
                         filterValues.add(Integer.parseInt(filterField.getSQLValue()));
-                    } else if (clsType == Double.class) {
+                    } else if (clsType == Double.class || clsType == double.class) {
                         sql += operator;
                         filterValues.add(Double.parseDouble(filterField.getSQLValue()));
-                    } else if (clsType == Float.class) {
+                    } else if (clsType == Float.class || clsType == float.class) {
                         sql += operator;
                         filterValues.add(Float.parseFloat(filterField.getSQLValue()));
+                    } else if (clsType == Boolean.class || clsType == boolean.class) {
+                        sql += operator;
+                        filterValues.add(Boolean.parseBoolean(filterField.getSQLValue()));
                         
                         // Estes entram no padrão do else abaixo
 //                    } else if (clsType == java.sql.Date.class) {

@@ -3,6 +3,9 @@ package util;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 /**
  *  Classe com funções úteis
@@ -22,11 +25,27 @@ public abstract class Util {
         txtToFormat.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
-                txtToFormat.setText("R$ " + txtToFormat.getText());
+//                DecimalFormat formatter = new DecimalFormat("###,###,###.00");
+//                String txt = formatter.format(Double.parseDouble(txtToFormat.getText()));
+                
+//                String txt = String.format("%10.2f", txtToFormat.getText());
+                
+                String txt = txtToFormat.getText();
+                String valTxt = txt.replaceAll("[^1-9,.]", "");
+                if ("".equals(valTxt) || Integer.parseInt(valTxt) == 0) 
+                    txt = "0,00";
+                if (txt.indexOf(",") == -1)
+                    txt += ",00";
+                txtToFormat.setText("R$ " + txt);
             }
             @Override
             public void focusGained(FocusEvent e) {
-                txtToFormat.setText(txtToFormat.getText().replaceAll("[^0-9,]", ""));
+                String txt = txtToFormat.getText().replaceAll("[^0-9,]", "");
+                String valTxt = txt.replace(",", "");
+                if (!"".equals(valTxt) && Integer.parseInt(valTxt) == 0) 
+                    txt = "";
+                txtToFormat.setText(txt);
+                
             }
         });
         txtToFormat.addKeyListener(new java.awt.event.KeyAdapter() {

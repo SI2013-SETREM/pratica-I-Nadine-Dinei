@@ -97,6 +97,9 @@ public class ContaCapital extends ModelTemplate {
     public void setCntPadrao(boolean CntPadrao) {
         this.CntPadrao = CntPadrao;
     }
+    public void setCntPadrao(int CntPadrao) {
+        this.CntPadrao = (CntPadrao == 1);
+    }
 
     public double getCntSaldo() {
         return CntSaldo;

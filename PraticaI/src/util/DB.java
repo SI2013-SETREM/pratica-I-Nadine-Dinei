@@ -85,9 +85,9 @@ public abstract class DB {
                 r = rs.getString(colLabel);
             else if (colType == Integer.class || colType == int.class)
                 r = rs.getInt(colLabel);
-            else if (colType == Double.class)
+            else if (colType == Double.class || colType == double.class)
                 r = rs.getDouble(colLabel);
-            else if (colType == Float.class)
+            else if (colType == Float.class || colType == float.class)
                 r = rs.getFloat(colLabel);
             else if (colType == java.sql.Date.class)
                 r = rs.getDate(colLabel);
@@ -95,6 +95,8 @@ public abstract class DB {
                 r = rs.getTime(colLabel);
             else if (colType == java.sql.Timestamp.class)
                 r = rs.getTimestamp(colLabel);
+            else if (colType == Boolean.class || colType == boolean.class)
+                r = rs.getBoolean(colLabel);
         } catch (SQLException ex) {
             // Comentar esta linha:
             System.out.println("ERRO tentando recuperar a coluna " + colLabel + " do tipo " + colType.getName());
@@ -147,6 +149,8 @@ public abstract class DB {
                 st.setTime(count, (java.sql.Time) o);
             else if (o instanceof java.sql.Timestamp)
                 st.setTimestamp(count, (java.sql.Timestamp) o);
+            else if (o instanceof Boolean)
+                st.setBoolean(count, (boolean) o);
         }
     }
     
