@@ -45,27 +45,24 @@ public class FrmCidade extends FormJDialog {
             cboxItensPais.add(new ComboBoxItem(p.getPaiCodigo(), p.getPaiNome()));
         }
         cmbPais.setModel(new DefaultComboBoxModel((ComboBoxItem[]) cboxItensPais.toArray(new ComboBoxItem[cboxItensPais.size()])));
-        ComboBoxItem i = cboxItensPais.get(cmbPais.getSelectedIndex());
-        ArrayList<Estado> list = model.Estado.getAlll(Pais.getPais((int) i.getId()));
-        for (Estado est : list) {
-            cboxItensEstado.add(new ComboBoxItem(est.getEstSigla(), est.getEstNome()));
-        }
-        cmbEstado.setModel(new DefaultComboBoxModel((ComboBoxItem[]) cboxItensEstado.toArray(new ComboBoxItem[cboxItensEstado.size()])));
+        
+//        ComboBoxItem i = cboxItensPais.get(cmbPais.getSelectedIndex());
+//        ArrayList<Estado> list = model.Estado.getAll((int) i.getId());
+//        for (Estado est : list) {
+//            cboxItensEstado.add(new ComboBoxItem(est.getEstSigla(), est.getEstNome()));
+//        }
+//        cmbEstado.setModel(new DefaultComboBoxModel((ComboBoxItem[]) cboxItensEstado.toArray(new ComboBoxItem[cboxItensEstado.size()])));
 
     }
 
     @Override
     public void loadUpdate() {
         cidade.load((int) idCols[0], (String) idCols[1], (int) idCols[2]);
+        System.out.println(cidade.getEstSigla().getEstNome());
         txtNomeCidade.setText(cidade.getCidNome());
         for (ComboBoxItem cbi : cboxItensPais) {
             if ((int) cbi.getId() == (int) idCols[0]) {
                 cmbPais.getModel().setSelectedItem(cbi);
-            }
-        }
-        for (ComboBoxItem cbi : cboxItensEstado) {
-            if ((String) cbi.getId() == (String) idCols[1]) {
-                cmbEstado.getModel().setSelectedItem(cbi);
             }
         }
     }
@@ -106,6 +103,11 @@ public class FrmCidade extends FormJDialog {
 
         jLabel4.setText("País:");
 
+        cmbPais.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cmbPaisItemStateChanged(evt);
+            }
+        });
         cmbPais.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbPaisActionPerformed(evt);
@@ -166,8 +168,29 @@ public class FrmCidade extends FormJDialog {
     }//GEN-LAST:event_cmbEstadoActionPerformed
 
     private void cmbPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbPaisActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_cmbPaisActionPerformed
+
+    private void cmbPaisItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbPaisItemStateChanged
+        if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+            ComboBoxItem cbxItem = (ComboBoxItem) evt.getItem();
+            ComboBoxItem selItem = null;
+            ArrayList<Estado> list = model.Estado.getAll((int) cbxItem.getId());
+            cboxItensEstado.clear();
+            for (Estado est : list) {
+//                System.out.println(est.getEstSigla()+" == "+cidade.getEstSigla().getEstSigla());
+                ComboBoxItem cboxEstado = new ComboBoxItem(est.getEstSigla(), est.getEstNome());
+                cboxItensEstado.add(cboxEstado);
+                if (est.getEstSigla().equals(cidade.getEstSigla().getEstSigla())) {
+                    selItem = cboxEstado;
+//                    System.out.println("SELECIONOU == "+selItem.getId());
+                }
+            }
+            cmbEstado.setModel(new DefaultComboBoxModel((ComboBoxItem[]) cboxItensEstado.toArray(new ComboBoxItem[cboxItensEstado.size()])));
+            if (selItem != null) {
+                cmbEstado.getModel().setSelectedItem(selItem);
+            }
+        }
+    }//GEN-LAST:event_cmbPaisItemStateChanged
 
     /**
      * @param args the command line arguments

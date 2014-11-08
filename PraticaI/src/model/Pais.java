@@ -50,7 +50,7 @@ public class Pais extends ModelTemplate {
      */
     public static Object[][] listTableFields = {
         {"Nome", "PaiNome"},
-        {"Sigla", "PaiAlfa2"},};
+        {"Sigla", "PaiAlfa2",50},};
 
 //    public static FilterField[] listFilterFields = {
 //        {"Nome", "PaiNome", 200},

@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.DB;
+import util.field.FilterField;
+import util.field.FilterFieldDynamicCombo;
+import util.field.FilterFieldText;
 
 /**
  *
@@ -45,7 +48,11 @@ public class Cidade extends ModelTemplate {
     public static String[][] listTableFields = {
         {"País", "Pais.PaiNome"},
         {"Estado", "Estado.EstNome"},
-        {"Nome", "CidNome"},
+        {"Nome", "CidNome"},};
+    public static FilterField[] listFilterFields = {
+        new FilterFieldDynamicCombo("Estado.EstSigla", "Estado:", 200, Estado.class, "EstNome", null, null, ""),
+        new FilterFieldDynamicCombo("Pais.PaiCodigo", "País:", 200, Pais.class, "PaiNome", null, null, ""),
+        new FilterFieldText("CidNome", "Cidade:", 200)
     };
 
     public Cidade() {
@@ -58,6 +65,7 @@ public class Cidade extends ModelTemplate {
     public void setPaiCodigo(Pais PaiCodigo) {
         this.PaiCodigo = PaiCodigo;
     }
+
     public Estado getEstSigla() {
         return EstSigla;
     }
@@ -99,19 +107,22 @@ public class Cidade extends ModelTemplate {
     }
 
     public boolean load(int PaiCodigo, String EstSigla, int CidCodigo) {
-        String sql = "Select * from" + reflection.ReflectionUtil.getDBTableName(this)
+        String sql = "Select * from " + reflection.ReflectionUtil.getDBTableName(this)
                 + " where PaiCodigo=? and EstSigla =? and CidCodigo=?";
         try {
             ResultSet rs = DB.executeQuery(sql, new Object[]{PaiCodigo, EstSigla, CidCodigo});
             if (rs.next()) {
                 this.setCidCodigo(rs.getInt("CidCodigo"));
                 this.setCidNome(rs.getString("CidNome"));
-                this.setEstSigla(Estado.getEstado(rs.getString("EstSigla"),rs.getInt("PaiCodigo")));
-//                this.setPaiCodigo(Pais.getPais(rs.getInt("PaiCodigo")));
-                this.setPaiCodigo(this.getEstSigla().getPaiCodigo());
+                this.setEstSigla(Estado.getEstado(rs.getString("EstSigla"), rs.getInt("PaiCodigo")));
+                if (this.getEstSigla() != null) {
+                    this.setPaiCodigo(this.getEstSigla().getPaiCodigo());
+
+                }
             }
         } catch (Exception ex) {
-            Logger.getLogger(Cidade.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Cidade.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
         return false;
 

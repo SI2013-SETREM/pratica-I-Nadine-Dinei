@@ -147,6 +147,9 @@ public class FilterFieldComboBox extends FilterField {
         if (this.getValue() != null) {
             ComboBoxItem cboxItem = (ComboBoxItem) this.getValue();
             Object id = cboxItem.getId();
+//            System.out.println("Campo " + this.getField() + " item " + cboxItem + " Id " + (String) id + " empty: " + ("".equals((String) id)));
+            if (id == null)
+                return true;
             if (id instanceof String)
                 return "".equals((String) id);
             else if (id instanceof Integer)

@@ -82,16 +82,17 @@ public class Estado extends ModelTemplate {
         this.EstNome = EstNome;
     }
 
-    public static java.util.ArrayList<Estado> getAlll(Pais pai) {
-        Estado est = new Estado();
+    public static java.util.ArrayList<Estado> getAll(int PaiCodigo) {
         java.util.ArrayList<Estado> list = new java.util.ArrayList<>();
         try {
-            String sql = "Select * from " + reflection.ReflectionUtil.getDBTableName(Estado.class)+" where 1=1 and PaiCodigo =?";
-            ResultSet rs = DB.executeQuery(sql, new Object[]{pai.getPaiCodigo()});
+            String sql = "Select * from " + reflection.ReflectionUtil.getDBTableName(Estado.class) + " where 1=1 and PaiCodigo =?";
+            System.out.println(sql);
+            ResultSet rs = DB.executeQuery(sql, new Object[]{PaiCodigo});
             while (rs.next()) {
-                est.setEstNome(rs.getString("EstNome"));
-                est.setEstSigla(rs.getString("EstSigla"));
+                Estado est = new Estado();
                 est.setPaiCodigo(Pais.getPais(rs.getInt("PaiCodigo")));
+                est.setEstSigla(rs.getString("EstSigla"));
+                est.setEstNome(rs.getString("EstNome"));
                 list.add(est);
             }
         } catch (Exception ex) {
@@ -164,6 +165,7 @@ public class Estado extends ModelTemplate {
                 estado.setEstNome(rs.getString("EstNome"));
                 estado.setEstSigla(rs.getString("EstSigla"));
                 estado.setPaiCodigo(Pais.getPais(rs.getInt("PaiCodigo")));
+                return estado;
             }
         } catch (Exception e) {
             Logger.getLogger(Estado.class.getName()).log(Level.SEVERE, null, e);
