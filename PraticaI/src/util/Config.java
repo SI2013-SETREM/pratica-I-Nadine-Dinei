@@ -22,6 +22,7 @@ public abstract class Config {
     
     /**
      *  Formato de exibição de horas
+     * @see util.field.FilterFieldDateTime
      */
     public static final int FORMAT_TIME = java.text.DateFormat.MEDIUM;
     public static final String MASK_TIME = "##:##:##";
@@ -40,7 +41,7 @@ public abstract class Config {
     public static final int    DB_PORT  = 3306;
     public static final String DB_NAME  = "pratica_i";
     public static final String DB_USER  = "root";
-    public static final String DB_PASS  = "root";
+    public static final String DB_PASS  = "";
     
     /**
      * Locais onde são verificados os tipos de variáveis:

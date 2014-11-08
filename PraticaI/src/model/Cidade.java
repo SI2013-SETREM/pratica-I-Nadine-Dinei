@@ -113,7 +113,7 @@ public class Cidade extends ModelTemplate {
             if (rs.next()) {
                 this.setCidCodigo(rs.getInt("CidCodigo"));
                 this.setCidNome(rs.getString("CidNome"));
-                this.setEstSigla(Estado.getEstado(rs.getString("EstSigla"), rs.getInt("PaiCodigo")));
+                this.setEstSigla(new Estado(rs.getInt("PaiCodigo"), rs.getString("EstSigla")));
                 if (this.getEstSigla() != null) {
                     this.setPaiCodigo(this.getEstSigla().getPaiCodigo());
 

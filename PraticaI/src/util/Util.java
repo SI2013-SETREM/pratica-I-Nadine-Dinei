@@ -25,6 +25,10 @@ public abstract class Util {
         txtToFormat.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
+                
+                //@TODO
+                //http://stackoverflow.com/questions/2379221/java-currency-number-format
+                
 //                DecimalFormat formatter = new DecimalFormat("###,###,###.00");
 //                String txt = formatter.format(Double.parseDouble(txtToFormat.getText()));
                 

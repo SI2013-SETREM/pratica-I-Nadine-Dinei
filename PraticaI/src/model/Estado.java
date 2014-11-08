@@ -56,7 +56,11 @@ public class Estado extends ModelTemplate {
 
     public Estado() {
     }
-
+    public Estado(int PaiCodigo, String EstSigla) {
+        this.load(PaiCodigo, EstSigla);
+    }
+    
+    
     public Pais getPaiCodigo() {
         return PaiCodigo;
     }
@@ -90,7 +94,7 @@ public class Estado extends ModelTemplate {
             ResultSet rs = DB.executeQuery(sql, new Object[]{PaiCodigo});
             while (rs.next()) {
                 Estado est = new Estado();
-                est.setPaiCodigo(Pais.getPais(rs.getInt("PaiCodigo")));
+                est.setPaiCodigo(new Pais(rs.getInt("PaiCodigo")));
                 est.setEstSigla(rs.getString("EstSigla"));
                 est.setEstNome(rs.getString("EstNome"));
                 list.add(est);
@@ -109,7 +113,7 @@ public class Estado extends ModelTemplate {
             if (rs.next()) {
                 this.setEstNome(rs.getString("EstNome"));
                 this.setEstSigla(rs.getString("EstSigla"));
-                this.setPaiCodigo(Pais.getPais(PaiCodigo));
+                this.setPaiCodigo(new Pais(PaiCodigo));
                 flag = DB.FLAG_UPDATE;
             }
         } catch (Exception ex) {
@@ -120,7 +124,7 @@ public class Estado extends ModelTemplate {
     }
 
     public boolean insert() {
-        String sql = " INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this)
+        String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this)
                 + " (PaiCodigo, EstSigla, EstNome)"
                 + " VALUES (?, ?, ?)";
         try {
@@ -135,8 +139,8 @@ public class Estado extends ModelTemplate {
 
     public boolean update() {
         try {
-            String sql = "update " + reflection.ReflectionUtil.getDBTableName(this) + " set "
-                    + " PaiCodigo=?, EstSigla=?, EstNome=? where PaiCodigo=? and EstSigla=?";
+            String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this) + " SET "
+                    + " PaiCodigo = ?, EstSigla = ?, EstNome = ? WHERE PaiCodigo = ? and EstSigla = ?";
             DB.executeUpdate(sql, new Object[]{PaiCodigo.getPaiCodigo(), EstSigla, EstNome, PaiCodigo.getPaiCodigo(), EstSigla});
             return true;
         } catch (Exception e) {
@@ -153,24 +157,6 @@ public class Estado extends ModelTemplate {
                 update();
         }
         return false;
-    }
-
-    public static Estado getEstado(String EstSigla, int PaiCodigo) {
-        try {
-            String sql = "Select * from " + reflection.ReflectionUtil.getDBTableName(Estado.class)
-                    + " where EstSigla=? and PaiCodigo=?";
-            ResultSet rs = DB.executeQuery(sql, new Object[]{EstSigla, PaiCodigo});
-            if (rs.next()) {
-                Estado estado = new Estado();
-                estado.setEstNome(rs.getString("EstNome"));
-                estado.setEstSigla(rs.getString("EstSigla"));
-                estado.setPaiCodigo(Pais.getPais(rs.getInt("PaiCodigo")));
-                return estado;
-            }
-        } catch (Exception e) {
-            Logger.getLogger(Estado.class.getName()).log(Level.SEVERE, null, e);
-        }
-        return null;
     }
 
 }

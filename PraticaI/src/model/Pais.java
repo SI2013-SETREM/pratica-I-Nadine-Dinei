@@ -65,6 +65,9 @@ public class Pais extends ModelTemplate {
 
     public Pais() {
     }
+    public Pais(int PaiCodigo) {
+        this.load(PaiCodigo);
+    }
 
     public int getPaiCodigo() {
         return PaiCodigo;
@@ -167,14 +170,14 @@ public class Pais extends ModelTemplate {
         }
         return false;
     }
-
+    
     public boolean update() {
         String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
         sql += " SET PaiAlfa2 = ?,";
         sql += " PaiAlfa3 = ?,";
-        sql += " PaiBacenIbge=?,";
-        sql += " PaiISO3166=?,";
-        sql += " PaiNome=? ";
+        sql += " PaiBacenIbge = ?,";
+        sql += " PaiISO3166 = ?,";
+        sql += " PaiNome = ?";
         sql += " WHERE PaiCodigo = ?";
         try {
             DB.executeUpdate(sql, new Object[]{PaiAlfa2, PaiAlfa3, PaiBacenIbge, PaiISO3166, PaiNome, PaiCodigo});
@@ -183,27 +186,6 @@ public class Pais extends ModelTemplate {
             Logger.getLogger(Sequencial.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
-    }
-
-    public static Pais getPais(int Pai) {
-        try {
-            String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(Pais.class);
-            sql += " WHERE PaiCodigo = ?";
-            ResultSet rs = DB.executeQuery(sql, new Object[]{Pai});
-            if (rs.next()) {
-                Pais p = new Pais();
-                p.setPaiCodigo(rs.getInt("PaiCodigo"));
-                p.setPaiAlfa3(rs.getString("PaiAlfa3"));
-                p.setPaiBacenIbge(rs.getInt("PaiBacenIbge"));
-                p.setPaiAlfa2(rs.getString("PaiAlfa2"));
-                p.setPaiISO3166(rs.getInt("PaiISO3166"));
-                p.setPaiNome(rs.getString("PaiNome"));
-                return p;
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
     }
 
     public static java.util.ArrayList<Pais> getAll() {

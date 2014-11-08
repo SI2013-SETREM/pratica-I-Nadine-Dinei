@@ -150,7 +150,7 @@ public class FrmEstado extends FormJDialog {
         System.out.println(i.getId());
         estado.setEstNome(txtNomeEstado.getText());
         estado.setEstSigla(txtSiglaEstado.getText());
-        estado.setPaiCodigo(Pais.getPais((int) i.getId()));
+        estado.setPaiCodigo(new Pais((int) i.getId()));
         estado.save();
         this.dispose();
     }//GEN-LAST:event_btnSalvarActionPerformed
