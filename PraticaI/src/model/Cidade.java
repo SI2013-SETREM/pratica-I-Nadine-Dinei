@@ -1,7 +1,6 @@
 package model;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.DB;
@@ -25,8 +24,8 @@ public class Cidade extends ModelTemplate {
      * @see model.ModelTemplate#sngTitle
      */
     public static String sngTitle = "Cidade";
-    /**
-     * @see model.ModelTemplate#prlTitle
+    /** 
+    * @see model.ModelTemplate#prlTitle
      */
     public static String prlTitle = "Cidade";
     /**
