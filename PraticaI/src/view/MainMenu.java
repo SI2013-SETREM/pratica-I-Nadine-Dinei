@@ -1,35 +1,68 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package view;
 
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Calendar;
 import java.util.Locale;
 import javax.swing.ImageIcon;
+import javax.swing.Timer;
+import model.Pessoa;
+import model.Usuario;
 import reflection.ListJFrame;
+import util.ImageSize;
+import util.Util;
 
 /**
  *
  * @author Nadine
  */
 public class MainMenu extends javax.swing.JFrame {
-
-    public model.Usuario usuario;
-
+    
+    private Usuario UsuLogado = Usuario.UsuLogado;
+    
     /**
      * Creates new form MainMenu
      */
     public MainMenu() {
         Locale.setDefault(new Locale("pt", "BR"));
-//        for (Locale l : Locale.getAvailableLocales()) {
-//            System.out.println(l.getDisplayCountry() + " - " + l.getCountry() + " - " + l.getLanguage() + " - " + l.getVariant());
-//        }
+        
+        java.net.URL urlImage = Util.getImageUrl("logo.png", ImageSize.M);
+        if (urlImage != null)
+            this.setIconImage(Toolkit.getDefaultToolkit().getImage(urlImage));
         
         initComponents();
         this.setLocationRelativeTo(null);
-        this.setExtendedState(MAXIMIZED_BOTH);
-        btnEfetuarLancamento.setIcon(new ImageIcon(util.Util.getImageUrl("moneydollar.png", util.ImageSize.M)));
+//        this.setExtendedState(MAXIMIZED_BOTH);
+        
+        String bemVindo = "Bem vind";
+        switch (UsuLogado.getPesCodigo().getPesSexo()) {
+            case Pessoa.SEXO_MASCULINO:
+                bemVindo += "o";
+                break;
+            case Pessoa.SEXO_FEMININO:
+                bemVindo += "a";
+                break;
+            case Pessoa.SEXO_NAOSABE:
+            case Pessoa.SEXO_NAOESPECIFICADO:
+                bemVindo += "o(a)";
+                break;
+        }
+        lblBemVindo.setText(bemVindo + " " + UsuLogado.getPesCodigo().getPesNome());
+        
+        Timer timer = new Timer(500, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                lblRelogio.setText(util.Util.getFormattedDate());
+            }
+        });
+        timer.setRepeats(true);
+        timer.setCoalesce(true);
+        timer.start();
+        
+        btnEfetuarLancamentoEntrada.setIcon(new ImageIcon(util.Util.getImageUrl("moneyadd.png", util.ImageSize.M)));
+        btnEfetuarLancamentoSaida.setIcon(new ImageIcon(util.Util.getImageUrl("moneydelete.png", util.ImageSize.M)));
         btnFecharCaixa.setIcon(new ImageIcon(util.Util.getImageUrl("accept.png", util.ImageSize.M)));
         btnContatos.setIcon(new ImageIcon(util.Util.getImageUrl("email.png", util.ImageSize.M)));
         btnSair.setIcon(new ImageIcon(util.Util.getImageUrl("doorout.png", util.ImageSize.M)));
@@ -67,10 +100,11 @@ public class MainMenu extends javax.swing.JFrame {
 
         jTabbedMenu = new javax.swing.JTabbedPane();
         pnlPrincipal = new javax.swing.JPanel();
-        btnEfetuarLancamento = new javax.swing.JButton();
+        btnEfetuarLancamentoEntrada = new javax.swing.JButton();
         btnFecharCaixa = new javax.swing.JButton();
         btnContatos = new javax.swing.JButton();
         btnSair = new javax.swing.JButton();
+        btnEfetuarLancamentoSaida = new javax.swing.JButton();
         pnlFluxoDeCaixa = new javax.swing.JPanel();
         btnLancamento = new javax.swing.JButton();
         btnPlanoContas = new javax.swing.JButton();
@@ -94,6 +128,8 @@ public class MainMenu extends javax.swing.JFrame {
         btnPaises = new javax.swing.JButton();
         btnEstados = new javax.swing.JButton();
         btnCidades = new javax.swing.JButton();
+        lblBemVindo = new javax.swing.JLabel();
+        lblRelogio = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -104,19 +140,19 @@ public class MainMenu extends javax.swing.JFrame {
 
         pnlPrincipal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        btnEfetuarLancamento.setBackground(new java.awt.Color(255, 255, 255));
-        btnEfetuarLancamento.setText("Efetuar Lançamento");
-        btnEfetuarLancamento.setBorderPainted(false);
-        btnEfetuarLancamento.setContentAreaFilled(false);
-        btnEfetuarLancamento.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnEfetuarLancamento.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnEfetuarLancamento.setMaximumSize(new java.awt.Dimension(75, 75));
-        btnEfetuarLancamento.setMinimumSize(new java.awt.Dimension(75, 75));
-        btnEfetuarLancamento.setPreferredSize(new java.awt.Dimension(75, 75));
-        btnEfetuarLancamento.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnEfetuarLancamento.addActionListener(new java.awt.event.ActionListener() {
+        btnEfetuarLancamentoEntrada.setBackground(new java.awt.Color(255, 255, 255));
+        btnEfetuarLancamentoEntrada.setText("Registrar Entrada");
+        btnEfetuarLancamentoEntrada.setBorderPainted(false);
+        btnEfetuarLancamentoEntrada.setContentAreaFilled(false);
+        btnEfetuarLancamentoEntrada.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEfetuarLancamentoEntrada.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnEfetuarLancamentoEntrada.setMaximumSize(new java.awt.Dimension(75, 75));
+        btnEfetuarLancamentoEntrada.setMinimumSize(new java.awt.Dimension(75, 75));
+        btnEfetuarLancamentoEntrada.setPreferredSize(new java.awt.Dimension(75, 75));
+        btnEfetuarLancamentoEntrada.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnEfetuarLancamentoEntrada.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEfetuarLancamentoActionPerformed(evt);
+                btnEfetuarLancamentoEntradaActionPerformed(evt);
             }
         });
 
@@ -168,29 +204,48 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
+        btnEfetuarLancamentoSaida.setBackground(new java.awt.Color(255, 255, 255));
+        btnEfetuarLancamentoSaida.setText("Registrar Saída");
+        btnEfetuarLancamentoSaida.setBorderPainted(false);
+        btnEfetuarLancamentoSaida.setContentAreaFilled(false);
+        btnEfetuarLancamentoSaida.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEfetuarLancamentoSaida.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnEfetuarLancamentoSaida.setMaximumSize(new java.awt.Dimension(75, 75));
+        btnEfetuarLancamentoSaida.setMinimumSize(new java.awt.Dimension(75, 75));
+        btnEfetuarLancamentoSaida.setPreferredSize(new java.awt.Dimension(75, 75));
+        btnEfetuarLancamentoSaida.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnEfetuarLancamentoSaida.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEfetuarLancamentoSaidaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlPrincipalLayout = new javax.swing.GroupLayout(pnlPrincipal);
         pnlPrincipal.setLayout(pnlPrincipalLayout);
         pnlPrincipalLayout.setHorizontalGroup(
             pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnEfetuarLancamento, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnEfetuarLancamentoEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnEfetuarLancamentoSaida, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnFecharCaixa, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnContatos, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(302, Short.MAX_VALUE))
+                .addContainerGap(190, Short.MAX_VALUE))
         );
         pnlPrincipalLayout.setVerticalGroup(
             pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnEfetuarLancamentoSaida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnContatos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnEfetuarLancamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEfetuarLancamentoEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnFecharCaixa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -216,7 +271,7 @@ public class MainMenu extends javax.swing.JFrame {
         });
 
         btnPlanoContas.setBackground(new java.awt.Color(255, 255, 255));
-        btnPlanoContas.setText("Plano Contas");
+        btnPlanoContas.setText("Planos de Contas");
         btnPlanoContas.setBorderPainted(false);
         btnPlanoContas.setContentAreaFilled(false);
         btnPlanoContas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -268,14 +323,14 @@ public class MainMenu extends javax.swing.JFrame {
         pnlFluxoDeCaixaLayout.setHorizontalGroup(
             pnlFluxoDeCaixaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlFluxoDeCaixaLayout.createSequentialGroup()
-                .addComponent(btnLancamento, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnLancamento, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnContasCapital, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnFechaCaixa2, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(284, Short.MAX_VALUE))
+                .addContainerGap(248, Short.MAX_VALUE))
         );
         pnlFluxoDeCaixaLayout.setVerticalGroup(
             pnlFluxoDeCaixaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -636,17 +691,32 @@ public class MainMenu extends javax.swing.JFrame {
 
         jTabbedMenu.addTab("Configuração", jPanel2);
 
+        lblBemVindo.setText("lblBemVindo");
+
+        lblRelogio.setText("    ");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jTabbedMenu)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblBemVindo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblRelogio)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblBemVindo)
+                    .addComponent(lblRelogio))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTabbedMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 274, Short.MAX_VALUE))
+                .addGap(0, 243, Short.MAX_VALUE))
         );
 
         pack();
@@ -657,11 +727,12 @@ public class MainMenu extends javax.swing.JFrame {
 
     }//GEN-LAST:event_formWindowOpened
 
-    private void btnEfetuarLancamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEfetuarLancamentoActionPerformed
+    private void btnEfetuarLancamentoEntradaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEfetuarLancamentoEntradaActionPerformed
         FrmLancamento frm = new FrmLancamento();
         frm.loadInsert();
+        frm.setEntrada();
         frm.setVisible(true);
-    }//GEN-LAST:event_btnEfetuarLancamentoActionPerformed
+    }//GEN-LAST:event_btnEfetuarLancamentoEntradaActionPerformed
 
     private void btnFecharCaixaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharCaixaActionPerformed
         // TODO add your handling code here:
@@ -753,7 +824,10 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnConfiguracoesActionPerformed
 
     private void btnLogsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogsActionPerformed
-        // TODO add your handling code here:
+        reflection.ListJFrame list = new reflection.ListJFrame();
+        list.setClass(model.Log.class);
+        list.initListComponents();
+        list.setVisible(true);
     }//GEN-LAST:event_btnLogsActionPerformed
 
     private void btnPaisesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaisesActionPerformed
@@ -776,6 +850,13 @@ public class MainMenu extends javax.swing.JFrame {
         list.initListComponents();
         list.setVisible(true);
     }//GEN-LAST:event_btnCidadesActionPerformed
+
+    private void btnEfetuarLancamentoSaidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEfetuarLancamentoSaidaActionPerformed
+        FrmLancamento frm = new FrmLancamento();
+        frm.loadInsert();
+        frm.setSaida();
+        frm.setVisible(true);
+    }//GEN-LAST:event_btnEfetuarLancamentoSaidaActionPerformed
 
     private void openList(String FncNome, Class<? extends model.ModelTemplate> cls) {
 //        FncNome = (String) ReflectionUtil.getAttibute(cls, "fncNome");
@@ -836,7 +917,8 @@ public class MainMenu extends javax.swing.JFrame {
     private javax.swing.JButton btnContasCapital;
     private javax.swing.JButton btnContatos;
     private javax.swing.JButton btnContatos1;
-    private javax.swing.JButton btnEfetuarLancamento;
+    private javax.swing.JButton btnEfetuarLancamentoEntrada;
+    private javax.swing.JButton btnEfetuarLancamentoSaida;
     private javax.swing.JButton btnEstados;
     private javax.swing.JButton btnFechaCaixa2;
     private javax.swing.JButton btnFecharCaixa;
@@ -854,6 +936,8 @@ public class MainMenu extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTabbedPane jTabbedMenu;
+    private javax.swing.JLabel lblBemVindo;
+    private javax.swing.JLabel lblRelogio;
     private javax.swing.JPanel pnlFluxoDeCaixa;
     private javax.swing.JPanel pnlPrincipal;
     private javax.swing.JPanel pnlVendas;

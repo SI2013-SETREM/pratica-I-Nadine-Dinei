@@ -4,6 +4,7 @@ package model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.DB;
@@ -12,7 +13,7 @@ import util.field.FilterFieldDynamicCombo;
 import util.field.FilterFieldText;
 
 /**
- *
+ *  Model de Lançamentos
  * @author Dinei A. Rockenbach
  * @author Nadine Anderle
  */
@@ -37,6 +38,8 @@ public class Lancamento extends ModelTemplate {
     
     private String flag = DB.FLAG_INSERT;
     
+    public String errorDsc;
+    
     /**
      * @see model.ModelTemplate#sngTitle
      */
@@ -48,7 +51,7 @@ public class Lancamento extends ModelTemplate {
     /**
      * @see model.ModelTemplate#iconTitle
      */
-    public static String iconTitle = "moneydollar.png";
+    public static String iconTitle = "money.png";
     /**
      * @see model.ModelTemplate#idColumn
      */
@@ -77,6 +80,10 @@ public class Lancamento extends ModelTemplate {
         new FilterFieldDynamicCombo("PlnCodigo", "Plano de Contas", 150, PlanoContas.class, "PlnNome", null, null, ""),
         new FilterFieldText("LanDescricao", "Descrição", 150),
     };
+    /**
+     * @see model.ModelTemplate#allowDelete
+     */
+    public static boolean allowDelete = false;
     
     public Lancamento() {
     }
@@ -184,23 +191,148 @@ public class Lancamento extends ModelTemplate {
         this.flag = flag;
     }
     
-    
-    public boolean load() {
+    public boolean load(int CntCodigo, int LanCodigo) {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(Lancamento.class)
                 + " WHERE CntCodigo = ? AND LanCodigo = ?";
             ResultSet rs = DB.executeQuery(sql, new Object[] {CntCodigo, LanCodigo});
             if (rs.next()) {
-                
-                //@TODO - FILL
-                
-                flag = DB.FLAG_UPDATE;
+                this.fill(rs, true);
                 return true;
             }
         } catch (SQLException ex) {
             Logger.getLogger(Sequencial.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+    
+    private Lancamento fill(ResultSet rs, boolean fillChild) throws SQLException {
+        this.setLanCodigo(rs.getInt("LanCodigo"));
+        if (fillChild) {
+            //@TODO
+//            this.setCliCodigo(rs.getInt("CliCodigo"));
+//            this.setVenCodigo(rs.getInt("VenCodigo"));
+            
+            PlanoContas plnContas = new PlanoContas();
+            if (plnContas.load(rs.getInt("PlnCodigo")))
+                this.setPlnCodigo(plnContas);
+        }
+        this.setLanTipo(rs.getInt("LanTipo"));
+        this.setLanDataHora(rs.getTimestamp("LanDataHora"));
+        this.setLanValorEntrada(rs.getDouble("LanValorEntrada"));
+        this.setLanValorSaida(rs.getDouble("LanValorSaida"));
+        this.setLanDescricao(rs.getString("LanDescricao"));
+        this.setLanDocumento(rs.getString("LanDocumento"));
+        this.setLanEfetivado(rs.getBoolean("LanEfetivado"));
+        this.setFlag(DB.FLAG_UPDATE);
+        return this;
+    }
+    
+    public boolean save() {
+        if (this.validate()) {
+            switch(this.getFlag()) {
+                case DB.FLAG_INSERT:
+                    return this.insert();
+                case DB.FLAG_UPDATE:
+                    return this.update();
+            }
+        }
+        return false;
+    }
+    
+    public boolean validate() {
+        if ((this.getLanTipo() == Lancamento.TIPO_ENTRADA && this.getLanValorEntrada() == 0)
+            || (this.getLanTipo() == Lancamento.TIPO_SAIDA && this.getLanValorSaida()== 0)) {
+            this.errorDsc = "O valor da entrada/saída é obrigatório";
+            return false;
+        }
+//        if (this.get)
+        return true;
+    }
+    
+    public boolean insert() {
+        this.setLanCodigo(Sequencial.getNextSequencial(Lancamento.class));
+        try {
+            String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(Lancamento.class);
+            sql += "(CntCodigo, LanCodigo, CliCodigo, VenCodigo, PlnCodigo, LanTipo, LanDataHora,";
+            sql += " LanValorEntrada, LanValorSaida, LanDescricao, LanDocumento, LanEfetivado)";
+            sql += " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            Object[] parms = this.getSQLParms();
+            DB.executeUpdate(sql, parms);
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(Lancamento.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    
+    public boolean update() {
+        try {
+            String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(Lancamento.class) + " SET";
+            sql += " CliCodigo = ?, VenCodigo = ?, PlnCodigo = ?, LanTipo = ?, LanDataHora = ?,";
+            sql += " LanValorEntrada = ?, LanValorSaida = ?, LanDescricao = ?, LanDocumento = ?, LanEfetivado = ?";
+            sql += " WHERE CntCodigo = ? AND LanCodigo = ?";
+            Object[] parms = this.getSQLParms();
+            DB.executeUpdate(sql, parms);
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(Lancamento.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    
+    private Object[] getSQLParms() {
+        Object[] parms = new Object[12];
+        int i = 0;
+        if (this.flag.equals(DB.FLAG_INSERT)) {
+            parms[i++] = this.getCntCodigo().getCntCodigo();
+            parms[i++] = this.getLanCodigo();
+        }
+        if (this.getCliCodigo() != null) 
+            parms[i] = this.getCliCodigo().getCliCodigo();
+//        else
+//            parms[i] = "NULL";
+        i++;
+        if (this.getVenCodigo() != null) 
+            parms[i] = this.getVenCodigo();//.getVenCodigo;
+//        else
+//            parms[i] = "NULL";
+        i++;
+        if (this.getPlnCodigo() != null) 
+            parms[i] = this.getPlnCodigo().getPlnCodigo();
+//        else
+//            parms[i] = "NULL";
+        i++;
+        parms[i++] = this.getLanTipo();
+        parms[i++] = this.getLanDataHora();
+        parms[i++] = this.getLanValorEntrada();
+        parms[i++] = this.getLanValorSaida();
+        parms[i++] = this.getLanDescricao();
+        parms[i++] = this.getLanDocumento();
+        parms[i++] = this.isLanEfetivado();
+        if (!this.flag.equals(DB.FLAG_INSERT)) {
+            parms[i++] = this.getCntCodigo().getCntCodigo();
+            parms[i++] = this.getLanCodigo();
+        }
+        return parms;
+    }
+    
+    public static ArrayList<Lancamento> getLancamentos(java.sql.Timestamp from, java.sql.Timestamp to) {
+        ArrayList<Lancamento> list = new ArrayList<>();
+        try {
+            String sql = "SELECT p.*, l.* FROM " + reflection.ReflectionUtil.getDBTableName(Lancamento.class) + " l";
+            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(PlanoContas.class) + " p ON (l.PlnCodigo = p.PlnCodigo)";
+            sql += " WHERE LanDataHora BETWEEN ? AND ?";
+            ResultSet rs = DB.executeQuery(sql, new java.sql.Timestamp[]{from, to});
+            Lancamento lancamento = new Lancamento();
+            lancamento.fill(rs, false);
+            lancamento.setPlnCodigo(new PlanoContas().fill(rs, false));
+            
+            list.add(lancamento);
+        } catch (SQLException ex) {
+            Logger.getLogger(Lancamento.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
     }
     
 }

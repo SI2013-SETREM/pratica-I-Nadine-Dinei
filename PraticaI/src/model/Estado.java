@@ -42,9 +42,9 @@ public class Estado extends ModelTemplate {
      * @see model.ModelTemplate#listTableFields
      */
     public static Object[][] listTableFields = {
-        {"País", "Pais.PaiNome"},
-        {"Sigla", "EstSigla"},
-        {"Nome", "EstNome"}
+        {"País", "Pais.PaiNome", 100},
+        {"Sigla", "EstSigla", 30},
+        {"Nome", "EstNome", 200}
     };
     /**
      * @see model.ModelTemplate#listFilterFields

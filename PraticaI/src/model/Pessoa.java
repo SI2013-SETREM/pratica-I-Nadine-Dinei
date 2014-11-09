@@ -15,7 +15,12 @@ import util.field.FilterFieldText;
  * @author Nadine
  */
 public class Pessoa extends ModelTemplate {
-
+    
+    public static final int SEXO_NAOSABE = 0;
+    public static final int SEXO_MASCULINO = 1;
+    public static final int SEXO_FEMININO = 2;
+    public static final int SEXO_NAOESPECIFICADO = 9;
+    
     private int PesCodigo;
     private String PesNome;
     private PessoaEmail[] PesEmlCodigo;

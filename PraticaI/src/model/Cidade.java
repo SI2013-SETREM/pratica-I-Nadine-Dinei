@@ -27,15 +27,11 @@ public class Cidade extends ModelTemplate {
     /** 
     * @see model.ModelTemplate#prlTitle
      */
-    public static String prlTitle = "Cidade";
+    public static String prlTitle = "Cidades";
     /**
      * @see model.ModelTemplate#iconTitle
      */
     public static String iconTitle = "flag.png";
-    /**
-     * @see model.ModelTemplate#softDelete
-     */
-    public static String softDelete = "";
     /**
      * @see model.ModelTemplate#idColumn
      */
@@ -47,11 +43,13 @@ public class Cidade extends ModelTemplate {
     public static String[][] listTableFields = {
         {"País", "Pais.PaiNome"},
         {"Estado", "Estado.EstNome"},
-        {"Nome", "CidNome"},};
+        {"Nome", "CidNome"},
+    };
+    
     public static FilterField[] listFilterFields = {
-        new FilterFieldDynamicCombo("Estado.EstSigla", "Estado:", 200, Estado.class, "EstNome", null, null, ""),
-        new FilterFieldDynamicCombo("Pais.PaiCodigo", "País:", 200, Pais.class, "PaiNome", null, null, ""),
-        new FilterFieldText("CidNome", "Cidade:", 200)
+        new FilterFieldDynamicCombo("Estado.EstSigla", "Estado", 200, Estado.class, "EstNome", null, null, ""),
+        new FilterFieldDynamicCombo("Pais.PaiCodigo", "País", 200, Pais.class, "PaiNome", null, null, ""),
+        new FilterFieldText("CidNome", "Cidade", 200)
     };
 
     public Cidade() {

@@ -143,7 +143,6 @@ public class Login extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Usuário ou senha inválidos!", "Acesso restrito", JOptionPane.WARNING_MESSAGE);
         } else {
             MainMenu mm = new MainMenu();
-            mm.usuario = usr;
             mm.setVisible(true);
             this.dispose();
         }

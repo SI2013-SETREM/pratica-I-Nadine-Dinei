@@ -21,6 +21,8 @@ public class Usuario extends ModelTemplate {
     public static final int IDX_ALTERAR = 2;
     public static final int IDX_EXCLUIR = 3;
     
+    public static Usuario UsuLogado;
+    
     private int UsuCodigo;
     private String UsuLogin;
     private String UsuHash;
@@ -172,7 +174,8 @@ public class Usuario extends ModelTemplate {
         } catch (SQLException ex) {
             Logger.getLogger(Usuario.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return usuario;
+        UsuLogado = usuario;
+        return UsuLogado;
     }
     
     private Usuario fill(ResultSet rs) throws SQLException {

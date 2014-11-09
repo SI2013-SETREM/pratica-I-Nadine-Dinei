@@ -97,7 +97,13 @@ public abstract class DB {
                 r = rs.getTimestamp(colLabel);
             else if (colType == Boolean.class || colType == boolean.class)
                 r = rs.getBoolean(colLabel);
-        } catch (SQLException ex) {
+            else if (model.ModelTemplate.class.isAssignableFrom(colType)) {
+//                model.ModelTemplate mdl = (model.ModelTemplate) colType.newInstance();
+//                String[] idColumn = (String[]) reflection.ReflectionUtil.getAttibute(cls, "idColumn");
+//                r = rs.getInt(colLabel);
+                r = null;
+            }
+        } catch (Exception ex) {
             // Comentar esta linha:
             System.out.println("ERRO tentando recuperar a coluna " + colLabel + " do tipo " + colType.getName());
             Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
@@ -151,6 +157,8 @@ public abstract class DB {
                 st.setTimestamp(count, (java.sql.Timestamp) o);
             else if (o instanceof Boolean)
                 st.setBoolean(count, (boolean) o);
+            else if (o == null)
+                st.setNull(count, java.sql.Types.INTEGER);
         }
     }
     

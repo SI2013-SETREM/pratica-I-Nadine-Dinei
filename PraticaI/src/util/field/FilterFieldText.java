@@ -22,20 +22,29 @@ public class FilterFieldText extends FilterField {
     public FilterFieldText(String field, String label, int width) {
         super(field, label, width);
     }
+    public FilterFieldText(String field, String label, int width, int maxChars) {
+        this(field, label, width);
+        util.Util.setLimitChars(this.getJComponent(), maxChars);
+    }
     public FilterFieldText(String field, String label, int width, String operator) {
-        super(label, field, width);
+        this(label, field, width);
+        this.setOperator(operator);
+    }
+    public FilterFieldText(String field, String label, int width, int maxChars, String operator) {
+        this(field, label, width, maxChars);
         this.setOperator(operator);
     }
     
     public String getOperator() {
         return operator;
     }
-    public void setOperator(String operator) {
+    public FilterFieldText setOperator(String operator) {
         this.operator = operator;
+        return this;
     }
     
     @Override
-    public JComponent getJComponent() {
+    public JTextField getJComponent() {
         return this.jComponent;
     }
     

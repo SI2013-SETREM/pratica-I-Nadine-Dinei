@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.DB;
@@ -14,7 +15,7 @@ import util.field.FilterFieldText;
  * @author Nadine Anderle
  */
 public class Pais extends ModelTemplate {
-
+    
     private int PaiCodigo;
     private String PaiAlfa2;
     private String PaiAlfa3;
@@ -49,8 +50,9 @@ public class Pais extends ModelTemplate {
      * @see model.ModelTemplate#listTableFields
      */
     public static Object[][] listTableFields = {
-        {"Nome", "PaiNome"},
-        {"Sigla", "PaiAlfa2",50},};
+        {"Nome", "PaiNome", 300},
+        {"Sigla", "PaiAlfa2",50},
+    };
 
 //    public static FilterField[] listFilterFields = {
 //        {"Nome", "PaiNome", 200},
@@ -60,8 +62,9 @@ public class Pais extends ModelTemplate {
      * @see model.ModelTemplate#listFilterFields
      */
     public static FilterField[] listFilterFields = {
-        new FilterFieldText("PaiNome", "Nome", 200),
-        new FilterFieldText("PaiAlfa2", "Sigla", 60),};
+        new FilterFieldText("PaiNome", "Nome", 200, 200),
+        new FilterFieldText("PaiAlfa2", "Sigla", 60, 2),
+    };
 
     public Pais() {
     }
@@ -72,7 +75,6 @@ public class Pais extends ModelTemplate {
     public int getPaiCodigo() {
         return PaiCodigo;
     }
-
     public void setPaiCodigo(int PaiCodigo) {
         this.PaiCodigo = PaiCodigo;
     }
@@ -80,7 +82,6 @@ public class Pais extends ModelTemplate {
     public String getPaiAlfa2() {
         return PaiAlfa2;
     }
-
     public void setPaiAlfa2(String PaiAlfa2) {
         this.PaiAlfa2 = PaiAlfa2;
     }
@@ -88,7 +89,6 @@ public class Pais extends ModelTemplate {
     public String getPaiAlfa3() {
         return PaiAlfa3;
     }
-
     public void setPaiAlfa3(String PaiAlfa3) {
         this.PaiAlfa3 = PaiAlfa3;
     }
@@ -96,7 +96,6 @@ public class Pais extends ModelTemplate {
     public int getPaiBacenIbge() {
         return PaiBacenIbge;
     }
-
     public void setPaiBacenIbge(int PaiBacenIbge) {
         this.PaiBacenIbge = PaiBacenIbge;
     }
@@ -104,7 +103,6 @@ public class Pais extends ModelTemplate {
     public int getPaiISO3166() {
         return PaiISO3166;
     }
-
     public void setPaiISO3166(int PaiISO3166) {
         this.PaiISO3166 = PaiISO3166;
     }
@@ -112,9 +110,15 @@ public class Pais extends ModelTemplate {
     public String getPaiNome() {
         return PaiNome;
     }
-
     public void setPaiNome(String PaiNome) {
         this.PaiNome = PaiNome;
+    }
+
+    public Timestamp getPaiDtaDelecao() {
+        return PaiDtaDelecao;
+    }
+    public void setPaiDtaDelecao(Timestamp PaiDtaDelecao) {
+        this.PaiDtaDelecao = PaiDtaDelecao;
     }
 
     public String getFlag() {
@@ -127,7 +131,7 @@ public class Pais extends ModelTemplate {
 
     public boolean load(int PaiCodigo) {
         try {
-            String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
+            String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(Pais.class);
             sql += " WHERE PaiCodigo = ?";
             ResultSet rs = DB.executeQuery(sql, new Object[]{PaiCodigo});
             if (rs.next()) {
@@ -149,16 +153,16 @@ public class Pais extends ModelTemplate {
     public boolean save() {
         switch (flag) {
             case DB.FLAG_INSERT:
-                insert();
+                return insert();
             case DB.FLAG_UPDATE:
-                update();
+                return update();
         }
         return false;
     }
 
     public boolean insert() {
-        this.setPaiCodigo(Sequencial.getNextSequencial(this.getClass()));
-        String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
+        this.setPaiCodigo(Sequencial.getNextSequencial(Pais.class));
+        String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(Pais.class);
         sql += " (PaiAlfa2,PaiAlfa3,PaiBacenIbge,PaiISO3166,PaiNome,PaiCodigo)";
         sql += " VALUES (?,?,?,?,?,?)";
         try {
@@ -172,7 +176,7 @@ public class Pais extends ModelTemplate {
     }
     
     public boolean update() {
-        String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
+        String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(Pais.class);
         sql += " SET PaiAlfa2 = ?,";
         sql += " PaiAlfa3 = ?,";
         sql += " PaiBacenIbge = ?,";

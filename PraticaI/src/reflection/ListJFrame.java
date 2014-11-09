@@ -248,18 +248,18 @@ public class ListJFrame extends javax.swing.JFrame {
                 .addComponent(scrollPane, 0, width, Short.MAX_VALUE)
                     ;
             
-            
-            if (allowInsert) {
-                ParallelGroup pgAddButton = layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        ;
-                pgContainer.addGroup(pgAddButton);
-            }
+//            ParallelGroup pgAddButton = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
+//            
+//            if (allowInsert) {
+//                pgAddButton.addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE);
+//                pgContainer.addGroup(pgAddButton);
+//            }
             // Filtros
             if (listFilterFields.length > 0) {
-                ParallelGroup pgFilterButton = layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                ParallelGroup pgFilterButton = layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(btnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         ;
+                pgContainer.addGroup(pgFilterButton);
                 
                 SequentialGroup sgFilters = layout.createSequentialGroup();
                 for (int i = 0; i < listFilterFields.length; i++) {
@@ -275,8 +275,17 @@ public class ListJFrame extends javax.swing.JFrame {
                 }
                 
                 pgMainTable.addGroup(sgFilters);
-                pgFilterButton.addGroup(pgMainTable);
-                pgContainer.addGroup(pgFilterButton);
+//                pgFilterButton.addGroup(pgMainTable);
+//                pgContainer.addGroup(pgFilterButton);
+//            } else {
+//                pgContainer.addGroup(pgMainTable);
+            }
+            if (allowInsert) {
+                ParallelGroup pgAddButton = layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        ;
+                pgAddButton.addGroup(pgMainTable);
+                pgContainer.addGroup(pgAddButton);
             } else {
                 pgContainer.addGroup(pgMainTable);
             }
@@ -733,9 +742,10 @@ public class ListJFrame extends javax.swing.JFrame {
             for (int i = 0; i < listTableFields.length; i++) {
                 Object[] field = listTableFields[i];
                 if (field.length > 2) {
-                    tcm.getColumn(i + idColumnHidden.size()).setResizable(false);
-                    tcm.getColumn(i + idColumnHidden.size()).setMinWidth((int) field[2]);
-                    tcm.getColumn(i + idColumnHidden.size()).setMinWidth((int) field[2]);
+//                    tcm.getColumn(i + idColumnHidden.size()).setResizable(false);
+//                    tcm.getColumn(i + idColumnHidden.size()).setMinWidth((int) field[2]);
+                    tcm.getColumn(i + idColumnHidden.size()).setPreferredWidth((int) field[2]);
+//                    tcm.getColumn(i + idColumnHidden.size()).setMinWidth((int) field[2]);
                 }
             }
             

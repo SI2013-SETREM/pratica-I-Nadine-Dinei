@@ -88,11 +88,6 @@ public abstract class ModelTemplate {
     public static boolean allowDelete = true;
     
     // Implementar se necessário
-//    /**
-//     *  Campo que deve ser ordenado
-//     */
-//    public static String orderBy = "";
-//    
 //    public static String getListSQL() {
 //        return "SELECT #FIELDS# FROM #MAINTABLE# #JOINS# WHERE 1=1 #CONDITIONS#";
 //    }
@@ -113,6 +108,7 @@ public abstract class ModelTemplate {
                 for (int i = 1; i <= rsmd.getColumnCount(); i++) {
                     String attr = rsmd.getColumnName(i);
                     Class<?> clsType = ReflectionUtil.getAttributeType(cls, attr);
+//                    System.out.println(cls + " . " + attr + " - " + clsType);
                     Object val = DB.getColumnByType(rs, attr, clsType);
                     ReflectionUtil.getMethod(obj, "set" + attr, new Object[]{val});
                 }
