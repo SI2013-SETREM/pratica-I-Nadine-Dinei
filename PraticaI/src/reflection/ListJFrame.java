@@ -8,8 +8,6 @@ import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
@@ -23,6 +21,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import model.ModelTemplate;
+import model.Log;
 import util.DB;
 import util.ImageSize;
 import util.Util;
@@ -69,6 +68,7 @@ public class ListJFrame extends javax.swing.JFrame {
     private String[] idColumn;
     private String sngTitle;
     private String prlTitle;
+    private String fncNome;
     private String softDelete;
     ArrayList<String> idColumnListed = new ArrayList<>();
     ArrayList<String> idColumnHidden = new ArrayList<>();
@@ -133,6 +133,9 @@ public class ListJFrame extends javax.swing.JFrame {
         // Título plural
         if (ReflectionUtil.isAttributeExists(cls, "prlTitle")) 
             prlTitle = (String) ReflectionUtil.getAttibute(cls, "prlTitle");
+        // Nome da funcionalidade
+        if (ReflectionUtil.isAttributeExists(cls, "fncNome")) 
+            fncNome = (String) ReflectionUtil.getAttibute(cls, "fncNome");
         // A tabela usa Soft Delete? Se sim, qual é o campo?
         if (ReflectionUtil.isAttributeExists(cls, "softDelete")) 
             softDelete = (String) ReflectionUtil.getAttibute(cls, "softDelete");
@@ -345,7 +348,7 @@ public class ListJFrame extends javax.swing.JFrame {
             this.setLocationRelativeTo(null);
             
         } catch (Exception ex) {
-            Logger.getLogger(ListJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Log.log(fncNome, Log.INT_OUTRA, "Falha na inicialização da listagem de '" + prlTitle + "' [" + ex.getMessage() + "]", Log.NV_ERRO);
         }
         
     }
@@ -749,8 +752,10 @@ public class ListJFrame extends javax.swing.JFrame {
                 }
             }
             
-        } catch (Exception ex) {
-            Logger.getLogger(ListJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | NumberFormatException ex) {
+            Log.log(fncNome, Log.INT_OUTRA, "Falha na busca dos dados da listagem de '" + prlTitle + "' [" + ex.getClass().getSimpleName() + "] - [" + ex.getMessage() + "]", Log.NV_ERRO);
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_OUTRA, "Falha na busca dos dados da listagem de '" + prlTitle + "' [" + ex.getClass().getSimpleName() + "] - [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         
     }
@@ -835,8 +840,8 @@ public class ListJFrame extends javax.swing.JFrame {
         for (Object colcol : idCols) 
             o += String.valueOf(colcol) + ", ";
         o += "]";
-        System.out.println("Linha " + row + " excluída: " + o);
-        System.out.println("SQL: " + sql);
+//        System.out.println("Linha " + row + " excluída: " + o);
+//        System.out.println("SQL: " + sql);
         
         //@TODO talvez seria melhor fazer tudo orientado a objetos, e instanciar o objeto e fazer um metodo delete em cada model...
 //        if (ReflectionUtil.isMethodExists(cls, "onDelete")) {
@@ -844,7 +849,9 @@ public class ListJFrame extends javax.swing.JFrame {
 //        }
         try {
             DB.executeUpdate(sql, idCols);
+            Log.log(fncNome, Log.INT_EXCLUSAO, "Registro de '" + prlTitle + "' excluído com sucesso", Log.NV_INFO);
         } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_EXCLUSAO, "Falha ao excluir registro [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
             JOptionPane.showMessageDialog(this, "Falha ao excluir o registro!\r\n" + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE, iconDelete);
         }
 //        ReflectionUtil.isMethodExists(cls, "afterDelete");
@@ -912,8 +919,14 @@ public class ListJFrame extends javax.swing.JFrame {
                 }
                 form.setVisible(true);
             }
-        } catch (Exception ex) {
-            Logger.getLogger(ListJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            char LogInteracao;
+            if (flag == null ? DB.FLAG_INSERT == null : flag.equals(DB.FLAG_INSERT))
+                LogInteracao = Log.INT_INSERCAO;
+            else
+                LogInteracao = Log.INT_ALTERACAO;
+            Log.log(fncNome, LogInteracao, "Falha ao abrir o form '" + formName + "' [" + ex.getMessage() + "]", Log.NV_ERRO);
+            JOptionPane.showMessageDialog(this, "Falha ao abrir o formulário.\r\n" + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE, iconDelete);
         }
     }
     

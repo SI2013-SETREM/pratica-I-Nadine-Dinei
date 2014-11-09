@@ -23,6 +23,10 @@ public class Cliente extends ModelTemplate{
      */
     public static String prlTitle = "Clientes";
     /**
+     * @see model.ModelTemplate#fncNome
+     */
+    public static String fncNome = "CLIENTES";
+    /**
      * @see model.ModelTemplate#iconTitle
      */
     public static String iconTitle = "clientes.png";

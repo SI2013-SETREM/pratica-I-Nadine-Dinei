@@ -25,6 +25,10 @@ public class ContaCapital extends ModelTemplate {
      */
     public static String prlTitle = "Contas de Capital";
     /**
+     * @see model.ModelTemplate#fncNome
+     */
+    public static String fncNome = "CONTAS DE CAPITAL";
+    /**
      * @see model.ModelTemplate#iconTitle
      */
     public static String iconTitle = "safe.png";

@@ -7,8 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import model.Log;
 
 /**
  *  Classe que faz o acesso ao banco de dados
@@ -40,20 +40,9 @@ public abstract class DB {
             
             try {
                 con = DriverManager.getConnection(getDsn(), Config.DB_USER, Config.DB_PASS);
-                Util.debug(DB.class.getName() + " - " + getDsn());
             } catch (SQLException ex) {
-                System.err.println("ERRO NO DSN: " + getDsn() + " - " + ex.getErrorCode() + " - " + ex.getMessage());
+                JOptionPane.showMessageDialog(null, "Falha na conexão ao banco de dados: " + getDsn() + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", "Falha na conexão ao banco", JOptionPane.ERROR_MESSAGE);
             }
-            
-//            try{
-//                PreparedStatement pst = con.prepareStatement("SELECT * FROM marca");
-//                ResultSet rs = pst.executeQuery();
-//                while (rs.next()) {
-//                    System.out.println(rs.getInt("codigo") + "\t" + rs.getString("descricao"));
-//                }
-//            } catch (SQLException ex) {
-//                System.err.println(ex.getErrorCode() + " - " + ex.getMessage());
-//            }
         }
         return con;
     }
@@ -97,16 +86,17 @@ public abstract class DB {
                 r = rs.getTimestamp(colLabel);
             else if (colType == Boolean.class || colType == boolean.class)
                 r = rs.getBoolean(colLabel);
+            else if (colType == Character.class || colType == char.class)
+                r = rs.getString(colLabel);
             else if (model.ModelTemplate.class.isAssignableFrom(colType)) {
 //                model.ModelTemplate mdl = (model.ModelTemplate) colType.newInstance();
 //                String[] idColumn = (String[]) reflection.ReflectionUtil.getAttibute(cls, "idColumn");
 //                r = rs.getInt(colLabel);
                 r = null;
             }
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             // Comentar esta linha:
-            System.out.println("ERRO tentando recuperar a coluna " + colLabel + " do tipo " + colType.getName());
-            Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
+            Log.log("CONFIGURACOES", Log.INT_OUTRA, "Erro tentando recuperar a coluna " + colLabel + " do tipo " + colType.getName() + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
             // Se der erro deve retornar null
         }
         return r;
@@ -127,6 +117,10 @@ public abstract class DB {
             r = java.text.DateFormat.getTimeInstance(Config.FORMAT_TIME).format((java.sql.Time) data);
         else if (data instanceof java.sql.Timestamp)
             r = java.text.DateFormat.getDateTimeInstance(Config.FORMAT_DATE, Config.FORMAT_TIME).format((java.sql.Timestamp) data);
+        else if (data instanceof Boolean)
+            r = String.valueOf((boolean) data);
+        else if (data instanceof Character)
+            r = String.valueOf((char) data);
         return r;
     }
     
@@ -157,6 +151,8 @@ public abstract class DB {
                 st.setTimestamp(count, (java.sql.Timestamp) o);
             else if (o instanceof Boolean)
                 st.setBoolean(count, (boolean) o);
+            else if (o instanceof Character)
+                st.setString(count, String.valueOf((char) o));
             else if (o == null)
                 st.setNull(count, java.sql.Types.INTEGER);
         }

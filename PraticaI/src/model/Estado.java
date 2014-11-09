@@ -31,6 +31,10 @@ public class Estado extends ModelTemplate {
      */
     public static String prlTitle = "Estados";
     /**
+     * @see model.ModelTemplate#fncNome
+     */
+    public static String fncNome = "ESTADOS";
+    /**
      * @see model.ModelTemplate#iconTitle
      */
     public static String iconTitle = "flagorange.png";

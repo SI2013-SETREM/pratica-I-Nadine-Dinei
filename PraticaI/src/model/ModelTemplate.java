@@ -26,6 +26,11 @@ public abstract class ModelTemplate {
     public static String prlTitle;
     
     /**
+     *  Nome da funcionalidade que faz a validação de acesso da entidade
+     */
+    public static String fncNome;
+    
+    /**
      *  Ícone que deve ir no título da janela
      */
     public static String iconTitle;

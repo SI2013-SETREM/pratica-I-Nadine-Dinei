@@ -49,6 +49,10 @@ public class Lancamento extends ModelTemplate {
      */
     public static String prlTitle = "Lançamentos";
     /**
+     * @see model.ModelTemplate#fncNome
+     */
+    public static String fncNome = "LANCAMENTOS";
+    /**
      * @see model.ModelTemplate#iconTitle
      */
     public static String iconTitle = "money.png";

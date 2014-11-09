@@ -13,6 +13,11 @@ public class FechamentoCaixa extends ModelTemplate {
     private int UsuCodigo;
     private Date FchDataHora;
     private double FchSaldo;
+    
+    /**
+     * @see model.ModelTemplate#fncNome
+     */
+    public static String fncNome = "FECHAMENTOS DE PERIODO";
 
     public FechamentoCaixa() {
 

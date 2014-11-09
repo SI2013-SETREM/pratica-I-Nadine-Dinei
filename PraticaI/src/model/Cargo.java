@@ -26,6 +26,10 @@ public class Cargo extends ModelTemplate {
      */
     public static String prlTitle = "Cargos";
     /**
+     * @see model.ModelTemplate#fncNome
+     */
+    public static String fncNome = "CARGOS DE FUNCIONARIOS";
+    /**
      * @see model.ModelTemplate#iconTitle
      */
     public static String iconTitle = "briefcase.png";

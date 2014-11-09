@@ -1,9 +1,8 @@
 package model;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.DB;
 import util.field.FilterField;
 import util.field.FilterFieldText;
@@ -35,6 +34,10 @@ public class Pais extends ModelTemplate {
      */
     public static String prlTitle = "Países";
     /**
+     * @see model.ModelTemplate#fncNome
+     */
+    public static String fncNome = "PAISES";
+    /**
      * @see model.ModelTemplate#iconTitle
      */
     public static String iconTitle = "locate.png";
@@ -53,11 +56,6 @@ public class Pais extends ModelTemplate {
         {"Nome", "PaiNome", 300},
         {"Sigla", "PaiAlfa2",50},
     };
-
-//    public static FilterField[] listFilterFields = {
-//        {"Nome", "PaiNome", 200},
-//        {"Sigla", "PaiAlfa2", 60}
-//    };
     /**
      * @see model.ModelTemplate#listFilterFields
      */
@@ -144,8 +142,8 @@ public class Pais extends ModelTemplate {
                 flag = DB.FLAG_UPDATE;
                 return true;
             }
-        } catch (Exception ex) {
-            Logger.getLogger(Pais.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar o país [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
     }
@@ -168,9 +166,10 @@ public class Pais extends ModelTemplate {
         try {
             DB.executeUpdate(sql, new Object[]{PaiAlfa2, PaiAlfa3, PaiBacenIbge, PaiISO3166, PaiNome, PaiCodigo});
             flag = DB.FLAG_UPDATE;
+            Log.log(fncNome, Log.INT_INSERCAO, "Inseriu o país " + this.getPaiCodigo()+ " - '" + this.getPaiNome()+ "'", Log.NV_INFO);
             return true;
-        } catch (Exception ex) {
-            Logger.getLogger(Sequencial.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_INSERCAO, "Falha ao inserir o país [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
     }
@@ -185,9 +184,10 @@ public class Pais extends ModelTemplate {
         sql += " WHERE PaiCodigo = ?";
         try {
             DB.executeUpdate(sql, new Object[]{PaiAlfa2, PaiAlfa3, PaiBacenIbge, PaiISO3166, PaiNome, PaiCodigo});
+            Log.log(fncNome, Log.INT_ALTERACAO, "Alterou o país " + this.getPaiCodigo()+ " - '" + this.getPaiNome() + "'", Log.NV_INFO);
             return true;
-        } catch (Exception ex) {
-            Logger.getLogger(Sequencial.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_ALTERACAO, "Falha ao alterar o país [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
     }

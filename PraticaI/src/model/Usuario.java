@@ -4,8 +4,6 @@ package model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.DB;
 import util.Encryption;
 import util.field.FilterField;
@@ -43,6 +41,10 @@ public class Usuario extends ModelTemplate {
      * @see model.ModelTemplate#prlTitle
      */
     public static String prlTitle = "Usuários";
+    /**
+     * @see model.ModelTemplate#fncNome
+     */
+    public static String fncNome = "USUARIOS";
     /**
      * @see model.ModelTemplate#iconTitle
      */
@@ -152,13 +154,12 @@ public class Usuario extends ModelTemplate {
                 return true;
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Usuario.class.getName()).log(Level.SEVERE, null, ex);
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar o usuário [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
     }
     
     public static Usuario login(String UsuLogin, String UsuSenha) {
-        Usuario usuario = null;
         try {
             String sql = "SELECT * FROM usuario"
                     + " WHERE UsuAtivo"
@@ -168,13 +169,13 @@ public class Usuario extends ModelTemplate {
             ResultSet rs = DB.executeQuery(sql, new String[]{UsuLogin});
             while (rs.next()) {
                 if (Encryption.validate(UsuSenha, rs.getString("UsuHash"), rs.getString("UsuSalt"), rs.getInt("UsuIterations"))) {
-                    usuario = new Usuario().fill(rs);
+                    UsuLogado = new Usuario().fill(rs);
+                    Log.log(fncNome, Log.INT_OUTRA, "Usuário logado [" + UsuLogado.getUsuCodigo() + " - " + UsuLogado.getUsuLogin() + "]", Log.NV_INFO);
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Usuario.class.getName()).log(Level.SEVERE, null, ex);
+            Log.log(fncNome, Log.INT_OUTRA, "Falha no login [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
-        UsuLogado = usuario;
         return UsuLogado;
     }
     
@@ -223,8 +224,8 @@ public class Usuario extends ModelTemplate {
                     acessos[IDX_EXCLUIR]    = rs.getInt("NivAceFncExcluir") == 1;
                 }
             }
-        } catch (Exception ex) {
-            Logger.getLogger(Usuario.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao verificar os acessos do usuário [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return acessos;
     }

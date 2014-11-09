@@ -29,6 +29,10 @@ public class Cidade extends ModelTemplate {
      */
     public static String prlTitle = "Cidades";
     /**
+     * @see model.ModelTemplate#fncNome
+     */
+    public static String fncNome = "CIDADES";
+    /**
      * @see model.ModelTemplate#iconTitle
      */
     public static String iconTitle = "flag.png";

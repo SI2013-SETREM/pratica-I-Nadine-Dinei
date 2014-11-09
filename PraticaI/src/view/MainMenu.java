@@ -7,9 +7,16 @@ import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.Locale;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import model.Cidade;
+import model.Estado;
+import model.Log;
+import model.NivelAcesso;
+import model.Pais;
 import model.Pessoa;
 import model.Usuario;
+import model.Venda;
 import reflection.ListJFrame;
 import util.ImageSize;
 import util.Util;
@@ -70,23 +77,21 @@ public class MainMenu extends javax.swing.JFrame {
         btnPlanoContas.setIcon(new ImageIcon(util.Util.getImageUrl("category.png", util.ImageSize.M)));
         btnContasCapital.setIcon(new ImageIcon(util.Util.getImageUrl("safe.png", util.ImageSize.M)));
         btnFechaCaixa2.setIcon(new ImageIcon(util.Util.getImageUrl("accept.png", util.ImageSize.M)));
-        btnVendas.setIcon(new ImageIcon(util.Util.getImageUrl("calculatorEdit.png", util.ImageSize.M)));
+        btnVendas.setIcon(new ImageIcon(util.Util.getImageUrl(Venda.iconTitle, util.ImageSize.M)));
         btnClientes.setIcon(new ImageIcon(util.Util.getImageUrl("clientes.png", util.ImageSize.M)));
         btnProdutos.setIcon(new ImageIcon(util.Util.getImageUrl("produtos.png", util.ImageSize.M)));
         btnPessoas.setIcon(new ImageIcon(util.Util.getImageUrl("pessoas2.png", util.ImageSize.M)));
         btnFuncionarios.setIcon(new ImageIcon(util.Util.getImageUrl("funcionarios.png", util.ImageSize.M)));
         btnClientes1.setIcon(new ImageIcon(util.Util.getImageUrl("clientes.png", util.ImageSize.M)));
         btnUsuarios.setIcon(new ImageIcon(util.Util.getImageUrl("user.png", util.ImageSize.M)));
-        btnPerfilUsuario.setIcon(new ImageIcon(util.Util.getImageUrl("cartaoVisitas.png", util.ImageSize.M)));
+        btnPerfilUsuario.setIcon(new ImageIcon(util.Util.getImageUrl(NivelAcesso.iconTitle, util.ImageSize.M)));
         btnContatos1.setIcon(new ImageIcon(util.Util.getImageUrl("email.png", util.ImageSize.M)));
         btnCargos.setIcon(new ImageIcon(util.Util.getImageUrl("briefcase.png", util.ImageSize.M)));
         btnConfiguracoes.setIcon(new ImageIcon(util.Util.getImageUrl("tools.png", util.ImageSize.M)));
-        btnLogs.setIcon(new ImageIcon(util.Util.getImageUrl("logs.png", util.ImageSize.M)));
-        btnPaises.setIcon(new ImageIcon(util.Util.getImageUrl("locate.png", util.ImageSize.M)));
-        btnEstados.setIcon(new ImageIcon(util.Util.getImageUrl("flagorange.png", util.ImageSize.M)));
-        btnCidades.setIcon(new ImageIcon(util.Util.getImageUrl("flag.png", util.ImageSize.M)));
-
-//        btnPaisesActionPerformed(null);
+        btnLogs.setIcon(new ImageIcon(util.Util.getImageUrl(Log.iconTitle, util.ImageSize.M)));
+        btnPaises.setIcon(new ImageIcon(util.Util.getImageUrl(Pais.iconTitle, util.ImageSize.M)));
+        btnEstados.setIcon(new ImageIcon(util.Util.getImageUrl(Estado.iconTitle, util.ImageSize.M)));
+        btnCidades.setIcon(new ImageIcon(util.Util.getImageUrl(Cidade.iconTitle, util.ImageSize.M)));
     }
 
     /**
@@ -728,10 +733,12 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void btnEfetuarLancamentoEntradaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEfetuarLancamentoEntradaActionPerformed
-        FrmLancamento frm = new FrmLancamento();
-        frm.loadInsert();
-        frm.setEntrada();
-        frm.setVisible(true);
+        if (checkAcesso("Lançamentos", Usuario.IDX_INSERIR, true)) {
+            FrmLancamento frm = new FrmLancamento();
+            frm.loadInsert();
+            frm.setEntrada();
+            frm.setVisible(true);
+        }
     }//GEN-LAST:event_btnEfetuarLancamentoEntradaActionPerformed
 
     private void btnFecharCaixaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharCaixaActionPerformed
@@ -743,80 +750,63 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnContatosActionPerformed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
-        // TODO add your handling code here:
         System.exit(0);
     }//GEN-LAST:event_btnSairActionPerformed
 
     private void btnLancamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLancamentoActionPerformed
-        reflection.ListJFrame list = new reflection.ListJFrame();
-        list.setClass(model.Lancamento.class);
-        list.setWidth(600);
-        list.initListComponents();
-        list.setVisible(true);
+        openList(model.Lancamento.class, 600);
     }//GEN-LAST:event_btnLancamentoActionPerformed
 
     private void btnPlanoContasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlanoContasActionPerformed
-        // TODO add your handling code here:
+        openList(model.PlanoContas.class);
     }//GEN-LAST:event_btnPlanoContasActionPerformed
 
     private void btnContasCapitalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContasCapitalActionPerformed
-        reflection.ListJFrame list = new reflection.ListJFrame();
-        list.setClass(model.ContaCapital.class);
-        list.initListComponents();
-        list.setVisible(true);
+        openList(model.ContaCapital.class);
     }//GEN-LAST:event_btnContasCapitalActionPerformed
 
     private void btnFechaCaixa2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFechaCaixa2ActionPerformed
-        // TODO add your handling code here:
+        btnFecharCaixaActionPerformed(evt);
     }//GEN-LAST:event_btnFechaCaixa2ActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
-        // TODO add your handling code here:
+        openList(model.Venda.class);
     }//GEN-LAST:event_btnVendasActionPerformed
 
     private void btnClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClientesActionPerformed
-        // TODO add your handling code here:
+        openList(model.Cliente.class);
     }//GEN-LAST:event_btnClientesActionPerformed
 
     private void btnProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProdutosActionPerformed
-        // TODO add your handling code here:
+        openList(model.Produto.class);
     }//GEN-LAST:event_btnProdutosActionPerformed
 
     private void btnCargosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargosActionPerformed
-        reflection.ListJFrame list = new reflection.ListJFrame();
-        list.setClass(model.Cargo.class);
-        list.initListComponents();
-        list.setVisible(true);
+        openList(model.Cargo.class);
     }//GEN-LAST:event_btnCargosActionPerformed
 
     private void btnPerfilUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPerfilUsuarioActionPerformed
-        // TODO add your handling code here:
+        openList(model.NivelAcesso.class);
     }//GEN-LAST:event_btnPerfilUsuarioActionPerformed
 
     private void btnContatos1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContatos1ActionPerformed
-
+        btnContatosActionPerformed(evt);
     }//GEN-LAST:event_btnContatos1ActionPerformed
 
     private void btnClientes1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClientes1ActionPerformed
-        // TODO add your handling code here:
+        btnClientesActionPerformed(evt);
     }//GEN-LAST:event_btnClientes1ActionPerformed
 
     private void btnPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPessoasActionPerformed
-        ListJFrame list = new ListJFrame();
-        list.setClass(model.Pessoa.class);
-        list.initListComponents();
-        list.setVisible(true);
+        openList(model.Pessoa.class);
     }//GEN-LAST:event_btnPessoasActionPerformed
 
     private void btnFuncionariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFuncionariosActionPerformed
-        // TODO add your handling code here:
+//        openList(model.Funcionario.class);
     }//GEN-LAST:event_btnFuncionariosActionPerformed
 
     private void btnUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuariosActionPerformed
-        ListJFrame list = new ListJFrame();
-        list.setClass(model.Usuario.class);
-        list.initListComponents();
-        list.setVisible(true);
+        openList(model.Usuario.class);
     }//GEN-LAST:event_btnUsuariosActionPerformed
 
     private void btnConfiguracoesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfiguracoesActionPerformed
@@ -824,52 +814,68 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnConfiguracoesActionPerformed
 
     private void btnLogsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogsActionPerformed
-        reflection.ListJFrame list = new reflection.ListJFrame();
-        list.setClass(model.Log.class);
-        list.initListComponents();
-        list.setVisible(true);
+        openList(model.Log.class);
     }//GEN-LAST:event_btnLogsActionPerformed
 
     private void btnPaisesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaisesActionPerformed
-        reflection.ListJFrame list = new reflection.ListJFrame();
-        list.setClass(model.Pais.class);
-        list.initListComponents();
-        list.setVisible(true);
+//        reflection.ListJFrame list = new reflection.ListJFrame();
+//        list.setClass(model.Pais.class);
+//        list.initListComponents();
+//        list.setVisible(true);
+        openList(model.Pais.class);
     }//GEN-LAST:event_btnPaisesActionPerformed
 
     private void btnEstadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEstadosActionPerformed
-        reflection.ListJFrame list = new reflection.ListJFrame();
-        list.setClass(model.Estado.class);
-        list.initListComponents();
-        list.setVisible(true);
+//        reflection.ListJFrame list = new reflection.ListJFrame();
+//        list.setClass(model.Estado.class);
+//        list.initListComponents();
+//        list.setVisible(true);
+        openList(model.Estado.class);
+        
     }//GEN-LAST:event_btnEstadosActionPerformed
 
     private void btnCidadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCidadesActionPerformed
-        reflection.ListJFrame list = new reflection.ListJFrame();
-        list.setClass(model.Cidade.class);
-        list.initListComponents();
-        list.setVisible(true);
+//        reflection.ListJFrame list = new reflection.ListJFrame();
+//        list.setClass(model.Cidade.class);
+//        list.initListComponents();
+//        list.setVisible(true);
+        openList(model.Cidade.class);
     }//GEN-LAST:event_btnCidadesActionPerformed
 
     private void btnEfetuarLancamentoSaidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEfetuarLancamentoSaidaActionPerformed
-        FrmLancamento frm = new FrmLancamento();
-        frm.loadInsert();
-        frm.setSaida();
-        frm.setVisible(true);
+        if (checkAcesso("Lançamentos", Usuario.IDX_INSERIR, true)) {
+            FrmLancamento frm = new FrmLancamento();
+            frm.loadInsert();
+            frm.setSaida();
+            frm.setVisible(true);
+        }
     }//GEN-LAST:event_btnEfetuarLancamentoSaidaActionPerformed
 
-    private void openList(String FncNome, Class<? extends model.ModelTemplate> cls) {
-//        FncNome = (String) ReflectionUtil.getAttibute(cls, "fncNome");
-
-//        boolean[] acessos = usuario.verificaAcesso(FncNome);
-//        if (acessos[model.Usuario.IDX_VISUALIZAR]) {
-        reflection.ListJFrame list = new reflection.ListJFrame();
-        list.setClass(cls);
-        list.initListComponents();
-        list.setVisible(true);
-//        } else {
-//            JOptionPane.showMessageDialog(this, "Usuário sem acesso ao objeto '" + FncNome + "'", "Sem acesso", JOptionPane.WARNING_MESSAGE);
-//        }
+    private void openList(Class<? extends model.ModelTemplate> cls) {
+        openList(cls, 0);
+    }
+    private void openList(Class<? extends model.ModelTemplate> cls, int width) {
+        String FncNome = (String) reflection.ReflectionUtil.getAttibute(cls, "fncNome");
+        
+        if (checkAcesso(FncNome, Usuario.IDX_VISUALIZAR, true)) {
+            reflection.ListJFrame list = new reflection.ListJFrame();
+            list.setClass(cls);
+            list.initListComponents();
+            if (width > 0)
+                list.setWidth(width);
+            list.setVisible(true);
+        }
+    }
+    
+    private boolean checkAcesso(String FncNome, int idx_acesso, boolean showError) {
+        boolean[] acessos;
+        if (FncNome != null && !"".equals(FncNome))
+            acessos = UsuLogado.verificaAcesso(FncNome);
+        else
+            acessos = new boolean[]{true, true, true, true};
+        if (showError && !acessos[idx_acesso]) 
+            JOptionPane.showMessageDialog(this, "Usuário sem acesso ao objeto '" + FncNome + "'", "Sem acesso", JOptionPane.WARNING_MESSAGE);
+        return acessos[idx_acesso];
     }
 
     /**

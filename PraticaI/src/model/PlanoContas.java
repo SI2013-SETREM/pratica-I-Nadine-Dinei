@@ -36,6 +36,10 @@ public class PlanoContas extends ModelTemplate {
      */
     public static String prlTitle = "Planos de Contas";
     /**
+     * @see model.ModelTemplate#fncNome
+     */
+    public static String fncNome = "PLANOS DE CONTA";
+    /**
      * @see model.ModelTemplate#idColumn
      */
     public static String[] idColumn = {"PlnCodigo"};

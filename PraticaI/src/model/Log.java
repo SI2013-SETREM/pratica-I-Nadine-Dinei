@@ -41,6 +41,10 @@ public class Log extends ModelTemplate {
      */
     public static String prlTitle = "Logs";
     /**
+     * @see model.ModelTemplate#fncNome
+     */
+    public static String fncNome = "LOGS";
+    /**
      * @see model.ModelTemplate#iconTitle
      */
     public static String iconTitle = "logs.png";
@@ -52,7 +56,7 @@ public class Log extends ModelTemplate {
      * @see model.ModelTemplate#listTableFields
      */
     public static Object[][] listTableFields = {
-        {"Data", "LogDtaHora", 80},
+        {"Data", "LogDtaHora", 85},
         {"Funcionalidade", "FncNome"},
 //        {"Usuário", "Usuario.Pessoa.PesNome"},
         {"Interação", "LogInteracao"},
@@ -145,6 +149,14 @@ public class Log extends ModelTemplate {
             int UsuCodigo = 0;
             if (this.getUsuCodigo() != null)
                 UsuCodigo = this.getUsuCodigo().getUsuCodigo();
+            util.Util.debug(sql);
+            util.Util.debug(this.getLogCodigo()+", "
+                + this.getFncNome()+", "
+                + UsuCodigo + ", "
+                + this.getLogDtaHora()+", "
+                + this.getLogInteracao()+", "
+                + this.getLogDescricao()+", "
+                + this.getLogNivel());
             DB.executeUpdate(sql, new Object[]{
                 this.getLogCodigo(), 
                 this.getFncNome(), 
