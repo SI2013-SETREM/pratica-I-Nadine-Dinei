@@ -6,12 +6,13 @@
 package view;
 
 //import java.sql.ResultSet;
-
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Lancamento;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -27,7 +28,6 @@ import util.DB;
 //import net.sf.jasperreports.engine.JasperPrint;
 //import net.sf.jasperreports.view.JasperViewer;
 //import util.DB;
-
 /**
  *
  * @author Nadine
@@ -76,15 +76,17 @@ public class ExemploConsulta extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
-            
+
 //            ResultSet rs = DB.executeQuery("SELECT PaiCodigo,PaiAlfa3,PaiAlfa2,PaiBacenIbge,PaiISO3166,PaiNome "
 //                    + "FROM `pais` where paicodigo=?", new Object[]{Integer.parseInt(txtFiltro.getText())});
             Map<String, Object> param = new HashMap<String, Object>();    //passa os parametros que foram criados no IReports
-            param.put("IMAGEM",util.Util.getImageUrl("flag.png", util.ImageSize.P));//param.put("NOME_PARAMETRO_JASPER","CAMINHO DA IMAGEM");
-            ResultSet rs = DB.executeQuery("SELECT PaiCodigo,PaiAlfa3,PaiAlfa2,PaiBacenIbge,PaiISO3166,PaiNome "
-                    + "FROM `pais`");
+            param.put("IMAGEM", util.Util.getImageUrl("logo_report.png", util.ImageSize.G));//param.put("NOME_PARAMETRO_JASPER","CAMINHO DA IMAGEM");
+            param.put("Periodo", "10/10/2014 a 10/10/2014");
+            // ResultSet rs = DB.executeQuery("SELECT PaiCodigo,PaiAlfa3,PaiAlfa2,PaiBacenIbge,PaiISO3166,PaiNome "
+            //       + "FROM `pais`");
+            ResultSet rs = Lancamento.getLancamentosReport(Timestamp.valueOf("2014-01-01 00:00:00"), Timestamp.valueOf("2014-12-31 00:00:00"));
             JRResultSetDataSource relatRes = new JRResultSetDataSource(rs);
-            JasperPrint p = JasperFillManager.fillReport("reports/paises2.jasper", param, relatRes);
+            JasperPrint p = JasperFillManager.fillReport("reports/rptLancamentosPorPeriodo.jasper", param, relatRes);
             JasperViewer jv = new JasperViewer(p);
             jv.setVisible(true);
         } catch (Exception ex) {

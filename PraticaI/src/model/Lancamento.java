@@ -341,7 +341,7 @@ public class Lancamento extends ModelTemplate {
     
     public static ResultSet getLancamentosReport(java.sql.Timestamp from, java.sql.Timestamp to) {
         try {
-            String sql = "SELECT l.LanDataHora, cc.CntNome, p.PlnNome, pes.PesNome, l.LanDescricao,";
+            String sql = "SELECT DATE_FORMAT(l.LanDataHora,'%d %b %y') as LanDataHora, cc.CntNome, p.PlnNome, pes.PesNome, l.LanDescricao,";
             sql += " CONCAT('R$ ', FORMAT(COALESCE(l.LanValorEntrada,0), 2)) AS LanValorEntrada,";
             sql += " CONCAT('R$ ', FORMAT(COALESCE(l.LanValorSaida,0), 2)) AS LanValorSaida";
             sql += " FROM " + reflection.ReflectionUtil.getDBTableName(Lancamento.class) + " l";
