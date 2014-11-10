@@ -339,4 +339,25 @@ public class Lancamento extends ModelTemplate {
         return list;
     }
     
+    public static ResultSet getLancamentosReport(java.sql.Timestamp from, java.sql.Timestamp to) {
+        try {
+            String sql = "SELECT l.LanDataHora, cc.CntNome, p.PlnNome, pes.PesNome, l.LanDescricao,";
+            sql += " CONCAT('R$ ', FORMAT(COALESCE(l.LanValorEntrada,0), 2)) AS LanValorEntrada,";
+            sql += " CONCAT('R$ ', FORMAT(COALESCE(l.LanValorSaida,0), 2)) AS LanValorSaida";
+            sql += " FROM " + reflection.ReflectionUtil.getDBTableName(Lancamento.class) + " l";
+            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(PlanoContas.class) + " p ON (l.PlnCodigo = p.PlnCodigo)";
+            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(ContaCapital.class) + " cc ON (l.CntCodigo = cc.CntCodigo)";
+            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Cliente.class) + " cli ON (l.CliCodigo =cli.CliCodigo)";
+            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Pessoa.class) + " pes ON (cli.PesCodigo = pes.PesCodigo)";
+            sql += " WHERE LanEfetivado";
+            sql += " AND LanDataHora BETWEEN ? AND ?";
+            sql += " ORDER BY l.LanDataHora";
+            ResultSet rs = DB.executeQuery(sql, new java.sql.Timestamp[]{from, to});
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(Lancamento.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
 }
