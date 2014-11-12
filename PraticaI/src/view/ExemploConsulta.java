@@ -54,7 +54,7 @@ public class ExemploConsulta extends javax.swing.JFrame {
         txtFiltro = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setText("Sigla Pais 2 Digitos:");
@@ -81,7 +81,7 @@ public class ExemploConsulta extends javax.swing.JFrame {
 //                    + "FROM `pais` where paicodigo=?", new Object[]{Integer.parseInt(txtFiltro.getText())});
             Map<String, Object> param = new HashMap<String, Object>();    //passa os parametros que foram criados no IReports
             param.put("IMAGEM", util.Util.getImageUrl("logo_report.png", util.ImageSize.G));//param.put("NOME_PARAMETRO_JASPER","CAMINHO DA IMAGEM");
-            param.put("Periodo", "10/10/2014 a 10/10/2014");
+            param.put("Periodo", "01/01/2014 a 31/12/2014");
             // ResultSet rs = DB.executeQuery("SELECT PaiCodigo,PaiAlfa3,PaiAlfa2,PaiBacenIbge,PaiISO3166,PaiNome "
             //       + "FROM `pais`");
             ResultSet rs = Lancamento.getLancamentosReport(Timestamp.valueOf("2014-01-01 00:00:00"), Timestamp.valueOf("2014-12-31 00:00:00"));

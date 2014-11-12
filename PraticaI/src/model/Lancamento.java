@@ -341,18 +341,31 @@ public class Lancamento extends ModelTemplate {
     
     public static ResultSet getLancamentosReport(java.sql.Timestamp from, java.sql.Timestamp to) {
         try {
-            String sql = "SELECT DATE_FORMAT(l.LanDataHora,'%d %b %y') as LanDataHora, cc.CntNome, p.PlnNome, pes.PesNome, l.LanDescricao,";
-            sql += " CONCAT('R$ ', FORMAT(COALESCE(l.LanValorEntrada,0), 2)) AS LanValorEntrada,";
-            sql += " CONCAT('R$ ', FORMAT(COALESCE(l.LanValorSaida,0), 2)) AS LanValorSaida";
-            sql += " FROM " + reflection.ReflectionUtil.getDBTableName(Lancamento.class) + " l";
-            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(PlanoContas.class) + " p ON (l.PlnCodigo = p.PlnCodigo)";
-            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(ContaCapital.class) + " cc ON (l.CntCodigo = cc.CntCodigo)";
-            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Cliente.class) + " cli ON (l.CliCodigo =cli.CliCodigo)";
-            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Pessoa.class) + " pes ON (cli.PesCodigo = pes.PesCodigo)";
-            sql += " WHERE LanEfetivado";
-            sql += " AND LanDataHora BETWEEN ? AND ?";
-            sql += " ORDER BY l.LanDataHora";
-            ResultSet rs = DB.executeQuery(sql, new java.sql.Timestamp[]{from, to});
+            String sqlTbls = " FROM " + reflection.ReflectionUtil.getDBTableName(Lancamento.class) + " l";
+            sqlTbls += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(PlanoContas.class) + " p ON (l.PlnCodigo = p.PlnCodigo)";
+            sqlTbls += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(ContaCapital.class) + " cc ON (l.CntCodigo = cc.CntCodigo)";
+            sqlTbls += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Cliente.class) + " cli ON (l.CliCodigo =cli.CliCodigo)";
+            sqlTbls += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Pessoa.class) + " pes ON (cli.PesCodigo = pes.PesCodigo)";
+            sqlTbls += " WHERE LanEfetivado";
+            sqlTbls += " AND LanDataHora BETWEEN ? AND ?";
+            
+            String sql = "SELECT * FROM ";
+            sql += "(SELECT DATE_FORMAT(l.LanDataHora,'%d/%m/%Y %H:%i:%s') as LanDataHora, cc.CntNome, p.PlnNome, pes.PesNome, l.LanDescricao,";
+            sql += " CONCAT('R$ ', FORMAT(COALESCE(l.LanValorEntrada,0), 2)) AS LanValorEntrada, ";
+            sql += " CONCAT('R$ ', FORMAT(COALESCE(l.LanValorSaida,0), 2)) AS LanValorSaida,";
+            sql += " NULL AS SumEntrada, NULL AS SumSaida";
+            sql += sqlTbls;
+            sql += " ORDER BY cc.CntCodigo, l.LanDataHora) AS lancamentos";
+            sql += " UNION";
+            sql += " SELECT NULL, NULL, NULL, NULL, NULL, NULL, NULL,";
+            sql += " CONCAT('R$ ', FORMAT(COALESCE(SUM(LanValorEntrada),0), 2)),";
+            sql += " CONCAT('R$ ', FORMAT(COALESCE(SUM(LanValorSaida),0), 2)) ";
+            sql += " FROM";
+            sql += "(SELECT LanValorEntrada, LanValorSaida";
+            sql += sqlTbls;
+            sql += ") AS somas";
+            System.out.println(sql);
+            ResultSet rs = DB.executeQuery(sql, new java.sql.Timestamp[]{from, to, from, to});
             return rs;
         } catch (SQLException ex) {
             Logger.getLogger(Lancamento.class.getName()).log(Level.SEVERE, null, ex);

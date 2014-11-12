@@ -45,14 +45,13 @@ public class FrmCidade extends FormJDialog {
             cboxItensPais.add(new ComboBoxItem(p.getPaiCodigo(), p.getPaiNome()));
         }
         cmbPais.setModel(new DefaultComboBoxModel((ComboBoxItem[]) cboxItensPais.toArray(new ComboBoxItem[cboxItensPais.size()])));
-        
+
 //        ComboBoxItem i = cboxItensPais.get(cmbPais.getSelectedIndex());
 //        ArrayList<Estado> list = model.Estado.getAll((int) i.getId());
 //        for (Estado est : list) {
 //            cboxItensEstado.add(new ComboBoxItem(est.getEstSigla(), est.getEstNome()));
 //        }
 //        cmbEstado.setModel(new DefaultComboBoxModel((ComboBoxItem[]) cboxItensEstado.toArray(new ComboBoxItem[cboxItensEstado.size()])));
-
     }
 
     @Override
@@ -92,6 +91,11 @@ public class FrmCidade extends FormJDialog {
         btnSalvar.setText("Salvar");
 
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         cmbEstado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -191,6 +195,11 @@ public class FrmCidade extends FormJDialog {
             }
         }
     }//GEN-LAST:event_cmbPaisItemStateChanged
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        // TODO add your handling code here:
+        dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments
