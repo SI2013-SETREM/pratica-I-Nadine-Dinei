@@ -95,6 +95,7 @@ public class Cargo extends ModelTemplate {
     }
 
     public void insert() {
+        this.setCrgCodigo(Sequencial.getNextSequencial(Cargo.class));
         try {
             String sql = "insert into " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " (CrgNome,CrgCodigo)";
