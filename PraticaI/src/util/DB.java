@@ -48,23 +48,39 @@ public abstract class DB {
     }
     
     public static ResultSet executeQuery(String sql) throws SQLException {
-        Statement st = getConnection().createStatement();
-        return st.executeQuery(sql);
+        if (getConnection() != null) {
+            Statement st = getConnection().createStatement();
+            return st.executeQuery(sql);
+        } else {
+            return null;
+        }
     }
     public static ResultSet executeQuery(String sql, Object[] parms) throws SQLException {
-        PreparedStatement st = getConnection().prepareStatement(sql);
-        setParmsByType(st, parms);
-        return st.executeQuery();
+        if (getConnection() != null) {
+            PreparedStatement st = getConnection().prepareStatement(sql);
+            setParmsByType(st, parms);
+            return st.executeQuery();
+        } else {
+            return null;
+        }
     }
     
     public static int executeUpdate(String sql) throws SQLException {
-        Statement st = getConnection().createStatement();
-        return st.executeUpdate(sql);
+        if (getConnection() != null) {
+            Statement st = getConnection().createStatement();
+            return st.executeUpdate(sql);
+        } else {
+            return 0;
+        }
     }
     public static int executeUpdate(String sql, Object[] parms) throws SQLException {
-        PreparedStatement st = getConnection().prepareStatement(sql);
-        setParmsByType(st, parms);
-        return st.executeUpdate();
+        if (getConnection() != null) {
+            PreparedStatement st = getConnection().prepareStatement(sql);
+            setParmsByType(st, parms);
+            return st.executeUpdate();
+        } else {
+            return 0;
+        }
     }
     
     public static Object getColumnByType(ResultSet rs, String colLabel, Class<?> colType) {

@@ -167,7 +167,7 @@ public class Usuario extends ModelTemplate {
                     + " AND UsuLogin = ?";
             System.out.println(sql);
             ResultSet rs = DB.executeQuery(sql, new String[]{UsuLogin});
-            while (rs.next()) {
+            while (rs != null && rs.next()) {
                 if (Encryption.validate(UsuSenha, rs.getString("UsuHash"), rs.getString("UsuSalt"), rs.getInt("UsuIterations"))) {
                     UsuLogado = new Usuario().fill(rs);
                     Log.log(fncNome, Log.INT_OUTRA, "Usuário logado [" + UsuLogado.getUsuCodigo() + " - " + UsuLogado.getUsuLogin() + "]", Log.NV_INFO);

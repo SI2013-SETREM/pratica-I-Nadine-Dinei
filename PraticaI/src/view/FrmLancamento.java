@@ -210,6 +210,12 @@ public class FrmLancamento extends reflection.FormJDialog {
 
         jLabel1.setText("Conta de Capital:");
 
+        cmbContaCapital.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbContaCapitalActionPerformed(evt);
+            }
+        });
+
         btnSalvar.setText("Salvar");
         btnSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -226,11 +232,22 @@ public class FrmLancamento extends reflection.FormJDialog {
 
         jLabel2.setText("Plano de Contas:");
 
+        cmbPlanoContas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbPlanoContasActionPerformed(evt);
+            }
+        });
+
         try {
             txtLanDataHora.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/#### ##:##:##")));
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
+        txtLanDataHora.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtLanDataHoraActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Data/Hora:");
 
@@ -238,8 +255,25 @@ public class FrmLancamento extends reflection.FormJDialog {
 
         txtLanValor.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         txtLanValor.setText("R$ 0,00");
+        txtLanValor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtLanValorActionPerformed(evt);
+            }
+        });
 
         jLabel5.setText("Descrição:");
+
+        txtLanDescricao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtLanDescricaoActionPerformed(evt);
+            }
+        });
+
+        txtLanDocumento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtLanDocumentoActionPerformed(evt);
+            }
+        });
 
         jLabel6.setText("Doc. Vinculado:");
 
@@ -351,6 +385,30 @@ public class FrmLancamento extends reflection.FormJDialog {
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         this.save();
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void txtLanValorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLanValorActionPerformed
+        this.save();
+    }//GEN-LAST:event_txtLanValorActionPerformed
+
+    private void txtLanDescricaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLanDescricaoActionPerformed
+        this.save();
+    }//GEN-LAST:event_txtLanDescricaoActionPerformed
+
+    private void txtLanDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLanDocumentoActionPerformed
+        this.save();
+    }//GEN-LAST:event_txtLanDocumentoActionPerformed
+
+    private void txtLanDataHoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLanDataHoraActionPerformed
+        this.save();
+    }//GEN-LAST:event_txtLanDataHoraActionPerformed
+
+    private void cmbContaCapitalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbContaCapitalActionPerformed
+        
+    }//GEN-LAST:event_cmbContaCapitalActionPerformed
+
+    private void cmbPlanoContasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbPlanoContasActionPerformed
+        
+    }//GEN-LAST:event_cmbPlanoContasActionPerformed
 
     /**
      * @param args the command line arguments

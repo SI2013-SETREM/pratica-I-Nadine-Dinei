@@ -590,7 +590,7 @@ public class ListJFrame extends javax.swing.JFrame {
             else
                 rs = DB.executeQuery(sql);
             
-            JLabel lblBtnUpdate = new JLabel(iconDelete, SwingConstants.CENTER);
+            JLabel lblBtnUpdate = new JLabel(iconUpdate, SwingConstants.CENTER);
 //            lblBtnUpdate.addMouseListener(new MouseAdapter(){
 //                public void mouseClicked(MouseEvent e) {
 //                    System.out.println("Mouse clicked (# of clicks: " + e.getClickCount() + ")");

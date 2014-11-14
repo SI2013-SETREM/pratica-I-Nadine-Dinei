@@ -66,18 +66,23 @@ public abstract class Util {
     
     public static double getMoneyFromText(String txtText) {
         String valTxt = txtText.replaceAll("[^0-9,.]", "");
-        System.out.println(valTxt + " " + txtText.trim().equals(","));
-        if (!"".equals(valTxt) && !",".equals(txtText) && !".".equals(txtText))
-            return Double.parseDouble(valTxt.replace(",", "."));
-        else
+//        System.out.println(valTxt + " " + txtText.trim().equals(","));
+        if (!"".equals(valTxt) && !",".equals(txtText) && !".".equals(txtText)) {
+            valTxt = valTxt.replace(".", "").replace(",", ".");
+//            System.out.println(valTxt);
+            return Double.parseDouble(valTxt);
+        } else {
             return 0;
+        }
     }
     public static String getFormattedMoney(String txtText) {
         String valTxt = txtText.replaceAll("[^0-9,.]", "");
-        if (!"".equals(valTxt))
-            return getFormattedMoney(Double.parseDouble(valTxt.replace(",", ".")));
-        else
+        if (!"".equals(valTxt)) {
+            valTxt = valTxt.replace(".", "").replace(",", ".");
+            return getFormattedMoney(Double.parseDouble(valTxt));
+        } else {
             return getFormattedMoney(0);
+        }
     }
     public static String getFormattedMoney(double valor) {
         java.text.NumberFormat formatter = java.text.NumberFormat.getCurrencyInstance();
