@@ -41,6 +41,8 @@ public class FrmEstado extends FormJDialog {
 
     @Override
     public void loadUpdate() {
+        txtSiglaEstado.disable();
+        cmbPais.disable();
         estado.load((int) idCols[0], (String) idCols[1]);
         txtNomeEstado.setText(estado.getEstNome());
         txtSiglaEstado.setText(estado.getEstSigla());
@@ -147,7 +149,6 @@ public class FrmEstado extends FormJDialog {
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         ComboBoxItem i = cboxItensPaises.get(cmbPais.getSelectedIndex());
-        System.out.println(i.getId());
         estado.setEstNome(txtNomeEstado.getText());
         estado.setEstSigla(txtSiglaEstado.getText());
         estado.setPaiCodigo(new Pais((int) i.getId()));

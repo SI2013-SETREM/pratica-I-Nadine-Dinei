@@ -60,11 +60,11 @@ public class Estado extends ModelTemplate {
 
     public Estado() {
     }
+
     public Estado(int PaiCodigo, String EstSigla) {
         this.load(PaiCodigo, EstSigla);
     }
-    
-    
+
     public Pais getPaiCodigo() {
         return PaiCodigo;
     }
@@ -157,8 +157,10 @@ public class Estado extends ModelTemplate {
         switch (flag) {
             case DB.FLAG_INSERT:
                 insert();
+                break;
             case DB.FLAG_UPDATE:
                 update();
+                break;
         }
         return false;
     }

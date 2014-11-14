@@ -12,6 +12,7 @@ import model.Cidade;
 import model.Estado;
 import model.Pais;
 import reflection.FormJDialog;
+import util.DB;
 import util.Util;
 import util.field.ComboBoxItem;
 
@@ -57,7 +58,8 @@ public class FrmCidade extends FormJDialog {
     @Override
     public void loadUpdate() {
         cidade.load((int) idCols[0], (String) idCols[1], (int) idCols[2]);
-        System.out.println(cidade.getEstSigla().getEstNome());
+        cmbEstado.disable();
+        cmbPais.disable();
         txtNomeCidade.setText(cidade.getCidNome());
         for (ComboBoxItem cbi : cboxItensPais) {
             if ((int) cbi.getId() == (int) idCols[0]) {
@@ -88,7 +90,18 @@ public class FrmCidade extends FormJDialog {
 
         jLabel2.setText("Nome Cidade:");
 
+        txtNomeCidade.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNomeCidadeActionPerformed(evt);
+            }
+        });
+
         btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
@@ -184,7 +197,7 @@ public class FrmCidade extends FormJDialog {
 //                System.out.println(est.getEstSigla()+" == "+cidade.getEstSigla().getEstSigla());
                 ComboBoxItem cboxEstado = new ComboBoxItem(est.getEstSigla(), est.getEstNome());
                 cboxItensEstado.add(cboxEstado);
-                if (est.getEstSigla().equals(cidade.getEstSigla().getEstSigla())) {
+                if (flag == DB.FLAG_UPDATE && est.getEstSigla().equals(cidade.getEstSigla().getEstSigla())) {
                     selItem = cboxEstado;
 //                    System.out.println("SELECIONOU == "+selItem.getId());
                 }
@@ -200,6 +213,23 @@ public class FrmCidade extends FormJDialog {
         // TODO add your handling code here:
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void txtNomeCidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeCidadeActionPerformed
+        // TODO add your handling code here:
+        btnSalvarActionPerformed(evt);
+
+    }//GEN-LAST:event_txtNomeCidadeActionPerformed
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        // TODO add your handling code here:
+        ComboBoxItem cbxPais = cboxItensPais.get(cmbPais.getSelectedIndex());
+        ComboBoxItem cbxEstado = cboxItensEstado.get(cmbEstado.getSelectedIndex());
+        cidade.setCidNome(txtNomeCidade.getText());
+        cidade.setEstSigla(new Estado((int) cbxPais.getId(), (String) cbxEstado.getId()));
+        cidade.setPaiCodigo(new Pais((int) cbxPais.getId()));
+        cidade.save();
+        dispose();
+    }//GEN-LAST:event_btnSalvarActionPerformed
 
     /**
      * @param args the command line arguments

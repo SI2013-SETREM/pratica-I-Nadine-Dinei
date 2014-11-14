@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.DB;
@@ -19,13 +20,13 @@ public class Cidade extends ModelTemplate {
     private Estado EstSigla;
     private int CidCodigo;
     private String CidNome;
-
+    private String flag = DB.FLAG_INSERT;
     /**
      * @see model.ModelTemplate#sngTitle
      */
     public static String sngTitle = "Cidade";
-    /** 
-    * @see model.ModelTemplate#prlTitle
+    /**
+     * @see model.ModelTemplate#prlTitle
      */
     public static String prlTitle = "Cidades";
     /**
@@ -47,9 +48,8 @@ public class Cidade extends ModelTemplate {
     public static String[][] listTableFields = {
         {"País", "Pais.PaiNome"},
         {"Estado", "Estado.EstNome"},
-        {"Nome", "CidNome"},
-    };
-    
+        {"Nome", "CidNome"},};
+
     public static FilterField[] listFilterFields = {
         new FilterFieldDynamicCombo("Estado.EstSigla", "Estado", 200, Estado.class, "EstNome", null, null, ""),
         new FilterFieldDynamicCombo("Pais.PaiCodigo", "País", 200, Pais.class, "PaiNome", null, null, ""),
@@ -108,9 +108,9 @@ public class Cidade extends ModelTemplate {
     }
 
     public boolean load(int PaiCodigo, String EstSigla, int CidCodigo) {
-        String sql = "Select * from " + reflection.ReflectionUtil.getDBTableName(this)
-                + " where PaiCodigo=? and EstSigla =? and CidCodigo=?";
         try {
+            String sql = "Select * from " + reflection.ReflectionUtil.getDBTableName(this)
+                    + " where PaiCodigo=? and EstSigla =? and CidCodigo=?";
             ResultSet rs = DB.executeQuery(sql, new Object[]{PaiCodigo, EstSigla, CidCodigo});
             if (rs.next()) {
                 this.setCidCodigo(rs.getInt("CidCodigo"));
@@ -118,15 +118,46 @@ public class Cidade extends ModelTemplate {
                 this.setEstSigla(new Estado(rs.getInt("PaiCodigo"), rs.getString("EstSigla")));
                 if (this.getEstSigla() != null) {
                     this.setPaiCodigo(this.getEstSigla().getPaiCodigo());
-
                 }
+                flag = DB.FLAG_UPDATE;
             }
         } catch (Exception ex) {
             Logger.getLogger(Cidade.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
         return false;
-
     }
 
+    public void insert() {
+        try {
+            this.setCidCodigo(Sequencial.getNextSequencial(Cidade.class.getSimpleName() + "_" + PaiCodigo.getPaiCodigo() + "_" + EstSigla.getEstSigla()));
+            String sql = "insert into " + reflection.ReflectionUtil.getDBTableName(this) + " (PaiCodigo,EstSigla,CidCodigo,CidNome) values(?,?,?,?)";
+            DB.executeUpdate(sql, new Object[]{PaiCodigo.getPaiCodigo(), EstSigla.getEstSigla(), CidCodigo, CidNome});
+            flag = DB.FLAG_UPDATE;
+        } catch (Exception ex) {
+            Logger.getLogger(Cidade.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void update() {
+        try {
+            String sql = "update " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " set CidNome=? where  PaiCodigo=? AND EstSigla=? AND CidCodigo=?";
+            DB.executeUpdate(sql, new Object[]{CidNome, PaiCodigo.getPaiCodigo(), EstSigla.getEstSigla(), CidCodigo});
+        } catch (Exception ex) {
+            Logger.getLogger(Cidade.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public boolean save() {
+        switch (flag) {
+            case DB.FLAG_INSERT:
+                insert();
+                break;
+            case DB.FLAG_UPDATE:
+                update();
+                break;
+        }
+        return false;
+    }
 }

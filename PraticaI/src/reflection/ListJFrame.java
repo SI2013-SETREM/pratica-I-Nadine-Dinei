@@ -800,10 +800,16 @@ public class ListJFrame extends javax.swing.JFrame {
         else
             sql += "DELETE FROM " + mainTable + " WHERE 1=1";
         
-        for (String field : idColumn) 
-            sql += " AND " + field + " = ?";
+        for (String field : idColumn) {
+            String[] fieldParts = field.split("\\.");
+            String localField = fieldParts[fieldParts.length-1];
+            sql += " AND " + localField + " = ?";
+        }
         
         Object[] idCols = getIdCols(row);
+        
+        System.out.println(sql);
+        System.out.println(idCols);
         
 //        Object[] idCols = new Object[idColumn.length]; //Cria um array que armazenará os campos chave da tabela (em ordem)
 //        int colIdHidden = 0; //É definido aqui fora porque as colunas ocultas sempre estarão em ordem, então não precisa navegar por todas elas a cada loop
