@@ -1,5 +1,10 @@
 package model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import util.DB;
 import util.field.FilterField;
 import util.field.FilterFieldText;
 
@@ -101,6 +106,7 @@ public class ContaCapital extends ModelTemplate {
     public void setCntPadrao(boolean CntPadrao) {
         this.CntPadrao = CntPadrao;
     }
+
     public void setCntPadrao(int CntPadrao) {
         this.CntPadrao = (CntPadrao == 1);
     }
@@ -112,14 +118,32 @@ public class ContaCapital extends ModelTemplate {
     public void setCntSaldo(double CntSaldo) {
         this.CntSaldo = CntSaldo;
     }
-    
-    
+
     public static java.util.ArrayList<ContaCapital> getAll() {
         java.util.ArrayList<ContaCapital> list = new java.util.ArrayList<>();
         for (Object o : ModelTemplate.getAll(ContaCapital.class)) {
             list.add((ContaCapital) o);
         }
         return list;
+    }
+
+    public void load(int CntCodigo) {
+        try {
+            String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " WHERE CrgCodigo=?";
+            ResultSet rs;
+            rs = DB.executeQuery(sql, new Object[]{CntCodigo});
+            rs.next();
+            this.setCntBncAgencia(rs.getString(""));
+            this.setCntBncNumero(rs.getString(""));
+            this.setCntBncTitular(rs.getString(""));
+            this.setCntNome(rs.getString(""));
+            this.setCntPadrao(rs.getInt(""));
+            this.setCntSaldo(rs.getDouble(""));
+        } catch (SQLException ex) {
+            Logger.getLogger(ContaCapital.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
 }
