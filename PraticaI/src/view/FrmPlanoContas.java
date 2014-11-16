@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import model.PlanoContas;
+import util.DB;
 import util.field.ComboBoxItem;
 
 /**
@@ -18,7 +19,7 @@ import util.field.ComboBoxItem;
 public class FrmPlanoContas extends reflection.FormJDialog {
 
     ArrayList<ComboBoxItem> cboxItensPlano = new ArrayList<>();
-    PlanoContas planocontas = new PlanoContas();
+    PlanoContas planoContas = new PlanoContas();
 
     /**
      * Creates new form FrmPlanoContas
@@ -34,6 +35,8 @@ public class FrmPlanoContas extends reflection.FormJDialog {
         btnCancelar.setIcon(new ImageIcon(util.Util.getImageUrl("cancel.png", util.ImageSize.P)));
         util.Util.setLimitChars(txtDescricao, 100);
         ArrayList<PlanoContas> listPC = model.PlanoContas.getAll();
+        
+        cboxItensPlano.add(new ComboBoxItem(null, ""));
         for (PlanoContas p : listPC) {
             cboxItensPlano.add(new ComboBoxItem(p.getPlnCodigo(), p.getPlnNome()));
         }
@@ -42,13 +45,15 @@ public class FrmPlanoContas extends reflection.FormJDialog {
 
     @Override
     public void loadUpdate() {
-        planocontas.load((int) idCols[0]);
-        txtDescricao.setText(planocontas.getPlnNome());
-        System.out.println(planocontas.getPlnCodigoPai().getPlnCodigo());
-        int i=(int) planocontas.getPlnCodigoPai().getPlnCodigo();
-        for (ComboBoxItem cbi : cboxItensPlano) {
-            if ((int) cbi.getId() == i ) {
-                cmbPai.getModel().setSelectedItem(cbi);
+        planoContas.load((int) idCols[0]);
+        txtDescricao.setText(planoContas.getPlnNome());
+        if (planoContas.getPlnCodigoPai() != null) {
+            System.out.println(planoContas.getPlnCodigoPai().getPlnCodigo());
+            int PlnCodigoPai = (int) planoContas.getPlnCodigoPai().getPlnCodigo();
+            for (ComboBoxItem cbi : cboxItensPlano) {
+                if (cbi.getId() != null && (int) cbi.getId() == PlnCodigoPai) {
+                    cmbPai.getModel().setSelectedItem(cbi);
+                }
             }
         }
     }
@@ -79,6 +84,12 @@ public class FrmPlanoContas extends reflection.FormJDialog {
         cmbPai.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel2.setText("Descrição:");
+
+        txtDescricao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtDescricaoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -117,6 +128,11 @@ public class FrmPlanoContas extends reflection.FormJDialog {
         });
 
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -149,16 +165,27 @@ public class FrmPlanoContas extends reflection.FormJDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        planoContas.setPlnNome(txtDescricao.getText());
+        
         ComboBoxItem cbxPaiPlano = cboxItensPlano.get(cmbPai.getSelectedIndex());
-        planocontas.setPlnCodigoPai(new PlanoContas((int) cbxPaiPlano.getId()));
-        planocontas.setPlnNome(txtDescricao.getText());
-        if (flag == "U") {
-            planocontas.update();
-        } else if (flag == "I") {
-            planocontas.insert();
+        if (cbxPaiPlano.getId() != null) {
+            planoContas.setPlnCodigoPai(new PlanoContas((int) cbxPaiPlano.getId()));
         }
-        this.dispose();
+        if (flag.equals(DB.FLAG_UPDATE)) {
+            planoContas.update();
+        } else if (flag.equals(DB.FLAG_INSERT)) {
+            planoContas.insert();
+        }
+        dispose();
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void txtDescricaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDescricaoActionPerformed
+        btnSalvarActionPerformed(evt);
+    }//GEN-LAST:event_txtDescricaoActionPerformed
 
     /**
      * @param args the command line arguments

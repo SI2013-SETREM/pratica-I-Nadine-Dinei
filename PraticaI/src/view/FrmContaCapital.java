@@ -75,12 +75,17 @@ public class FrmContaCapital extends FormJDialog {
         txtTitular = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        txtSaldo = new javax.swing.JFormattedTextField();
         ckbContaPadrao = new javax.swing.JCheckBox();
+        txtSaldo = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         btnSalvar.setText("Salvar");
         btnSalvar.addActionListener(new java.awt.event.ActionListener() {
@@ -100,8 +105,6 @@ public class FrmContaCapital extends FormJDialog {
         jLabel4.setText("Titular:");
 
         jLabel5.setText("Saldo Inicial:");
-
-        txtSaldo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,###.00"))));
 
         ckbContaPadrao.setText("Conta padrão");
         ckbContaPadrao.addActionListener(new java.awt.event.ActionListener() {
@@ -129,13 +132,20 @@ public class FrmContaCapital extends FormJDialog {
                                 .addGap(10, 10, 10)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtTitular)
-                                .addComponent(txtNumeroConta, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtAgencia, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txtSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(16, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtTitular)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addComponent(txtAgencia, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                                                .addComponent(txtNumeroConta, javax.swing.GroupLayout.Alignment.LEADING)))
+                                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addContainerGap(16, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(txtSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(ckbContaPadrao, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
@@ -207,24 +217,33 @@ public class FrmContaCapital extends FormJDialog {
         contaCapital.setCntBncNumero(txtNumeroConta.getText());
         contaCapital.setCntBncTitular(txtTitular.getText());
         contaCapital.setCntNome(txtDescricao.getText());
+        contaCapital.setCntSaldo(Util.getMoneyFromText(txtSaldo.getText()));
         contaCapital.setCntPadrao(ckbContaPadrao.isSelected());
+        boolean dispose = true;
         if (ContaCapital.getCntPadraoCodigo() != contaCapital.getCntCodigo() && ckbContaPadrao.isSelected()) {
             int i = JOptionPane.showConfirmDialog(null, "Você já possui uma conta padrão: '" + ContaCapital.getCntPadraoNome() + "', deseja substitui-la?");
             if (i == JOptionPane.OK_OPTION) {
-                contaCapital.save();
                 ContaCapital ccPadrao = new ContaCapital();
                 ccPadrao.load(contaCapital.getCntPadraoCodigo());
                 ccPadrao.setCntPadrao(false);
                 ccPadrao.save();
+                contaCapital.save();
             } else if (i == JOptionPane.NO_OPTION) {
                 contaCapital.setCntPadrao(false);
                 contaCapital.save();
+            } else if (i == JOptionPane.CANCEL_OPTION) {
+                dispose = false;
             }
         } else {
             contaCapital.save();
         }
-        dispose();
+        if (dispose)
+            dispose();
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -274,7 +293,7 @@ public class FrmContaCapital extends FormJDialog {
     private javax.swing.JTextField txtAgencia;
     private javax.swing.JTextField txtDescricao;
     private javax.swing.JTextField txtNumeroConta;
-    private javax.swing.JFormattedTextField txtSaldo;
+    private javax.swing.JTextField txtSaldo;
     private javax.swing.JTextField txtTitular;
     // End of variables declaration//GEN-END:variables
 }

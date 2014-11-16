@@ -924,6 +924,7 @@ public class ListJFrame extends javax.swing.JFrame {
                         break;
                 }
                 form.setVisible(true);
+                listData();
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             char LogInteracao;

@@ -159,7 +159,7 @@ public class PlanoContas extends ModelTemplate {
                 PlanoContas pln = new PlanoContas().fill(rs, true);
                 list.add(pln);
             }
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(ModelTemplate.class.getName()).log(Level.SEVERE, null, ex);
         }
         return list;
@@ -168,8 +168,14 @@ public class PlanoContas extends ModelTemplate {
     public void update() {
         try {
             String sql = "UPDATE " + ReflectionUtil.getDBTableName(PlanoContas.class) + " SET PlnCodigoPai=?, PlnNome=? WHERE (PlnCodigo=?)";
-            DB.executeUpdate(sql, new Object[]{PlnCodigoPai.getPlnCodigo(), PlnNome, PlnCodigo});
-        } catch (Exception ex) {
+            Object[] parms = new Object[3];
+            if (this.getPlnCodigoPai() != null) {
+                parms[0] = this.getPlnCodigoPai().getPlnCodigo();
+            }
+            parms[1] = this.getPlnNome();
+            parms[2] = this.getPlnCodigo();
+            DB.executeUpdate(sql, parms);
+        } catch (SQLException ex) {
             Logger.getLogger(PlanoContas.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -177,8 +183,14 @@ public class PlanoContas extends ModelTemplate {
     public void insert() {
         try {
             String sql = "INSERT INTO " + ReflectionUtil.getDBTableName(PlanoContas.class) + " (PlnCodigoPai, PlnNome,PlnCodigo) VALUES(?,?,?);";
-            DB.executeUpdate(sql, new Object[]{PlnCodigoPai.getPlnCodigo(), PlnNome, PlnCodigo});
-        } catch (Exception ex) {
+            Object[] parms = new Object[3];
+            if (this.getPlnCodigoPai() != null) {
+                parms[0] = this.getPlnCodigoPai().getPlnCodigo();
+            }
+            parms[1] = this.getPlnNome();
+            parms[2] = this.getPlnCodigo();
+            DB.executeUpdate(sql, parms);
+        } catch (SQLException ex) {
             Logger.getLogger(PlanoContas.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
