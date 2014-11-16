@@ -81,7 +81,7 @@ public class FrmLancamento extends reflection.FormJDialog {
         
         lblImg.setIcon(imgEntrada);
         lblLanTipo.setText("Entrada");
-        lblLanTipo.setForeground(new java.awt.Color(50, 127, 60));
+        lblLanTipo.setForeground(Lancamento.COR_ENTRADA);
 //        btnTrocaLanTipo.setText("Saída");
 //        btnTrocaLanTipo.setText("");
 //        btnTrocaLanTipo.setIcon(imgSaidaP);
@@ -91,7 +91,7 @@ public class FrmLancamento extends reflection.FormJDialog {
         
         lblImg.setIcon(imgSaida);
         lblLanTipo.setText("Saída");
-        lblLanTipo.setForeground(new java.awt.Color(190, 25, 25));
+        lblLanTipo.setForeground(Lancamento.COR_SAIDA);
 //        btnTrocaLanTipo.setText("Entrada");
 //        btnTrocaLanTipo.setText("");
 //        btnTrocaLanTipo.setIcon(imgEntradaP);
@@ -100,7 +100,7 @@ public class FrmLancamento extends reflection.FormJDialog {
     @Override
     public void loadInsert() {
         lancamento = new Lancamento();
-        txtLanDataHora.setText(util.Util.getFormattedDate(new java.util.Date()));
+        txtLanDataHora.setText(util.Util.getFormattedDateTime(new java.util.Date()));
     }
 
     @Override
@@ -128,7 +128,7 @@ public class FrmLancamento extends reflection.FormJDialog {
                     //@TODO
                     break;
             }
-            txtLanDataHora.setText(util.Util.getFormattedDate(lancamento.getLanDataHora()));
+            txtLanDataHora.setText(Util.getFormattedDateTime(lancamento.getLanDataHora()));
             txtLanDescricao.setText(lancamento.getLanDescricao());
             txtLanDocumento.setText(lancamento.getLanDocumento());
             rdoEfetivado.setSelected(lancamento.isLanEfetivado());

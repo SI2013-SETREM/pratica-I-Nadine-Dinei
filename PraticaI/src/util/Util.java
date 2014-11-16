@@ -29,28 +29,33 @@ public abstract class Util {
     public static String getFormattedDate() {
         return getFormattedDate(Calendar.getInstance());
     }
-    public static String getFormattedDate(java.util.Date date) {
-        Calendar cl = Calendar.getInstance();
-        cl.setTime(date);
-        return getFormattedDate(cl);
-    }
     public static String getFormattedDate(Calendar cl) {
-        String dataHora = "";
-        dataHora += String.format("%02d", cl.get(Calendar.DAY_OF_MONTH)) + "/";
-        dataHora += String.format("%02d", cl.get(Calendar.MONTH)+1) + "/";
-        dataHora += String.valueOf(cl.get(Calendar.YEAR));
-        dataHora += " ";
-        dataHora += getFormattedTime(cl);
-        return dataHora;
+        String data = String.format("%02d", cl.get(Calendar.DAY_OF_MONTH)) + "/";
+        data += String.format("%02d", cl.get(Calendar.MONTH)+1) + "/";
+        data += String.valueOf(cl.get(Calendar.YEAR));
+        return data;
     }
+    
     public static String getFormattedTime() {
         return getFormattedTime(Calendar.getInstance());
     }
     public static String getFormattedTime(Calendar cl) {
-        String dataHora = String.format("%02d", cl.get(Calendar.HOUR_OF_DAY)) + ":";
-        dataHora += String.format("%02d", cl.get(Calendar.MINUTE)) + ":";
-        dataHora += String.format("%02d", cl.get(Calendar.SECOND));
-        return dataHora;
+        String hora = String.format("%02d", cl.get(Calendar.HOUR_OF_DAY)) + ":";
+        hora += String.format("%02d", cl.get(Calendar.MINUTE)) + ":";
+        hora += String.format("%02d", cl.get(Calendar.SECOND));
+        return hora;
+    }
+    
+    public static String getFormattedDateTime() {
+        return Util.getFormattedDateTime(Calendar.getInstance());
+    }
+    public static String getFormattedDateTime(java.util.Date date) {
+        Calendar cl = Calendar.getInstance();
+        cl.setTime(date);
+        return Util.getFormattedDateTime(cl);
+    }
+    public static String getFormattedDateTime(Calendar cl) {
+        return getFormattedDate(cl) + " " + getFormattedTime(cl);
     }
     
     public static java.sql.Timestamp getTimestampFromString(String strDate) {

@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import model.Cidade;
 import model.Estado;
+import model.Lancamento;
 import model.Log;
 import model.NivelAcesso;
 import model.Pais;
@@ -61,7 +62,7 @@ public class MainMenu extends javax.swing.JFrame {
         Timer timer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                lblRelogio.setText(util.Util.getFormattedDate());
+                lblRelogio.setText(util.Util.getFormattedDateTime());
             }
         });
         timer.setRepeats(true);
@@ -721,7 +722,7 @@ public class MainMenu extends javax.swing.JFrame {
                     .addComponent(lblRelogio))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTabbedMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 243, Short.MAX_VALUE))
+                .addContainerGap(243, Short.MAX_VALUE))
         );
 
         pack();
@@ -733,7 +734,7 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void btnEfetuarLancamentoEntradaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEfetuarLancamentoEntradaActionPerformed
-        if (checkAcesso("Lançamentos", Usuario.IDX_INSERIR, true)) {
+        if (checkAcesso(Lancamento.fncNome, Usuario.IDX_INSERIR, true)) {
             FrmLancamento frm = new FrmLancamento();
             frm.loadInsert();
             frm.setEntrada();
@@ -754,7 +755,9 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSairActionPerformed
 
     private void btnLancamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLancamentoActionPerformed
-        openList(model.Lancamento.class, 600);
+        //openList(model.Lancamento.class, 600);
+        LstLancamento lst = new LstLancamento();
+        lst.setVisible(true);
     }//GEN-LAST:event_btnLancamentoActionPerformed
 
     private void btnPlanoContasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlanoContasActionPerformed
@@ -843,7 +846,7 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCidadesActionPerformed
 
     private void btnEfetuarLancamentoSaidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEfetuarLancamentoSaidaActionPerformed
-        if (checkAcesso("Lançamentos", Usuario.IDX_INSERIR, true)) {
+        if (checkAcesso(Lancamento.fncNome, Usuario.IDX_INSERIR, true)) {
             FrmLancamento frm = new FrmLancamento();
             frm.loadInsert();
             frm.setSaida();
@@ -863,6 +866,7 @@ public class MainMenu extends javax.swing.JFrame {
             list.initListComponents();
             if (width > 0)
                 list.setWidth(width);
+//            list.setAlwaysOnTop(true);
             list.setVisible(true);
         }
     }

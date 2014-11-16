@@ -24,6 +24,13 @@ public class Lancamento extends ModelTemplate {
     public static final int TIPO_SAIDA = 2;
     public static final int TIPO_TRANSFERENCIA = 3;
     
+    public static final java.awt.Color COR_ENTRADA = new java.awt.Color(50, 130, 60);
+    public static final java.awt.Color COR_ENTRADA_SEL = new java.awt.Color(200, 255, 200);
+    public static final java.awt.Color COR_SAIDA = new java.awt.Color(200, 25, 25);
+    public static final java.awt.Color COR_SAIDA_SEL = new java.awt.Color(255, 200, 200);
+    public static final java.awt.Color COR_INATIVO = new java.awt.Color(150, 150, 150);
+    public static final java.awt.Color COR_INATIVO_SEL = new java.awt.Color(200, 200, 200);
+    
     private ContaCapital CntCodigo;
     private int LanCodigo;
     private Cliente CliCodigo;
@@ -32,10 +39,13 @@ public class Lancamento extends ModelTemplate {
     private int LanTipo;
     private Timestamp LanDataHora;
     private double LanValorEntrada;
+    private double LanValorEntradaOriginal;
     private double LanValorSaida;
+    private double LanValorSaidaOriginal;
     private String LanDescricao;
     private String LanDocumento;
     private boolean LanEfetivado;
+    private boolean LanEfetivadoOriginal;
     
     private String flag = DB.FLAG_INSERT;
     
@@ -156,6 +166,14 @@ public class Lancamento extends ModelTemplate {
     public void setLanValorEntrada(double LanValorEntrada) {
         this.LanValorEntrada = LanValorEntrada;
     }
+    
+    private double getLanValorEntradaOriginal() {
+        return LanValorEntradaOriginal;
+    }
+    
+    private void setLanValorEntradaOriginal(double LanValorEntrada) {
+        this.LanValorEntradaOriginal = LanValorEntrada;
+    }
 
     public double getLanValorSaida() {
         return LanValorSaida;
@@ -163,6 +181,14 @@ public class Lancamento extends ModelTemplate {
 
     public void setLanValorSaida(double LanValorSaida) {
         this.LanValorSaida = LanValorSaida;
+    }
+
+    private double getLanValorSaidaOriginal() {
+        return LanValorSaidaOriginal;
+    }
+    
+    private void setLanValorSaidaOriginal(double LanValorSaida) {
+        this.LanValorSaidaOriginal = LanValorSaida;
     }
 
     public String getLanDescricao() {
@@ -189,6 +215,14 @@ public class Lancamento extends ModelTemplate {
         this.LanEfetivado = LanEfetivado;
     }
 
+    private boolean isLanEfetivadoOriginal() {
+        return LanEfetivadoOriginal;
+    }
+    
+    private void setLanEfetivadoOriginal(boolean LanEfetivado) {
+        this.LanEfetivadoOriginal = LanEfetivado;
+    }
+
     public String getFlag() {
         return flag;
     }
@@ -197,16 +231,19 @@ public class Lancamento extends ModelTemplate {
     }
     
     public boolean load(int CntCodigo, int LanCodigo) {
+        return load(CntCodigo, LanCodigo, true);
+    }
+    public boolean load(int CntCodigo, int LanCodigo, boolean fillChild) {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(Lancamento.class)
                 + " WHERE CntCodigo = ? AND LanCodigo = ?";
             ResultSet rs = DB.executeQuery(sql, new Object[] {CntCodigo, LanCodigo});
             if (rs.next()) {
-                this.fill(rs, true);
+                this.fill(rs, fillChild);
                 return true;
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Sequencial.class.getName()).log(Level.SEVERE, null, ex);
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar o lançamento [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
     }
@@ -214,8 +251,18 @@ public class Lancamento extends ModelTemplate {
     private Lancamento fill(ResultSet rs, boolean fillChild) throws SQLException {
         this.setLanCodigo(rs.getInt("LanCodigo"));
         if (fillChild) {
+            ContaCapital cntCapital = new ContaCapital();
+            if (cntCapital.load(rs.getInt("CntCodigo")))
+                this.setCntCodigo(cntCapital);
+            
             //@TODO
+//            Cliente cliente = new Cliente();
+//            cliente.load()
 //            this.setCliCodigo(rs.getInt("CliCodigo"));
+            
+            //@TODO
+//            Venda venda = new Venda();
+//            venda.load()
 //            this.setVenCodigo(rs.getInt("VenCodigo"));
             
             PlanoContas plnContas = new PlanoContas();
@@ -225,10 +272,13 @@ public class Lancamento extends ModelTemplate {
         this.setLanTipo(rs.getInt("LanTipo"));
         this.setLanDataHora(rs.getTimestamp("LanDataHora"));
         this.setLanValorEntrada(rs.getDouble("LanValorEntrada"));
+        this.setLanValorEntradaOriginal(rs.getDouble("LanValorEntrada"));
         this.setLanValorSaida(rs.getDouble("LanValorSaida"));
+        this.setLanValorSaidaOriginal(rs.getDouble("LanValorSaida"));
         this.setLanDescricao(rs.getString("LanDescricao"));
         this.setLanDocumento(rs.getString("LanDocumento"));
         this.setLanEfetivado(rs.getBoolean("LanEfetivado"));
+        this.setLanEfetivadoOriginal(rs.getBoolean("LanEfetivado"));
         this.setFlag(DB.FLAG_UPDATE);
         return this;
     }
@@ -256,17 +306,21 @@ public class Lancamento extends ModelTemplate {
     }
     
     public boolean insert() {
-        this.setLanCodigo(Sequencial.getNextSequencial(Lancamento.class));
         try {
+            this.setLanCodigo(Sequencial.getNextSequencial(Lancamento.class.getSimpleName() + "_" + this.getCntCodigo().getCntCodigo()));
             String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(Lancamento.class);
             sql += "(CntCodigo, LanCodigo, CliCodigo, VenCodigo, PlnCodigo, LanTipo, LanDataHora,";
             sql += " LanValorEntrada, LanValorSaida, LanDescricao, LanDocumento, LanEfetivado)";
             sql += " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             Object[] parms = this.getSQLParms();
             DB.executeUpdate(sql, parms);
+            
+            Log.log(fncNome, Log.INT_INSERCAO, "Inseriu o " + sngTitle + " de código " + this.getLanCodigo() + " na Conta de Capital " + this.getCntCodigo().getCntCodigo() + " (" + this.getCntCodigo().getCntNome() + ")", Log.NV_INFO);
+            
+            this.updateSaldoContaCapital();
             return true;
         } catch (SQLException ex) {
-            Logger.getLogger(Lancamento.class.getName()).log(Level.SEVERE, null, ex);
+            Log.log(fncNome, Log.INT_INSERCAO, "Falha ao inserir o " + sngTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
     }
@@ -279,11 +333,51 @@ public class Lancamento extends ModelTemplate {
             sql += " WHERE CntCodigo = ? AND LanCodigo = ?";
             Object[] parms = this.getSQLParms();
             DB.executeUpdate(sql, parms);
+            
+            Log.log(fncNome, Log.INT_INSERCAO, "Alterou o " + sngTitle + " de código " + this.getLanCodigo() + " da Conta de Capital " + this.getCntCodigo().getCntCodigo() + " (" + this.getCntCodigo().getCntNome() + ")", Log.NV_INFO);
+            
+            this.updateSaldoContaCapital();
             return true;
         } catch (SQLException ex) {
-            Logger.getLogger(Lancamento.class.getName()).log(Level.SEVERE, null, ex);
+            Log.log(fncNome, Log.INT_ALTERACAO, "Falha ao alterar o " + sngTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
+    }
+    
+    private void updateSaldoContaCapital() {
+        this.updateSaldoContaCapital(this.getLanTipo());
+    }
+    private void updateSaldoContaCapital(int LanTipo) {
+        if (this.isLanEfetivado()) {
+            ContaCapital cc = this.getCntCodigo();
+            switch (LanTipo) {
+                case TIPO_ENTRADA:
+                    if (!this.isLanEfetivadoOriginal()) { //Efetivou o lançamento
+                        cc.debito(this.getLanValorEntrada());
+                    } else { //Alterou o lançamento
+                        if (this.getLanValorEntrada() != this.getLanValorEntradaOriginal()) {
+                            cc.debito(this.getLanValorEntradaOriginal() - this.getLanValorEntrada());
+                        }
+                    }
+                    break;
+                case TIPO_SAIDA:
+                    if (!this.isLanEfetivadoOriginal()) { //Efetivou o lançamento
+                        cc.credito(this.getLanValorSaida());
+                    } else { //Alterou o lançamento
+                        if (this.getLanValorSaida() != this.getLanValorSaidaOriginal()) {
+                            cc.credito(this.getLanValorSaidaOriginal() - this.getLanValorSaida());
+                        }
+                    }
+                    break;
+                case TIPO_TRANSFERENCIA:
+                    if (this.getLanValorSaida() != 0) 
+                        this.updateSaldoContaCapital(TIPO_SAIDA);
+                    if (this.getLanValorEntrada() != 0) 
+                        this.updateSaldoContaCapital(TIPO_ENTRADA);
+                    break;
+            }
+            cc.save();
+        }
     }
     
     private Object[] getSQLParms() {
@@ -325,7 +419,7 @@ public class Lancamento extends ModelTemplate {
     public static ResultSet getList(int CntCodigo, int PlnCodigo, String LanDescricao, Timestamp LanDataHoraFrom, Timestamp LanDataHoraTo, Boolean LanEfetivado) {
         ResultSet rs = null;
         try {
-            String sql = "SELECT l.LanCodigo, l.LanDataHora, cc.CntNome, p.PlnNome, l.LanDescricao, l.LanValorSaida, l.LanValorEntrada, pes.PesNome";
+            String sql = "SELECT l.CntCodigo, l.LanCodigo, l.LanEfetivado, l.LanDataHora, cc.CntNome, p.PlnNome, l.LanDescricao, l.LanValorSaida, l.LanValorEntrada, pes.PesNome";
             sql += " FROM " + reflection.ReflectionUtil.getDBTableName(Lancamento.class) + " l";
             sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(PlanoContas.class) + " p ON (l.PlnCodigo = p.PlnCodigo)";
             sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(ContaCapital.class) + " cc ON (l.CntCodigo = cc.CntCodigo)";
@@ -367,7 +461,7 @@ public class Lancamento extends ModelTemplate {
             rs = DB.executeQuery(sql, (Object[]) parms.toArray(new Object[0]));
             
         } catch (SQLException ex) {
-            Logger.getLogger(Lancamento.class.getName()).log(Level.SEVERE, null, ex);
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar a lista de " + prlTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return rs;
     }
@@ -385,7 +479,7 @@ public class Lancamento extends ModelTemplate {
             
             list.add(lancamento);
         } catch (SQLException ex) {
-            Logger.getLogger(Lancamento.class.getName()).log(Level.SEVERE, null, ex);
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar os " + prlTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return list;
     }
@@ -419,7 +513,7 @@ public class Lancamento extends ModelTemplate {
             ResultSet rs = DB.executeQuery(sql, new java.sql.Timestamp[]{from, to, from, to});
             return rs;
         } catch (SQLException ex) {
-            Logger.getLogger(Lancamento.class.getName()).log(Level.SEVERE, null, ex);
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar a lista de " + prlTitle + " para o relatório [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return null;
     }

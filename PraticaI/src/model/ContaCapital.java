@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.DB;
@@ -122,7 +123,120 @@ public class ContaCapital extends ModelTemplate {
     public void setCntSaldo(double CntSaldo) {
         this.CntSaldo = CntSaldo;
     }
+    
+    public void debito(double valor) {
+        this.setCntSaldo(this.getCntSaldo() + valor);
+    }
+    public void credito(double valor) {
+        this.setCntSaldo(this.getCntSaldo() - valor);
+    }
 
+    public boolean load(int CntCodigo) {
+        try {
+            String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " WHERE CntCodigo=?";
+            ResultSet rs;
+            rs = DB.executeQuery(sql, new Object[]{CntCodigo});
+            if (rs.next()) {
+                this.setCntCodigo(rs.getInt("CntCodigo"));
+                this.setCntBncAgencia(rs.getString("CntBncAgencia"));
+                this.setCntBncNumero(rs.getString("CntBncNumero"));
+                this.setCntBncTitular(rs.getString("CntBncTitular"));
+                this.setCntNome(rs.getString("CntNome"));
+                this.setCntPadrao(rs.getInt("CntPadrao"));
+                this.setCntSaldo(rs.getDouble("CntSaldo"));
+
+                if (this.getCntPadrao()) {
+                    ContaCapital.setCntPadraoCodigo(this.getCntCodigo());
+                    ContaCapital.setCntPadraoNome(this.getCntNome());
+                }
+
+                flag = DB.FLAG_UPDATE;
+
+                return true;
+            }
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar a " + sngTitle + " de código " + CntCodigo + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+        }
+        return false;
+    }
+
+    public boolean insert() {
+        try {
+            int CntPadrao = 0;
+            if (this.CntPadrao == true) {
+                CntPadrao = 1;
+            }
+            this.setCntCodigo(Sequencial.getNextSequencial(ContaCapital.class));
+            String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " (CntCodigo, CntNome, CntBncNumero, CntBncAgencia, CntBncTitular, CntPadrao, CntSaldo)";
+            sql += " VALUES(?, ?, ?, ?, ?, ?, ?)";
+            DB.executeUpdate(sql, new Object[]{CntCodigo, CntNome, CntBncNumero, CntBncAgencia, CntBncTitular, CntPadrao, CntSaldo});
+            
+            if (this.getCntPadrao()) {
+                ContaCapital.setCntPadraoCodigo(CntCodigo);
+                ContaCapital.setCntPadraoNome(CntNome);
+            }
+            
+            flag = DB.FLAG_UPDATE;
+            return true;
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_INSERCAO, "Falha ao inserir a " + sngTitle + " '" + this.getCntNome() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+        }
+        return false;
+    }
+
+    public boolean update() {
+        try {
+            int CntPadrao = 0;
+            if (this.CntPadrao) {
+                CntPadrao = 1;
+            }
+            String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " SET CntNome = ?,CntBncNumero = ?,CntBncAgencia = ?,CntBncTitular = ?,CntPadrao = ?,CntSaldo = ?";
+            sql += " WHERE (CntCodigo = ?)";
+            
+            DB.executeUpdate(sql, new Object[]{CntNome, CntBncNumero, CntBncAgencia, CntBncTitular, CntPadrao, CntSaldo, CntCodigo});
+            
+            if (this.getCntPadrao()) {
+                ContaCapital.setCntPadraoCodigo(CntCodigo);
+                ContaCapital.setCntPadraoNome(CntNome);
+            }
+            return true;
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_ALTERACAO, "Falha ao alterar a " + sngTitle + " '" + this.getCntNome() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+        }
+        return false;
+    }
+
+//    public boolean verificaContaPadrao(int CntCodigo) {
+//        try {
+//            String sql = "SELECT CntCodigo, CntPadrao FROM contacapital WHERE NOT CntPadrao";
+//            ResultSet rs = DB.executeQuery(sql);
+//            if (rs.next()) {
+//                //if (rs.getInt("CntPadrao") != 0 && rs.getObject("CntPadrao") != null) {
+////                this.setCntPadraoCodigo(rs.getInt("CntCodigo"));
+//                return true;
+//                //  }
+//            } else {
+//                return false;
+//            }
+//        } catch (Exception ex) {
+//            Logger.getLogger(ContaCapital.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return false;
+//    }
+
+    public boolean save() {
+        switch (flag) {
+            case DB.FLAG_INSERT:
+                return insert();
+            case DB.FLAG_UPDATE:
+                return update();
+        }
+        return false;
+    }
+    
     public static int getCntPadraoCodigo() {
         if (CntPadraoCodigo == null) {
             try {
@@ -160,102 +274,4 @@ public class ContaCapital extends ModelTemplate {
         return list;
     }
 
-    public void load(int CntCodigo) {
-        try {
-            String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
-            sql += " WHERE CntCodigo=?";
-            ResultSet rs;
-            rs = DB.executeQuery(sql, new Object[]{CntCodigo});
-            rs.next();
-            this.setCntCodigo(rs.getInt("CntCodigo"));
-            this.setCntBncAgencia(rs.getString("CntBncAgencia"));
-            this.setCntBncNumero(rs.getString("CntBncNumero"));
-            this.setCntBncTitular(rs.getString("CntBncTitular"));
-            this.setCntNome(rs.getString("CntNome"));
-            this.setCntPadrao(rs.getInt("CntPadrao"));
-            this.setCntSaldo(rs.getDouble("CntSaldo"));
-            
-            if (this.getCntPadrao()) {
-                ContaCapital.setCntPadraoCodigo(this.getCntCodigo());
-                ContaCapital.setCntPadraoNome(this.getCntNome());
-            }
-            
-            flag = DB.FLAG_UPDATE;
-        } catch (Exception ex) {
-            Logger.getLogger(ContaCapital.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void insert() {
-        try {
-            int CntPadrao = 0;
-            if (this.CntPadrao == true) {
-                CntPadrao = 1;
-            }
-            this.setCntCodigo(Sequencial.getNextSequencial(ContaCapital.class));
-            String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
-            sql += " (CntCodigo,CntNome,CntBncNumero,CntBncAgencia,CntBncTitular,CntPadrao,CntSaldo)";
-            sql += " VALUES(?,?,?,?,?,?,?)";
-            DB.executeUpdate(sql, new Object[]{CntCodigo, CntNome, CntBncNumero, CntBncAgencia, CntBncTitular, CntPadrao, CntSaldo});
-            
-            if (this.getCntPadrao()) {
-                ContaCapital.setCntPadraoCodigo(CntCodigo);
-                ContaCapital.setCntPadraoNome(CntNome);
-            }
-            
-            flag = DB.FLAG_UPDATE;
-        } catch (Exception ex) {
-            Logger.getLogger(ContaCapital.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void update() {
-        try {
-            int CntPadrao = 0;
-            if (this.CntPadrao) {
-                CntPadrao = 1;
-            }
-            String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
-            sql += " SET CntNome=?,CntBncNumero=?,CntBncAgencia=?,CntBncTitular=?,CntPadrao=?,CntSaldo=? WHERE (CntCodigo=?)";
-            
-            DB.executeUpdate(sql, new Object[]{CntNome, CntBncNumero, CntBncAgencia, CntBncTitular, CntPadrao, CntSaldo, CntCodigo});
-            
-            if (this.getCntPadrao()) {
-                ContaCapital.setCntPadraoCodigo(CntCodigo);
-                ContaCapital.setCntPadraoNome(CntNome);
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(ContaCapital.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-//    public boolean verificaContaPadrao(int CntCodigo) {
-//        try {
-//            String sql = "SELECT CntCodigo, CntPadrao FROM contacapital WHERE NOT CntPadrao";
-//            ResultSet rs = DB.executeQuery(sql);
-//            if (rs.next()) {
-//                //if (rs.getInt("CntPadrao") != 0 && rs.getObject("CntPadrao") != null) {
-////                this.setCntPadraoCodigo(rs.getInt("CntCodigo"));
-//                return true;
-//                //  }
-//            } else {
-//                return false;
-//            }
-//        } catch (Exception ex) {
-//            Logger.getLogger(ContaCapital.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        return false;
-//    }
-
-    public boolean save() {
-        switch (flag) {
-            case DB.FLAG_INSERT:
-                insert();
-                break;
-            case DB.FLAG_UPDATE:
-                update();
-                break;
-        }
-        return false;
-    }
 }

@@ -143,7 +143,7 @@ public class Pais extends ModelTemplate {
                 return true;
             }
         } catch (SQLException ex) {
-            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar o país [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar o " + sngTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
     }
@@ -166,10 +166,10 @@ public class Pais extends ModelTemplate {
         try {
             DB.executeUpdate(sql, new Object[]{PaiAlfa2, PaiAlfa3, PaiBacenIbge, PaiISO3166, PaiNome, PaiCodigo});
             flag = DB.FLAG_UPDATE;
-            Log.log(fncNome, Log.INT_INSERCAO, "Inseriu o país " + this.getPaiCodigo()+ " - '" + this.getPaiNome()+ "'", Log.NV_INFO);
+            Log.log(fncNome, Log.INT_INSERCAO, "Inseriu o " + sngTitle + " " + this.getPaiCodigo()+ " - '" + this.getPaiNome()+ "'", Log.NV_INFO);
             return true;
         } catch (SQLException ex) {
-            Log.log(fncNome, Log.INT_INSERCAO, "Falha ao inserir o país [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+            Log.log(fncNome, Log.INT_INSERCAO, "Falha ao inserir o " + sngTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
     }
@@ -184,10 +184,10 @@ public class Pais extends ModelTemplate {
         sql += " WHERE PaiCodigo = ?";
         try {
             DB.executeUpdate(sql, new Object[]{PaiAlfa2, PaiAlfa3, PaiBacenIbge, PaiISO3166, PaiNome, PaiCodigo});
-            Log.log(fncNome, Log.INT_ALTERACAO, "Alterou o país " + this.getPaiCodigo()+ " - '" + this.getPaiNome() + "'", Log.NV_INFO);
+            Log.log(fncNome, Log.INT_ALTERACAO, "Alterou o " + sngTitle + " " + this.getPaiCodigo()+ " - '" + this.getPaiNome() + "'", Log.NV_INFO);
             return true;
         } catch (SQLException ex) {
-            Log.log(fncNome, Log.INT_ALTERACAO, "Falha ao alterar o país [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+            Log.log(fncNome, Log.INT_ALTERACAO, "Falha ao alterar o " + sngTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
     }
