@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.DB;
@@ -29,7 +30,7 @@ public class Lancamento extends ModelTemplate {
     private Venda VenCodigo; //@TODO
     private PlanoContas PlnCodigo;
     private int LanTipo;
-    private java.sql.Timestamp LanDataHora;
+    private Timestamp LanDataHora;
     private double LanValorEntrada;
     private double LanValorSaida;
     private String LanDescricao;
@@ -319,6 +320,56 @@ public class Lancamento extends ModelTemplate {
             parms[i++] = this.getLanCodigo();
         }
         return parms;
+    }
+    
+    public static ResultSet getList(int CntCodigo, int PlnCodigo, String LanDescricao, Timestamp LanDataHoraFrom, Timestamp LanDataHoraTo, Boolean LanEfetivado) {
+        ResultSet rs = null;
+        try {
+            String sql = "SELECT l.LanCodigo, l.LanDataHora, cc.CntNome, p.PlnNome, l.LanDescricao, l.LanValorSaida, l.LanValorEntrada, pes.PesNome";
+            sql += " FROM " + reflection.ReflectionUtil.getDBTableName(Lancamento.class) + " l";
+            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(PlanoContas.class) + " p ON (l.PlnCodigo = p.PlnCodigo)";
+            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(ContaCapital.class) + " cc ON (l.CntCodigo = cc.CntCodigo)";
+            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Cliente.class) + " cli ON (l.CliCodigo =cli.CliCodigo)";
+            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Pessoa.class) + " pes ON (cli.PesCodigo = pes.PesCodigo)";
+            sql += " WHERE 1=1";
+            
+            ArrayList<Object> parms = new ArrayList<>();
+            if (LanEfetivado != null) {
+                if (LanEfetivado) {
+                    sql += " AND LanEfetivado";
+                } else {
+                    sql += " AND NOT LanEfetivado";
+                }
+            }
+            if (CntCodigo != 0) {
+                sql += " AND l.CntCodigo = ?";
+                parms.add(CntCodigo);
+            }
+            if (PlnCodigo != 0) {
+                sql += " AND l.PlnCodigo = ?";
+                parms.add(PlnCodigo);
+            }
+            if (LanDescricao != null && !"".equals(LanDescricao)) {
+                sql += " AND l.LanDescricao LIKE ?";
+                parms.add("%" + LanDescricao + "%");
+            }
+            if (LanDataHoraFrom != null && LanDataHoraTo != null) {
+                sql += " AND l.LanDataHora BETWEEN ? AND ?";
+                parms.add(LanDataHoraFrom);
+                parms.add(LanDataHoraTo);
+            } else if (LanDataHoraFrom != null) {
+                sql += " AND l.LanDataHora >= ?";
+                parms.add(LanDataHoraFrom);
+            } else if (LanDataHoraTo != null) {
+                sql += " AND l.LanDataHora <= ?";
+                parms.add(LanDataHoraTo);
+            }
+            rs = DB.executeQuery(sql, (Object[]) parms.toArray(new Object[0]));
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(Lancamento.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return rs;
     }
     
     public static ArrayList<Lancamento> getLancamentos(java.sql.Timestamp from, java.sql.Timestamp to) {

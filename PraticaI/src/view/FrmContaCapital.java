@@ -25,7 +25,7 @@ public class FrmContaCapital extends FormJDialog {
      */
     public FrmContaCapital() {
         initComponents();
-        this.setTitle("Manutenção De " + ContaCapital.sngTitle);
+        this.setTitle("Manutenção de " + ContaCapital.sngTitle);
         ImageIcon icone = new ImageIcon(util.Util.getImageUrl(ContaCapital.iconTitle, util.ImageSize.P));
         this.setResizable(false);
         this.setLocationRelativeTo(null);
@@ -36,6 +36,7 @@ public class FrmContaCapital extends FormJDialog {
         Util.setLimitChars(txtDescricao, 30);
         Util.setLimitChars(txtNumeroConta, 30);
         Util.setLimitChars(txtTitular, 200);
+        Util.setMoneyField(txtSaldo);
     }
 
     @Override
@@ -44,11 +45,10 @@ public class FrmContaCapital extends FormJDialog {
         txtAgencia.setText(contaCapital.getCntBncAgencia());
         txtDescricao.setText(contaCapital.getCntNome());
         txtNumeroConta.setText(contaCapital.getCntBncNumero());
-        txtSaldo.disable();
-        txtSaldo.setText(String.valueOf(contaCapital.getCntSaldo()));
+        txtSaldo.setEnabled(false);
+        txtSaldo.setText(Util.getFormattedMoney(contaCapital.getCntSaldo()));
         txtTitular.setText(contaCapital.getCntBncTitular());
-        boolean i = contaCapital.getCntPadrao();
-        if (i == true) {
+        if (contaCapital.getCntPadrao()) {
             ckbContaPadrao.setSelected(true);
         } else {
             ckbContaPadrao.setSelected(false);
@@ -204,29 +204,22 @@ public class FrmContaCapital extends FormJDialog {
     }//GEN-LAST:event_ckbContaPadraoActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        // TODO add your handling code here:
-        boolean Cp;
-        if (ckbContaPadrao.isSelected() == true) {
-            Cp = true;
-        } else {
-            Cp = false;
-        }
+        
         contaCapital.setCntBncAgencia(txtAgencia.getText());
         contaCapital.setCntBncNumero(txtNumeroConta.getText());
         contaCapital.setCntBncTitular(txtTitular.getText());
         contaCapital.setCntNome(txtDescricao.getText());
-        contaCapital.setCntPadrao(Cp);
-        if (contaCapital.VerificaContaPadrao() == true && Cp) {
-            int i = JOptionPane.showConfirmDialog(null, "Você já possui uma conta padrão deseja substitui-la?");
-            if (i == 0) {
+        contaCapital.setCntPadrao(ckbContaPadrao.isSelected());
+        if (ContaCapital.getCntPadraoCodigo() != contaCapital.getCntCodigo() && ckbContaPadrao.isSelected()) {
+            int i = JOptionPane.showConfirmDialog(null, "Você já possui uma conta padrão: '" + ContaCapital.getCntPadraoNome() + "', deseja substitui-la?");
+            if (i == JOptionPane.OK_OPTION) {
                 contaCapital.save();
-                ContaCapital c = new ContaCapital();
-                c.load(contaCapital.getAux());
-                c.setCntPadrao(false);
-                c.save();
-            } else {
-                Cp = false;
-                contaCapital.setCntPadrao(Cp);
+                ContaCapital ccPadrao = new ContaCapital();
+                ccPadrao.load(contaCapital.getCntPadraoCodigo());
+                ccPadrao.setCntPadrao(false);
+                ccPadrao.save();
+            } else if (i == JOptionPane.NO_OPTION) {
+                contaCapital.setCntPadrao(false);
                 contaCapital.save();
             }
         } else {
