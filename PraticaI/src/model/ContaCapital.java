@@ -1,7 +1,6 @@
 package model;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.DB;
@@ -15,12 +14,14 @@ import util.field.FilterFieldText;
 public class ContaCapital extends ModelTemplate {
 
     private int CntCodigo;
+    private int aux;
     private String CntNome;
     private String CntBncNumero;
     private String CntBncAgencia;
     private String CntBncTitular;
     private boolean CntPadrao;
     private double CntSaldo;
+    private String flag = DB.FLAG_INSERT;
     /**
      * @see model.ModelTemplate#sngTitle
      */
@@ -57,6 +58,14 @@ public class ContaCapital extends ModelTemplate {
     };
 
     public ContaCapital() {
+    }
+
+    public int getAux() {
+        return aux;
+    }
+
+    public void setAux(int aux) {
+        this.aux = aux;
     }
 
     public int getCntCodigo() {
@@ -130,20 +139,80 @@ public class ContaCapital extends ModelTemplate {
     public void load(int CntCodigo) {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
-            sql += " WHERE CrgCodigo=?";
+            sql += " WHERE CntCodigo=?";
             ResultSet rs;
             rs = DB.executeQuery(sql, new Object[]{CntCodigo});
             rs.next();
-            this.setCntBncAgencia(rs.getString(""));
-            this.setCntBncNumero(rs.getString(""));
-            this.setCntBncTitular(rs.getString(""));
-            this.setCntNome(rs.getString(""));
-            this.setCntPadrao(rs.getInt(""));
-            this.setCntSaldo(rs.getDouble(""));
-        } catch (SQLException ex) {
+            this.setCntBncAgencia(rs.getString("CntBncAgencia"));
+            this.setCntBncNumero(rs.getString("CntBncNumero"));
+            this.setCntBncTitular(rs.getString("CntBncTitular"));
+            this.setCntNome(rs.getString("CntNome"));
+            this.setCntPadrao(rs.getInt("CntPadrao"));
+            this.setCntSaldo(rs.getDouble("CntSaldo"));
+            flag = DB.FLAG_UPDATE;
+        } catch (Exception ex) {
             Logger.getLogger(ContaCapital.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
+    public void insert() {
+        try {
+            int a = 0;
+            if (CntPadrao == true) {
+                a = 1;
+            }
+            this.setCntCodigo(Sequencial.getNextSequencial(ContaCapital.class));
+            String sql = "Insert into " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " (CntCodigo,CntNome,CntBncNumero,CntBncAgencia,CntBncTitular,CntPadrao,CntSaldo)";
+            sql += " VALUES(?,?,?,?,?,?,?)";
+            DB.executeUpdate(sql, new Object[]{CntCodigo, CntNome, CntBncNumero, CntBncAgencia, CntBncTitular, a, CntSaldo});
+            flag = DB.FLAG_UPDATE;
+        } catch (Exception ex) {
+            Logger.getLogger(ContaCapital.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void update() {
+        try {
+            int a = 0;
+            if (CntPadrao == true) {
+                a = 1;
+            }
+            String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += "  SET CntNome=?,CntBncNumero=?,CntBncAgencia=?,CntBncTitular=?,CntPadrao=?,CntSaldo=? WHERE (CntCodigo=?)";
+            DB.executeUpdate(sql, new Object[]{CntNome, CntBncNumero, CntBncAgencia, CntBncTitular, a, CntSaldo, CntCodigo});
+        } catch (Exception ex) {
+            Logger.getLogger(ContaCapital.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public boolean VerificaContaPadrao() {
+        try {
+            String sql = "SELECT CntCodigo,CntPadrao FROM contacapital where CntPadrao <>0;";
+            ResultSet rs = DB.executeQuery(sql);
+            if (rs.next()) {
+                //if (rs.getInt("CntPadrao") != 0 && rs.getObject("CntPadrao") != null) {
+                this.setAux(rs.getInt("CntCodigo"));
+                return true;
+                //  }
+            } else {
+                return false;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ContaCapital.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public boolean save() {
+        switch (flag) {
+            case DB.FLAG_INSERT:
+                insert();
+                break;
+            case DB.FLAG_UPDATE:
+                update();
+                break;
+        }
+        return false;
+    }
 }

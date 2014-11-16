@@ -7,6 +7,7 @@ package view;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import model.ContaCapital;
 import reflection.FormJDialog;
 import util.Util;
@@ -16,6 +17,8 @@ import util.Util;
  * @author Nadine
  */
 public class FrmContaCapital extends FormJDialog {
+
+    ContaCapital contaCapital = new ContaCapital();
 
     /**
      * Creates new form FrmContaCapital
@@ -33,6 +36,23 @@ public class FrmContaCapital extends FormJDialog {
         Util.setLimitChars(txtDescricao, 30);
         Util.setLimitChars(txtNumeroConta, 30);
         Util.setLimitChars(txtTitular, 200);
+    }
+
+    @Override
+    public void loadUpdate() {
+        contaCapital.load((int) idCols[0]);
+        txtAgencia.setText(contaCapital.getCntBncAgencia());
+        txtDescricao.setText(contaCapital.getCntNome());
+        txtNumeroConta.setText(contaCapital.getCntBncNumero());
+        txtSaldo.disable();
+        txtSaldo.setText(String.valueOf(contaCapital.getCntSaldo()));
+        txtTitular.setText(contaCapital.getCntBncTitular());
+        boolean i = contaCapital.getCntPadrao();
+        if (i == true) {
+            ckbContaPadrao.setSelected(true);
+        } else {
+            ckbContaPadrao.setSelected(false);
+        }
     }
 
     /**
@@ -57,12 +77,18 @@ public class FrmContaCapital extends FormJDialog {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         txtSaldo = new javax.swing.JFormattedTextField();
+        ckbContaPadrao = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         btnCancelar.setText("Cancelar");
 
         btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -74,9 +100,16 @@ public class FrmContaCapital extends FormJDialog {
 
         jLabel4.setText("Titular:");
 
-        jLabel5.setText("Saldo:");
+        jLabel5.setText("Saldo Inicial:");
 
         txtSaldo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,###.00"))));
+
+        ckbContaPadrao.setText("Conta padrão");
+        ckbContaPadrao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ckbContaPadraoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -92,23 +125,21 @@ public class FrmContaCapital extends FormJDialog {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel2)
                                     .addComponent(jLabel3)
-                                    .addComponent(jLabel4))
-                                .addGap(0, 5, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(49, 49, 49)))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(txtTitular)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel5))
+                                .addGap(10, 10, 10)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txtTitular)
                                 .addComponent(txtNumeroConta, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtAgencia, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 321, Short.MAX_VALUE))
-                        .addComponent(txtDescricao))
-                    .addComponent(txtSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(txtAgencia, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(16, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(ckbContaPadrao, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -132,7 +163,9 @@ public class FrmContaCapital extends FormJDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(txtSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 9, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 5, Short.MAX_VALUE)
+                .addComponent(ckbContaPadrao)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -145,7 +178,7 @@ public class FrmContaCapital extends FormJDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnSalvar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnCancelar))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -153,8 +186,8 @@ public class FrmContaCapital extends FormJDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
@@ -164,6 +197,43 @@ public class FrmContaCapital extends FormJDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void ckbContaPadraoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbContaPadraoActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_ckbContaPadraoActionPerformed
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        // TODO add your handling code here:
+        boolean Cp;
+        if (ckbContaPadrao.isSelected() == true) {
+            Cp = true;
+        } else {
+            Cp = false;
+        }
+        contaCapital.setCntBncAgencia(txtAgencia.getText());
+        contaCapital.setCntBncNumero(txtNumeroConta.getText());
+        contaCapital.setCntBncTitular(txtTitular.getText());
+        contaCapital.setCntNome(txtDescricao.getText());
+        contaCapital.setCntPadrao(Cp);
+        if (contaCapital.VerificaContaPadrao() == true && Cp) {
+            int i = JOptionPane.showConfirmDialog(null, "Você já possui uma conta padrão deseja substitui-la?");
+            if (i == 0) {
+                contaCapital.save();
+                ContaCapital c = new ContaCapital();
+                c.load(contaCapital.getAux());
+                c.setCntPadrao(false);
+                c.save();
+            } else {
+                Cp = false;
+                contaCapital.setCntPadrao(Cp);
+                contaCapital.save();
+            }
+        } else {
+            contaCapital.save();
+        }
+        dispose();
+    }//GEN-LAST:event_btnSalvarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -203,6 +273,7 @@ public class FrmContaCapital extends FormJDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnSalvar;
+    private javax.swing.JCheckBox ckbContaPadrao;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
