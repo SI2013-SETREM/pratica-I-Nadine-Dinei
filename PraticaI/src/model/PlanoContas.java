@@ -1,4 +1,3 @@
-
 package model;
 
 import java.sql.ResultSet;
@@ -14,19 +13,22 @@ import util.field.FilterFieldText;
 import util.sql.LeftOuterJoin;
 
 /**
- *  Classe de Plano de Contas
+ * Classe de Plano de Contas
+ *
  * @author Dinei A. Rockenbach
  * @author Nadine Anderle
  */
 public class PlanoContas extends ModelTemplate {
-    
+
     // nbsp(non-breaking space): ALT+255
     private static final String CHILD_SIGNAL = "|   ";
-    
+
     private int PlnCodigo;
     private String PlnNome;
     private PlanoContas PlnCodigoPai;
-    
+    private String flag = DB.FLAG_INSERT;
+
+    public static String iconTitle = "category.png";
     /**
      * @see model.ModelTemplate#sngTitle
      */
@@ -48,8 +50,7 @@ public class PlanoContas extends ModelTemplate {
      */
     public static Object[][] listTableFields = {
         {"Plano Pai", new LeftOuterJoin(PlanoContas.class, new String[]{"PlnCodigoPai"}, PlanoContas.class, new String[]{"PlnCodigo"}, "PlnNome")},
-        {"Nome", "PlnNome"},
-    };
+        {"Nome", "PlnNome"},};
     /**
      * @see model.ModelTemplate#listFilterFields
      */
@@ -57,10 +58,11 @@ public class PlanoContas extends ModelTemplate {
         new FilterFieldText("PlnNome", "Nome", 200),
         new FilterFieldDynamicCombo("PlanoContas.PlnCodigo", "Plano Pai", 200, PlanoContas.class, "PlnNome", null, null, "")
     };
-    
-    
-    
+
     public PlanoContas() {
+    }
+     public PlanoContas(int PlanoContas) {
+         this.load(PlanoContas);
     }
 
     public int getPlnCodigo() {
@@ -86,14 +88,15 @@ public class PlanoContas extends ModelTemplate {
     public void setPlnCodigoPai(PlanoContas PlnCodigoPai) {
         this.PlnCodigoPai = PlnCodigoPai;
     }
-    
+
     public boolean load(int PlnCodigo) {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this)
-                + " WHERE PlnCodigo = ?";
-            ResultSet rs = DB.executeQuery(sql, new Object[] {PlnCodigo});
+                    + " WHERE PlnCodigo = ?";
+            ResultSet rs = DB.executeQuery(sql, new Object[]{PlnCodigo});
             if (rs.next()) {
                 this.fill(rs, true);
+                flag = DB.FLAG_UPDATE;
                 return true;
             }
         } catch (SQLException ex) {
@@ -101,7 +104,7 @@ public class PlanoContas extends ModelTemplate {
         }
         return false;
     }
-    
+
     public PlanoContas fill(ResultSet rs, boolean fillChild) throws SQLException {
         this.setPlnCodigo(rs.getInt("PlnCodigo"));
         this.setPlnNome(rs.getString("PlnNome"));
@@ -113,7 +116,7 @@ public class PlanoContas extends ModelTemplate {
         }
         return this;
     }
-    
+
     public static ArrayList<PlanoContas> getAllOrdered() {
         ArrayList<PlanoContas> listPlanoContas = getAll();
         ArrayList<PlanoContas> finalList = new ArrayList<>();
@@ -123,26 +126,29 @@ public class PlanoContas extends ModelTemplate {
         }
         return finalList;
     }
+
     private static ArrayList<PlanoContas> findChilds(ArrayList<PlanoContas> orgList, ArrayList<PlanoContas> dstList, int idPai, int iterations) {
         ArrayList<PlanoContas> newList = new ArrayList<>();
-        for (PlanoContas pln : orgList) 
+        for (PlanoContas pln : orgList) {
             newList.add(pln);
-        
+        }
+
         for (PlanoContas pln : orgList) {
             int PlnCodigoPai = 0;
-            if (pln.getPlnCodigoPai() != null) 
+            if (pln.getPlnCodigoPai() != null) {
                 PlnCodigoPai = pln.getPlnCodigoPai().getPlnCodigo();
-            
+            }
+
             if (idPai == PlnCodigoPai) {
                 pln.setPlnNome(util.Util.strRepeat(CHILD_SIGNAL, iterations) + pln.getPlnNome());
                 dstList.add(pln);
                 newList.remove(pln);
-                findChilds(newList, dstList, pln.getPlnCodigo(), iterations+1);
+                findChilds(newList, dstList, pln.getPlnCodigo(), iterations + 1);
             }
         }
         return newList;
     }
-    
+
     public static java.util.ArrayList<PlanoContas> getAll() {
         java.util.ArrayList<PlanoContas> list = new java.util.ArrayList<>();
         try {
@@ -159,4 +165,21 @@ public class PlanoContas extends ModelTemplate {
         return list;
     }
 
-}
+    public void update() {
+        try {
+            String sql = "UPDATE " + ReflectionUtil.getDBTableName(PlanoContas.class) + " SET PlnCodigoPai=?, PlnNome=? WHERE (PlnCodigo=?)";
+            DB.executeUpdate(sql, new Object[]{PlnCodigoPai.getPlnCodigo(), PlnNome, PlnCodigo});
+        } catch (Exception ex) {
+            Logger.getLogger(PlanoContas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void insert() {
+        try {
+            String sql = "INSERT INTO " + ReflectionUtil.getDBTableName(PlanoContas.class) + " (PlnCodigoPai, PlnNome,PlnCodigo) VALUES(?,?,?);";
+            DB.executeUpdate(sql, new Object[]{PlnCodigoPai.getPlnCodigo(), PlnNome, PlnCodigo});
+        } catch (Exception ex) {
+            Logger.getLogger(PlanoContas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+ }

@@ -5,7 +5,6 @@
  */
 package view;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import model.ContaCapital;
@@ -204,7 +203,6 @@ public class FrmContaCapital extends FormJDialog {
     }//GEN-LAST:event_ckbContaPadraoActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        
         contaCapital.setCntBncAgencia(txtAgencia.getText());
         contaCapital.setCntBncNumero(txtNumeroConta.getText());
         contaCapital.setCntBncTitular(txtTitular.getText());

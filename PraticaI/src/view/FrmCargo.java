@@ -113,22 +113,10 @@ public class FrmCargo extends reflection.FormJDialog {
         cargo.setCrgNome(txtCargo.getText());
         if (flag == "U") {
             cargo.update();
-            this.dispose();
         } else if (flag == "I") {
-            try {
-                String sql = "select max(CrgCodigo)+1 as CrgCodigo from cargo";
-                ResultSet rs;
-                rs = DB.executeQuery(sql);
-                rs.next();
-                cargo.setCrgCodigo(rs.getInt("CrgCodigo"));
-                cargo.insert();
-                this.dispose();
-            } catch (Exception ex) {
-                Logger.getLogger(FrmCargo.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            cargo.insert();
         }
-
-
+        this.dispose();
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
