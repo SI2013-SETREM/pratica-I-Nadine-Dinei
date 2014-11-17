@@ -181,6 +181,7 @@ public class PlanoContas extends ModelTemplate {
     }
 
     public void insert() {
+          this.setPlnCodigo(Sequencial.getNextSequencial(PlanoContas.class));
         try {
             String sql = "INSERT INTO " + ReflectionUtil.getDBTableName(PlanoContas.class) + " (PlnCodigoPai, PlnNome,PlnCodigo) VALUES(?,?,?);";
             Object[] parms = new Object[3];

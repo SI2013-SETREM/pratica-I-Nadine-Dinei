@@ -1,4 +1,3 @@
-
 package model;
 
 import java.sql.ResultSet;
@@ -9,19 +8,21 @@ import util.field.FilterField;
 import util.field.FilterFieldText;
 
 /**
- *  Model de Produtos
+ * Model de Produtos
+ *
  * @author Dinei A. Rockenbach
  * @author Nadine Anderle
  */
 public class Produto extends ModelTemplate {
+
     private int PrdCodigo;
     private String PrdNome;
     private String PrdDescricao;
     private double PrdPreco;
     private java.sql.Timestamp PrdDtaDelecao;
-    
+
     private String flag = DB.FLAG_INSERT;
-    
+
     /**
      * @see model.ModelTemplate#sngTitle
      */
@@ -52,25 +53,25 @@ public class Produto extends ModelTemplate {
     public static Object[][] listTableFields = {
         {"Nome", "PrdNome"},
         {"Descrição", "PrdDescricao"},
-        {"Preço", "PrdPreco"},
-    };
+        {"Preço", "PrdPreco"},};
     /**
      * @see model.ModelTemplate#listFilterFields
      */
     public static FilterField[] listFilterFields = {
         new FilterFieldText("PrdNome", "Nome", 200, 200),
-        new FilterFieldText("PrdDescricao", "Descrição", 200),
-    };
-    
+        new FilterFieldText("PrdDescricao", "Descrição", 200),};
+
     public Produto() {
     }
+
     public Produto(int PrdCodigo) {
         this.load(PrdCodigo);
     }
-    
+
     public int getPrdCodigo() {
         return PrdCodigo;
     }
+
     public void setPrdCodigo(int PrdCodigo) {
         this.PrdCodigo = PrdCodigo;
     }
@@ -78,6 +79,7 @@ public class Produto extends ModelTemplate {
     public String getPrdNome() {
         return PrdNome;
     }
+
     public void setPrdNome(String PrdNome) {
         this.PrdNome = PrdNome;
     }
@@ -85,6 +87,7 @@ public class Produto extends ModelTemplate {
     public String getPrdDescricao() {
         return PrdDescricao;
     }
+
     public void setPrdDescricao(String PrdDescricao) {
         this.PrdDescricao = PrdDescricao;
     }
@@ -92,6 +95,7 @@ public class Produto extends ModelTemplate {
     public double getPrdPreco() {
         return PrdPreco;
     }
+
     public void setPrdPreco(double PrdPreco) {
         this.PrdPreco = PrdPreco;
     }
@@ -99,6 +103,7 @@ public class Produto extends ModelTemplate {
     public Timestamp getPrdDtaDelecao() {
         return PrdDtaDelecao;
     }
+
     public void setPrdDtaDelecao(Timestamp PrdDtaDelecao) {
         this.PrdDtaDelecao = PrdDtaDelecao;
     }
@@ -106,10 +111,11 @@ public class Produto extends ModelTemplate {
     public String getFlag() {
         return flag;
     }
+
     public void setFlag(String flag) {
         this.flag = flag;
     }
-    
+
     public boolean load(int PrdCodigo) {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(Produto.class);
@@ -121,7 +127,6 @@ public class Produto extends ModelTemplate {
                 this.setPrdDescricao(rs.getString("PrdDescricao"));
                 this.setPrdPreco(rs.getDouble("PrdPreco"));
                 this.setPrdDtaDelecao(rs.getTimestamp("PrdDtaDelecao"));
-                
                 this.setFlag(DB.FLAG_UPDATE);
                 return true;
             }
@@ -130,7 +135,7 @@ public class Produto extends ModelTemplate {
         }
         return false;
     }
-    
+
     public boolean save() {
         switch (flag) {
             case DB.FLAG_INSERT:
@@ -140,7 +145,7 @@ public class Produto extends ModelTemplate {
         }
         return false;
     }
-    
+
     public boolean insert() {
         this.setPrdCodigo(Sequencial.getNextSequencial(Produto.class));
         String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(Produto.class);
@@ -156,7 +161,7 @@ public class Produto extends ModelTemplate {
         }
         return false;
     }
-    
+
     public boolean update() {
         String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(Pais.class);
         sql += " SET PrdNome = ?, PrdDescricao = ?, PrdPreco = ?";
@@ -170,5 +175,5 @@ public class Produto extends ModelTemplate {
         }
         return false;
     }
-    
+
 }

@@ -5,10 +5,6 @@
  */
 package view;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import model.Cargo;
 import util.DB;
@@ -111,9 +107,9 @@ public class FrmCargo extends reflection.FormJDialog {
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         cargo.setCrgNome(txtCargo.getText());
-        if (flag == "U") {
+        if (flag.equals(DB.FLAG_UPDATE)) {
             cargo.update();
-        } else if (flag == "I") {
+        } else if (flag.equals(DB.FLAG_INSERT)) {
             cargo.insert();
         }
         this.dispose();
