@@ -51,7 +51,8 @@ public class ContaCapital extends ModelTemplate {
      */
     public static Object[][] listTableFields = {
         {"Descrição", "CntNome"},
-        {"Saldo", "CntSaldo"}
+        {"Saldo", "CntSaldo"},
+        {"Conta Padrão", "CntPadrao"},
     };
 
     /**

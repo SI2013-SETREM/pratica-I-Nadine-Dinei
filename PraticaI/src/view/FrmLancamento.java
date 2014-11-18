@@ -24,8 +24,6 @@ import util.field.ComboBoxItem;
  */
 public class FrmLancamento extends reflection.FormJDialog {
     
-    private ArrayList<ComboBoxItem> cboxItensContaCapital = new ArrayList<>();
-    private ArrayList<ComboBoxItem> cboxItensPlanoContas = new ArrayList<>();
     public Lancamento lancamento = new Lancamento();
     private int LanTipo = Lancamento.TIPO_ENTRADA;
     
@@ -34,6 +32,9 @@ public class FrmLancamento extends reflection.FormJDialog {
     private ImageIcon imgSaida = new ImageIcon(util.Util.getImageUrl("moneydelete.png", ImageSize.M));
     private ImageIcon imgSaidaP = new ImageIcon(util.Util.getImageUrl("moneydelete.png", ImageSize.P));
     private ImageIcon imgTransferencia = new ImageIcon(util.Util.getImageUrl("companygenerosity.png", ImageSize.M));
+    
+    private ArrayList<ComboBoxItem> cboxItensContaCapital = new ArrayList<>();
+    private ArrayList<ComboBoxItem> cboxItensPlanoContas = new ArrayList<>();
     
     private ArrayList<ContaCapital> ContasDeCapital = ContaCapital.getAll();
     private ArrayList<PlanoContas> PlanosDeContas = PlanoContas.getAllOrdered();
@@ -52,10 +53,6 @@ public class FrmLancamento extends reflection.FormJDialog {
         util.Util.setLimitChars(txtLanDocumento, 50);
         
         this.setEntrada(); //Só por garantia
-        
-        // Por enquanto, não temos isto
-        rdoEfetivado.setVisible(false);
-        rdoPendente.setVisible(false);
         
         ComboBoxItem sel = null;
         for (ContaCapital cc : ContasDeCapital) {
@@ -131,8 +128,7 @@ public class FrmLancamento extends reflection.FormJDialog {
             txtLanDataHora.setText(Util.getFormattedDateTime(lancamento.getLanDataHora()));
             txtLanDescricao.setText(lancamento.getLanDescricao());
             txtLanDocumento.setText(lancamento.getLanDocumento());
-            rdoEfetivado.setSelected(lancamento.isLanEfetivado());
-            rdoPendente.setSelected(!lancamento.isLanEfetivado());
+            chkEfetivado.setSelected(lancamento.isLanEfetivado());
         } else {
             JOptionPane.showMessageDialog(this, "Registro não encontrado!", "Erro", JOptionPane.ERROR_MESSAGE);
             //Fechar form
@@ -169,7 +165,7 @@ public class FrmLancamento extends reflection.FormJDialog {
         }
         lancamento.setLanDescricao(txtLanDescricao.getText());
         lancamento.setLanDocumento(txtLanDocumento.getText());
-        lancamento.setLanEfetivado(rdoEfetivado.isSelected());
+        lancamento.setLanEfetivado(chkEfetivado.isSelected());
         if (lancamento.save())
             this.dispose();
         else
@@ -203,8 +199,7 @@ public class FrmLancamento extends reflection.FormJDialog {
         jLabel6 = new javax.swing.JLabel();
         lblLanTipo = new javax.swing.JLabel();
         lblImg = new javax.swing.JLabel();
-        rdoEfetivado = new javax.swing.JRadioButton();
-        rdoPendente = new javax.swing.JRadioButton();
+        chkEfetivado = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -280,12 +275,13 @@ public class FrmLancamento extends reflection.FormJDialog {
         lblLanTipo.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         lblLanTipo.setText("Tipo");
 
-        btnGrpLanEfetivado.add(rdoEfetivado);
-        rdoEfetivado.setSelected(true);
-        rdoEfetivado.setText("Efetivado");
-
-        btnGrpLanEfetivado.add(rdoPendente);
-        rdoPendente.setText("Pendente");
+        chkEfetivado.setSelected(true);
+        chkEfetivado.setText("Efetivado");
+        chkEfetivado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkEfetivadoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -317,21 +313,18 @@ public class FrmLancamento extends reflection.FormJDialog {
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(txtLanDescricao, javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(cmbPlanoContas, javax.swing.GroupLayout.Alignment.LEADING, 0, 245, Short.MAX_VALUE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtLanDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(txtLanValor, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(chkEfetivado))
+                                        .addGroup(layout.createSequentialGroup()
                                             .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(txtLanValor, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel3)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(txtLanDataHora, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(rdoEfetivado)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(rdoPendente))))
-                                    .addComponent(txtLanDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                            .addGap(18, 18, 18)
+                                            .addComponent(jLabel3)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(txtLanDataHora, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -349,14 +342,11 @@ public class FrmLancamento extends reflection.FormJDialog {
                     .addComponent(txtLanDataHora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(rdoEfetivado)
-                        .addComponent(rdoPendente))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel4)
-                        .addComponent(txtLanValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(txtLanValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(chkEfetivado))
+                .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmbPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
@@ -410,6 +400,10 @@ public class FrmLancamento extends reflection.FormJDialog {
         
     }//GEN-LAST:event_cmbPlanoContasActionPerformed
 
+    private void chkEfetivadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkEfetivadoActionPerformed
+        System.out.println(chkEfetivado.isSelected());
+    }//GEN-LAST:event_chkEfetivadoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -458,6 +452,7 @@ public class FrmLancamento extends reflection.FormJDialog {
     private javax.swing.ButtonGroup btnGrpLanEfetivado;
     private javax.swing.ButtonGroup btnGrpLanTipo;
     private javax.swing.JButton btnSalvar;
+    private javax.swing.JCheckBox chkEfetivado;
     private javax.swing.JComboBox cmbContaCapital;
     private javax.swing.JComboBox cmbPlanoContas;
     private javax.swing.JLabel jLabel1;
@@ -468,8 +463,6 @@ public class FrmLancamento extends reflection.FormJDialog {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel lblImg;
     private javax.swing.JLabel lblLanTipo;
-    private javax.swing.JRadioButton rdoEfetivado;
-    private javax.swing.JRadioButton rdoPendente;
     private javax.swing.JFormattedTextField txtLanDataHora;
     private javax.swing.JTextField txtLanDescricao;
     private javax.swing.JTextField txtLanDocumento;

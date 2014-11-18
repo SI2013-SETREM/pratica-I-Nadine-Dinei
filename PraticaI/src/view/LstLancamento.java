@@ -8,29 +8,36 @@ package view;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.font.TextAttribute;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import model.ContaCapital;
 import model.Lancamento;
 import model.Log;
+import model.PlanoContas;
 import model.Usuario;
 import reflection.ListJFrame;
 import util.DB;
 import util.ImageSize;
 import util.Util;
+import util.field.ComboBoxItem;
 
 /**
  *
@@ -40,6 +47,8 @@ public class LstLancamento extends javax.swing.JFrame {
     
     public static final ImageIcon iconEfetivar = new ImageIcon(Util.getIconUrl("accept.png"));
     public static final ImageIcon iconEfetivarInativo = new ImageIcon(Util.getIconUrl("accept_gray.png"));
+    public static final ImageIcon iconEstornar = new ImageIcon(Util.getIconUrl("cross.png"));
+    public static final ImageIcon iconEstornarInativo = new ImageIcon(Util.getIconUrl("cross_gray.png"));
     public static final ImageIcon iconQuestion = new ImageIcon(Util.getImageUrl("question.png", ImageSize.M));
     
     public static final int colLanDataHora = 0;
@@ -49,9 +58,17 @@ public class LstLancamento extends javax.swing.JFrame {
     public static final int colLanValorSaida = 4;
     public static final int colLanValorEntrada = 5;
     public static final int colBtnEfetivar = 6;
-    public static final int colCntCodigo = 7;
-    public static final int colLanCodigo = 8;
-    public static final int colLanEfetivado = 9;
+    public static final int colBtnEstornar = 7;
+    public static final int colCntCodigo = 8;
+    public static final int colLanCodigo = 9;
+    public static final int colLanEfetivado = 10;
+    public static final int colLanEstornado = 11;
+    
+    private ArrayList<ComboBoxItem> cboxItensContaCapital = new ArrayList<>();
+    private ArrayList<ComboBoxItem> cboxItensPlanoContas = new ArrayList<>();
+    
+    private ArrayList<ContaCapital> ContasDeCapital = ContaCapital.getAll();
+    private ArrayList<PlanoContas> PlanosDeContas = PlanoContas.getAllOrdered();
     
     /**
      * Creates new form LstLancamento
@@ -84,13 +101,29 @@ public class LstLancamento extends javax.swing.JFrame {
             public void mouseClicked(MouseEvent e) {
                 int col = tbl.columnAtPoint(e.getPoint());
                 int row = tbl.rowAtPoint(e.getPoint());
-                if (col == colBtnEfetivar) {
-                    efetivar(row);
+                switch (col) {
+                    case colBtnEfetivar:
+                        efetivar(row);
+                        break;
+                    case colBtnEstornar:
+                        estornar(row);
+                        break;
                 }
-//                } else if (e.getClickCount() > 1) {
+//                if (e.getClickCount() > 1) {
 //                    updateRow(row);
             }
         });
+        
+        // Preenche os filtros
+        cboxItensContaCapital.add(new ComboBoxItem(0, "")); //Empty Item
+        for (ContaCapital cc : ContasDeCapital) 
+            cboxItensContaCapital.add(new ComboBoxItem(cc.getCntCodigo(), cc.getCntNome()));
+        cmbContaCapital.setModel(new DefaultComboBoxModel((ComboBoxItem[]) cboxItensContaCapital.toArray(new ComboBoxItem[cboxItensContaCapital.size()])));
+        
+        cboxItensPlanoContas.add(new ComboBoxItem(0, "")); //Empty Item
+        for (PlanoContas pc : PlanosDeContas)
+            cboxItensPlanoContas.add(new ComboBoxItem(pc.getPlnCodigo(), pc.getPlnNome()));
+        cmbPlanoContas.setModel(new DefaultComboBoxModel((ComboBoxItem[]) cboxItensPlanoContas.toArray(new ComboBoxItem[cboxItensPlanoContas.size()])));
         
         // Filtros default
         Calendar cl = Calendar.getInstance();
@@ -103,7 +136,23 @@ public class LstLancamento extends javax.swing.JFrame {
     }
     
     public void listar() {
-        ResultSet rs = Lancamento.getList(0, 0, txtLanDescricao.getText(), null, null, null);
+        int CntCodigo = 0;
+        if (cmbContaCapital.getSelectedItem() != null) {
+            for (ContaCapital cc : ContasDeCapital) {
+                if ((int) ((ComboBoxItem) cmbContaCapital.getSelectedItem()).getId() == cc.getCntCodigo())
+                    CntCodigo = cc.getCntCodigo();
+            }
+        }
+        
+        int PlnCodigo = 0;
+        if (cmbPlanoContas.getSelectedItem() != null) {
+            for (PlanoContas pln : PlanosDeContas) {
+                if ((int) ((ComboBoxItem) cmbPlanoContas.getSelectedItem()).getId() == pln.getPlnCodigo())
+                    PlnCodigo = pln.getPlnCodigo();
+            }
+        }
+        
+        ResultSet rs = Lancamento.getList(CntCodigo, PlnCodigo, txtLanDescricao.getText(), Util.getTimestampFromString(txtLanDataHoraFrom.getText() + " 00:00:00"), Util.getTimestampFromString(txtLanDataHoraTo.getText() + " 23:59:59"), null);
         
         DefaultTableModel dtm = (DefaultTableModel) tbl.getModel();
         dtm.setNumRows(0);
@@ -120,6 +169,7 @@ public class LstLancamento extends javax.swing.JFrame {
                 row[colCntCodigo] = rs.getInt("CntCodigo");
                 row[colLanCodigo] = rs.getInt("LanCodigo");
                 row[colLanEfetivado] = rs.getBoolean("LanEfetivado");
+                row[colLanEstornado] = rs.getBoolean("LanEstornado");
                 dtm.addRow(row);
             }
         } catch (SQLException ex) {
@@ -130,12 +180,35 @@ public class LstLancamento extends javax.swing.JFrame {
     
     public void efetivar(int row) {
         if (!(boolean) tbl.getValueAt(row, colLanEfetivado)) {
-            int opt = JOptionPane.showConfirmDialog(rootPane, "Deseja realmente efetivar o lançamento:", "Efetivar lançamento", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, iconQuestion);
+            int opt = JOptionPane.showConfirmDialog(rootPane, 
+                    "Deseja realmente efetivar o lançamento: '" + (String) tbl.getValueAt(row, colLanDescricao) + "'?\r\n"
+                    + "Esta opção é irreversível.", 
+                    "Efetivar lançamento", 
+                    JOptionPane.YES_NO_OPTION, 
+                    JOptionPane.QUESTION_MESSAGE, 
+                    iconQuestion);
             if (opt == JOptionPane.YES_OPTION) {
                 Lancamento lan = new Lancamento();
                 lan.load((int) tbl.getValueAt(row, colCntCodigo), (int) tbl.getValueAt(row, colLanCodigo));
-                lan.setLanEfetivado(true);
-                lan.save();
+                lan.efetivar();
+                listar();
+            }
+        }
+    }
+    
+    public void estornar(int row) {
+        if (!(boolean) tbl.getValueAt(row, colLanEstornado)) {
+            int opt = JOptionPane.showConfirmDialog(rootPane, 
+                    "Deseja realmente estornar o lançamento: '" + (String) tbl.getValueAt(row, colLanDescricao) + "'?\r\n"
+                    + "Esta opção é irreversível.", 
+                    "Estornar lançamento", 
+                    JOptionPane.YES_NO_OPTION, 
+                    JOptionPane.QUESTION_MESSAGE, 
+                    iconQuestion);
+            if (opt == JOptionPane.YES_OPTION) {
+                Lancamento lan = new Lancamento();
+                lan.load((int) tbl.getValueAt(row, colCntCodigo), (int) tbl.getValueAt(row, colLanCodigo));
+                lan.estornar();
                 listar();
             }
         }
@@ -170,17 +243,17 @@ public class LstLancamento extends javax.swing.JFrame {
 
         tbl.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Data", "Conta de Capital", "Plano de Contas", "Descrição", "Saída", "Entrada", "", "CntCodigo", "LanCodigo", "LanEfetivado"
+                "Data", "Conta de Capital", "Plano de Contas", "Descrição", "Saída", "Entrada", "Efetivar", "Estornar", "CntCodigo", "LanCodigo", "LanEfetivado", "LanEstornado"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -192,16 +265,21 @@ public class LstLancamento extends javax.swing.JFrame {
             tbl.getColumnModel().getColumn(0).setMinWidth(100);
             tbl.getColumnModel().getColumn(0).setPreferredWidth(100);
             tbl.getColumnModel().getColumn(6).setResizable(false);
-            tbl.getColumnModel().getColumn(6).setPreferredWidth(30);
-            tbl.getColumnModel().getColumn(7).setMinWidth(0);
-            tbl.getColumnModel().getColumn(7).setPreferredWidth(0);
-            tbl.getColumnModel().getColumn(7).setMaxWidth(0);
+            tbl.getColumnModel().getColumn(6).setPreferredWidth(35);
+            tbl.getColumnModel().getColumn(7).setResizable(false);
+            tbl.getColumnModel().getColumn(7).setPreferredWidth(35);
             tbl.getColumnModel().getColumn(8).setMinWidth(0);
             tbl.getColumnModel().getColumn(8).setPreferredWidth(0);
             tbl.getColumnModel().getColumn(8).setMaxWidth(0);
             tbl.getColumnModel().getColumn(9).setMinWidth(0);
             tbl.getColumnModel().getColumn(9).setPreferredWidth(0);
             tbl.getColumnModel().getColumn(9).setMaxWidth(0);
+            tbl.getColumnModel().getColumn(10).setMinWidth(0);
+            tbl.getColumnModel().getColumn(10).setPreferredWidth(0);
+            tbl.getColumnModel().getColumn(10).setMaxWidth(0);
+            tbl.getColumnModel().getColumn(11).setMinWidth(0);
+            tbl.getColumnModel().getColumn(11).setPreferredWidth(0);
+            tbl.getColumnModel().getColumn(11).setMaxWidth(0);
         }
 
         jLabel1.setText("Conta de Capital");
@@ -244,7 +322,7 @@ public class LstLancamento extends javax.swing.JFrame {
 
         jLabel4.setText("De:");
 
-        jLabel5.setText("Até");
+        jLabel5.setText("até");
 
         try {
             txtLanDataHoraTo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
@@ -259,7 +337,7 @@ public class LstLancamento extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 655, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 680, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
@@ -407,40 +485,73 @@ class LancamentoCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         boolean LanEfetivado = (boolean) table.getValueAt(row, LstLancamento.colLanEfetivado);
-        System.out.println(row + "," + column  + " = " + table.getValueAt(row, column) + "; ");
-        System.out.println(table.getValueAt(row, LstLancamento.colLanEfetivado));
+        boolean LanEstornado = (boolean) table.getValueAt(row, LstLancamento.colLanEstornado);
+        
+        Map attributes = this.getFont().getAttributes();
+        attributes.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+        Font fontEstornado = new Font(attributes);
+        
         switch (column) {
+            case LstLancamento.colLanDataHora:
+            case LstLancamento.colLanContaCapital:
+            case LstLancamento.colLanPlanoContas:
+            case LstLancamento.colLanDescricao:
+                if (LanEstornado) {
+                    this.setFont(fontEstornado);
+                    this.setForeground(Lancamento.COR_ESTORNADO);
+                } else {
+                    this.setForeground(Color.black);
+                }
+                break;
             case LstLancamento.colLanValorSaida:
-                if (LanEfetivado)
-                    if (isSelected)
-                        this.setForeground(Lancamento.COR_SAIDA_SEL);
+                if (LanEstornado) {
+                    this.setFont(fontEstornado);
+                    this.setForeground(Lancamento.COR_ESTORNADO);
+                } else {
+                    if (LanEfetivado)
+                        if (isSelected)
+                            this.setForeground(Lancamento.COR_SAIDA_SEL);
+                        else
+                            this.setForeground(Lancamento.COR_SAIDA);
                     else
-                        this.setForeground(Lancamento.COR_SAIDA);
-                else
-                    if (isSelected)
-                        this.setForeground(Lancamento.COR_INATIVO_SEL);
-                    else
-                        this.setForeground(Lancamento.COR_INATIVO);
+                        if (isSelected)
+                            this.setForeground(Lancamento.COR_INATIVO_SEL);
+                        else
+                            this.setForeground(Lancamento.COR_INATIVO);
+                }
                 break;
             case LstLancamento.colLanValorEntrada:
-                if (LanEfetivado)
-                    if (isSelected)
-                        this.setForeground(Lancamento.COR_ENTRADA_SEL);
+                if (LanEstornado) {
+                    this.setFont(fontEstornado);
+                    this.setForeground(Lancamento.COR_ESTORNADO);
+                } else {
+                    if (LanEfetivado)
+                        if (isSelected)
+                            this.setForeground(Lancamento.COR_ENTRADA_SEL);
+                        else
+                            this.setForeground(Lancamento.COR_ENTRADA);
                     else
-                        this.setForeground(Lancamento.COR_ENTRADA);
-                else
-                    if (isSelected)
-                        this.setForeground(Lancamento.COR_INATIVO_SEL);
-                    else
-                        this.setForeground(Lancamento.COR_INATIVO);
+                        if (isSelected)
+                            this.setForeground(Lancamento.COR_INATIVO_SEL);
+                        else
+                            this.setForeground(Lancamento.COR_INATIVO);
+                }
                 break;
             case LstLancamento.colBtnEfetivar:
                 this.setHorizontalAlignment(SwingConstants.CENTER);
                 this.setText(null);
-                if (LanEfetivado)
+                if (LanEfetivado || LanEstornado)
                     this.setIcon(LstLancamento.iconEfetivarInativo);
                 else
                     this.setIcon(LstLancamento.iconEfetivar);
+                break;
+            case LstLancamento.colBtnEstornar:
+                this.setHorizontalAlignment(SwingConstants.CENTER);
+                this.setText(null);
+                if (LanEstornado)
+                    this.setIcon(LstLancamento.iconEstornarInativo);
+                else
+                    this.setIcon(LstLancamento.iconEstornar);
                 break;
         }
         return this;

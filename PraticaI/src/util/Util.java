@@ -59,14 +59,16 @@ public abstract class Util {
     }
     
     public static java.sql.Timestamp getTimestampFromString(String strDate) {
-        java.sql.Timestamp r = null;
         String[] dateTimeParts = strDate.split("\\s");
-        if (dateTimeParts.length == 2) {
-            String[] dateParts = dateTimeParts[0].split("/");
-            if (dateParts.length == 3) 
-                r = java.sql.Timestamp.valueOf(dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0] + " " + dateTimeParts[1]);
-        }
-        return r;
+        String[] dateParts = dateTimeParts[0].split("/");
+        String timestamp = "";
+        if (dateParts.length == 3) 
+            timestamp += dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
+        if (dateTimeParts.length == 2) 
+            timestamp += " " + dateTimeParts[1];
+        else
+            timestamp += " 00:00:00";
+        return java.sql.Timestamp.valueOf(timestamp);
     }
     
     public static double getMoneyFromText(String txtText) {

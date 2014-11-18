@@ -124,7 +124,8 @@ public abstract class DB {
         else if (data instanceof Integer)
             r = String.valueOf(data);
         else if (data instanceof Double)
-            r = String.valueOf(data);
+            r = Util.getFormattedMoney((double) data);
+            //r = String.valueOf(data);
         else if (data instanceof Float)
             r = String.valueOf(data);
         else if (data instanceof java.sql.Date)
@@ -134,7 +135,7 @@ public abstract class DB {
         else if (data instanceof java.sql.Timestamp)
             r = java.text.DateFormat.getDateTimeInstance(Config.FORMAT_DATE, Config.FORMAT_TIME).format((java.sql.Timestamp) data);
         else if (data instanceof Boolean)
-            r = String.valueOf((boolean) data);
+            r = ((boolean) data) ? "Sim" : "Não"; //String.valueOf((boolean) data);
         else if (data instanceof Character)
             r = String.valueOf((char) data);
         return r;

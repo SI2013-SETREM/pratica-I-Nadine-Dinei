@@ -40,6 +40,8 @@ public class FrmContaCapital extends FormJDialog {
 
     @Override
     public void loadUpdate() {
+        lblSaldo.setText("Saldo:");
+        
         contaCapital.load((int) idCols[0]);
         txtAgencia.setText(contaCapital.getCntBncAgencia());
         txtDescricao.setText(contaCapital.getCntNome());
@@ -74,7 +76,7 @@ public class FrmContaCapital extends FormJDialog {
         txtAgencia = new javax.swing.JTextField();
         txtTitular = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        lblSaldo = new javax.swing.JLabel();
         ckbContaPadrao = new javax.swing.JCheckBox();
         txtSaldo = new javax.swing.JTextField();
 
@@ -104,7 +106,7 @@ public class FrmContaCapital extends FormJDialog {
 
         jLabel4.setText("Titular:");
 
-        jLabel5.setText("Saldo Inicial:");
+        lblSaldo.setText("Saldo Inicial:");
 
         ckbContaPadrao.setText("Conta padrão");
         ckbContaPadrao.addActionListener(new java.awt.event.ActionListener() {
@@ -128,7 +130,7 @@ public class FrmContaCapital extends FormJDialog {
                                     .addComponent(jLabel2)
                                     .addComponent(jLabel3)
                                     .addComponent(jLabel4)
-                                    .addComponent(jLabel5))
+                                    .addComponent(lblSaldo))
                                 .addGap(10, 10, 10)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -170,7 +172,7 @@ public class FrmContaCapital extends FormJDialog {
                     .addComponent(txtTitular, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
+                    .addComponent(lblSaldo)
                     .addComponent(txtSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 5, Short.MAX_VALUE)
                 .addComponent(ckbContaPadrao)
@@ -288,8 +290,8 @@ public class FrmContaCapital extends FormJDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel lblSaldo;
     private javax.swing.JTextField txtAgencia;
     private javax.swing.JTextField txtDescricao;
     private javax.swing.JTextField txtNumeroConta;

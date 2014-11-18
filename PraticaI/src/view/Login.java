@@ -6,9 +6,12 @@
 
 package view;
 
+import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import model.Usuario;
+import util.ImageSize;
+import util.Util;
 
 /**
  *
@@ -20,6 +23,10 @@ public class Login extends javax.swing.JFrame {
      * Creates new form Login
      */
     public Login() {
+        java.net.URL urlImage = Util.getImageUrl("logo.png", ImageSize.M);
+        if (urlImage != null)
+            this.setIconImage(Toolkit.getDefaultToolkit().getImage(urlImage));
+        
         initComponents();
         this.setLocationRelativeTo(null);
         
