@@ -163,7 +163,7 @@ public class Produto extends ModelTemplate {
     }
 
     public boolean update() {
-        String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(Pais.class);
+        String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(Produto.class);
         sql += " SET PrdNome = ?, PrdDescricao = ?, PrdPreco = ?";
         sql += " WHERE PrdCodigo = ?";
         try {

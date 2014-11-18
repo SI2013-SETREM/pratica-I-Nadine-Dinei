@@ -6,7 +6,6 @@
 package view;
 
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import model.Produto;
 import util.DB;
 
@@ -40,7 +39,7 @@ public class FrmProduto extends reflection.FormJDialog {
         produto.load((int) idCols[0]);
         txtDescricao.setText(produto.getPrdDescricao());
         txtNome.setText(produto.getPrdNome());
-        txtPrdPreco.setText(String.valueOf(produto.getPrdPreco()));
+        txtPrdPreco.setText(util.Util.getFormattedMoney(produto.getPrdPreco()));
     }
 
     /**
@@ -72,6 +71,9 @@ public class FrmProduto extends reflection.FormJDialog {
 
         jLabel3.setText("Preço Unt.:");
 
+        txtPrdPreco.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtPrdPreco.setText("R$ 0,00");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -85,26 +87,25 @@ public class FrmProduto extends reflection.FormJDialog {
                             .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtNome)
+                            .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
                             .addComponent(txtDescricao)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtPrdPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtPrdPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -157,7 +158,10 @@ public class FrmProduto extends reflection.FormJDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-         if (flag.equals(DB.FLAG_UPDATE)) {
+        produto.setPrdDescricao(txtDescricao.getText());
+        produto.setPrdNome(txtNome.getText());
+        produto.setPrdPreco(util.Util.getMoneyFromText(txtPrdPreco.getText()));
+        if (flag.equals(DB.FLAG_UPDATE)) {
             produto.update();
         } else if (flag.equals(DB.FLAG_INSERT)) {
             produto.insert();
@@ -166,7 +170,7 @@ public class FrmProduto extends reflection.FormJDialog {
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-       dispose();
+        dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
