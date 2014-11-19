@@ -1,4 +1,3 @@
-
 package model;
 
 import java.sql.Date;
@@ -11,10 +10,10 @@ import util.field.FilterFieldDate;
  * @author Nadine Anderle
  */
 public class Venda extends ModelTemplate {
-    
+
     public static final char TIPO_VISTA = 'V';
     public static final char TIPO_PRAZO = 'P';
-    
+
     private Cliente CliCodigo;
     private int VenCodigo;
     private java.sql.Date VenData;
@@ -24,7 +23,8 @@ public class Venda extends ModelTemplate {
     private char VenTipo;
     private int VenParcelas;
     private double VenEntrada;
-    
+    private Produto[] VendaProduto;
+
     /**
      * @see model.ModelTemplate#sngTitle
      */
@@ -53,14 +53,12 @@ public class Venda extends ModelTemplate {
         {"Cliente", "Cliente.Pessoa.PesNome"},
         {"Valor", "VenValor"},
         {"Desconto", "VenDesconto"},
-        {"Valor Final", "VenValorFinal"},
-    };
+        {"Valor Final", "VenValorFinal"},};
     /**
      * @see model.ModelTemplate#listFilterFields
      */
     public static FilterField[] listFilterFields = {
-        new FilterFieldDate("VenData", "Data"),
-    };
+        new FilterFieldDate("VenData", "Data"),};
 
     public Venda() {
     }
@@ -136,8 +134,26 @@ public class Venda extends ModelTemplate {
     public void setVenEntrada(double VenEntrada) {
         this.VenEntrada = VenEntrada;
     }
+
+    public Produto[] getVendaProduto() {
+        return VendaProduto;
+    }
+
+    public void setVendaProduto(Produto[] VendaProduto) {
+        this.VendaProduto = VendaProduto;
+    }
+
     
+    public boolean save() {
+        return this.insert();
+    }
     
-    
+    public boolean insert() {
+        this.setVenCodigo(Sequencial.getNextSequencial(Venda.class.getSimpleName() + "_" + this.getCliCodigo().getCliCodigo()));        
+        for (Produto venPrd : this.getVendaProduto()) {
+            venPrd.save();
+        }
+        return false;
+    }
     
 }
