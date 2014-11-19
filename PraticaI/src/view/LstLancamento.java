@@ -64,6 +64,8 @@ public class LstLancamento extends javax.swing.JFrame {
     public static final int colLanEfetivado = 10;
     public static final int colLanEstornado = 11;
     
+    public static int rowTotal = 0;
+    
     private ArrayList<ComboBoxItem> cboxItensContaCapital = new ArrayList<>();
     private ArrayList<ComboBoxItem> cboxItensPlanoContas = new ArrayList<>();
     
@@ -74,7 +76,7 @@ public class LstLancamento extends javax.swing.JFrame {
      * Creates new form LstLancamento
      */
     public LstLancamento() {
-        java.net.URL urlImage = Util.getImageUrl("money.png", ImageSize.M);
+        java.net.URL urlImage = Util.getImageUrl(Lancamento.iconTitle, ImageSize.M);
         if (urlImage != null)
             this.setIconImage(Toolkit.getDefaultToolkit().getImage(urlImage));
         
@@ -101,16 +103,20 @@ public class LstLancamento extends javax.swing.JFrame {
             public void mouseClicked(MouseEvent e) {
                 int col = tbl.columnAtPoint(e.getPoint());
                 int row = tbl.rowAtPoint(e.getPoint());
-                switch (col) {
-                    case colBtnEfetivar:
-                        efetivar(row);
-                        break;
-                    case colBtnEstornar:
-                        estornar(row);
-                        break;
+                if (row != rowTotal) {
+                    switch (col) {
+                        case colBtnEfetivar:
+                            efetivar(row);
+                            break;
+                        case colBtnEstornar:
+                            estornar(row);
+                            break;
+                        default:
+                            if (e.getClickCount() > 1)
+                                updateRow(row);
+                            break;
+                    }
                 }
-//                if (e.getClickCount() > 1) {
-//                    updateRow(row);
             }
         });
         
@@ -157,24 +163,58 @@ public class LstLancamento extends javax.swing.JFrame {
         DefaultTableModel dtm = (DefaultTableModel) tbl.getModel();
         dtm.setNumRows(0);
         try {
-            while (rs.next()) {
+            double totalSaida = 0;
+            double totalEntrada = 0;
+            
+            if (rs.next()) {
+                do { //invertido porque ele já deu um next no if
+                    Object[] row = new Object[tbl.getColumnCount()];
+                    row[colLanDataHora] = DB.formatColumn(rs.getTimestamp("LanDataHora"));
+                    row[colLanContaCapital] = rs.getString("CntNome");
+                    row[colLanPlanoContas] = rs.getString("PlnNome");
+                    row[colLanDescricao] = rs.getString("LanDescricao");
+                    row[colLanValorSaida] = Util.getFormattedMoney(rs.getDouble("LanValorSaida"));
+                    row[colLanValorEntrada] = Util.getFormattedMoney(rs.getDouble("LanValorEntrada"));
+                    row[colBtnEfetivar] = null;
+                    row[colCntCodigo] = rs.getInt("CntCodigo");
+                    row[colLanCodigo] = rs.getInt("LanCodigo");
+                    row[colLanEfetivado] = rs.getBoolean("LanEfetivado");
+                    row[colLanEstornado] = rs.getBoolean("LanEstornado");
+                    dtm.addRow(row);
+                    
+                    totalSaida += rs.getDouble("LanValorSaida");
+                    totalEntrada += rs.getDouble("LanValorEntrada");
+                } while (rs.next());
                 Object[] row = new Object[tbl.getColumnCount()];
-                row[colLanDataHora] = DB.formatColumn(rs.getTimestamp("LanDataHora"));
-                row[colLanContaCapital] = rs.getString("CntNome");
-                row[colLanPlanoContas] = rs.getString("PlnNome");
-                row[colLanDescricao] = rs.getString("LanDescricao");
-                row[colLanValorSaida] = Util.getFormattedMoney(rs.getDouble("LanValorSaida"));
-                row[colLanValorEntrada] = Util.getFormattedMoney(rs.getDouble("LanValorEntrada"));
+                row[colLanDataHora] = null;
+                row[colLanContaCapital] = null;
+                row[colLanPlanoContas] = null;
+                row[colLanDescricao] = "Total:";
+                row[colLanValorSaida] = Util.getFormattedMoney(totalSaida);
+                row[colLanValorEntrada] = Util.getFormattedMoney(totalEntrada);
                 row[colBtnEfetivar] = null;
-                row[colCntCodigo] = rs.getInt("CntCodigo");
-                row[colLanCodigo] = rs.getInt("LanCodigo");
-                row[colLanEfetivado] = rs.getBoolean("LanEfetivado");
-                row[colLanEstornado] = rs.getBoolean("LanEstornado");
+                row[colCntCodigo] = null;
+                row[colLanCodigo] = null;
+                row[colLanEfetivado] = null;
+                row[colLanEstornado] = null;
                 dtm.addRow(row);
+                
+                rowTotal = dtm.getRowCount()-1;
             }
         } catch (SQLException ex) {
             Log.log(Lancamento.fncNome, Log.INT_OUTRA, "Falha na listagem de lançamentos [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
             Logger.getLogger(LstLancamento.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void updateRow(int row) {
+        boolean LanEfetivado = (boolean) tbl.getValueAt(row, colLanEfetivado);
+        boolean LanEstornado = (boolean) tbl.getValueAt(row, colLanEstornado);
+        if (!LanEfetivado && !LanEstornado) {
+            FrmLancamento frm = new FrmLancamento();
+            frm.idCols = new Object[]{(int) tbl.getValueAt(row, colCntCodigo), (int) tbl.getValueAt(row, colLanCodigo)};
+            frm.loadUpdate();
+            frm.setVisible(true);
         }
     }
     
@@ -223,8 +263,6 @@ public class LstLancamento extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tbl = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         cmbContaCapital = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
@@ -238,49 +276,10 @@ public class LstLancamento extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         txtLanDataHoraTo = new javax.swing.JFormattedTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbl = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        tbl.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "Data", "Conta de Capital", "Plano de Contas", "Descrição", "Saída", "Entrada", "Efetivar", "Estornar", "CntCodigo", "LanCodigo", "LanEfetivado", "LanEstornado"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(tbl);
-        if (tbl.getColumnModel().getColumnCount() > 0) {
-            tbl.getColumnModel().getColumn(0).setMinWidth(100);
-            tbl.getColumnModel().getColumn(0).setPreferredWidth(100);
-            tbl.getColumnModel().getColumn(6).setResizable(false);
-            tbl.getColumnModel().getColumn(6).setPreferredWidth(35);
-            tbl.getColumnModel().getColumn(7).setResizable(false);
-            tbl.getColumnModel().getColumn(7).setPreferredWidth(35);
-            tbl.getColumnModel().getColumn(8).setMinWidth(0);
-            tbl.getColumnModel().getColumn(8).setPreferredWidth(0);
-            tbl.getColumnModel().getColumn(8).setMaxWidth(0);
-            tbl.getColumnModel().getColumn(9).setMinWidth(0);
-            tbl.getColumnModel().getColumn(9).setPreferredWidth(0);
-            tbl.getColumnModel().getColumn(9).setMaxWidth(0);
-            tbl.getColumnModel().getColumn(10).setMinWidth(0);
-            tbl.getColumnModel().getColumn(10).setPreferredWidth(0);
-            tbl.getColumnModel().getColumn(10).setMaxWidth(0);
-            tbl.getColumnModel().getColumn(11).setMinWidth(0);
-            tbl.getColumnModel().getColumn(11).setPreferredWidth(0);
-            tbl.getColumnModel().getColumn(11).setMaxWidth(0);
-        }
 
         jLabel1.setText("Conta de Capital");
 
@@ -330,6 +329,47 @@ public class LstLancamento extends javax.swing.JFrame {
             ex.printStackTrace();
         }
 
+        tbl.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Data", "Conta de Capital", "Plano de Contas", "Descrição", "Saída", "Entrada", "Efetivar", "Estornar", "CntCodigo", "LanCodigo", "LanEfetivado", "LanEstornado"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tbl);
+        if (tbl.getColumnModel().getColumnCount() > 0) {
+            tbl.getColumnModel().getColumn(0).setMinWidth(100);
+            tbl.getColumnModel().getColumn(0).setPreferredWidth(100);
+            tbl.getColumnModel().getColumn(6).setResizable(false);
+            tbl.getColumnModel().getColumn(6).setPreferredWidth(35);
+            tbl.getColumnModel().getColumn(7).setResizable(false);
+            tbl.getColumnModel().getColumn(7).setPreferredWidth(35);
+            tbl.getColumnModel().getColumn(8).setMinWidth(0);
+            tbl.getColumnModel().getColumn(8).setPreferredWidth(0);
+            tbl.getColumnModel().getColumn(8).setMaxWidth(0);
+            tbl.getColumnModel().getColumn(9).setMinWidth(0);
+            tbl.getColumnModel().getColumn(9).setPreferredWidth(0);
+            tbl.getColumnModel().getColumn(9).setMaxWidth(0);
+            tbl.getColumnModel().getColumn(10).setMinWidth(0);
+            tbl.getColumnModel().getColumn(10).setPreferredWidth(0);
+            tbl.getColumnModel().getColumn(10).setMaxWidth(0);
+            tbl.getColumnModel().getColumn(11).setMinWidth(0);
+            tbl.getColumnModel().getColumn(11).setPreferredWidth(0);
+            tbl.getColumnModel().getColumn(11).setMaxWidth(0);
+        }
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -337,7 +377,13 @@ public class LstLancamento extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 680, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnAddSaida, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnAddEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
@@ -361,13 +407,7 @@ public class LstLancamento extends javax.swing.JFrame {
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtLanDataHoraTo, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnAddSaida, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnAddEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 149, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -392,8 +432,8 @@ public class LstLancamento extends javax.swing.JFrame {
                     .addComponent(btnFiltrar)
                     .addComponent(btnAddEntrada)
                     .addComponent(btnAddSaida))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -484,90 +524,116 @@ class LancamentoCellRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        boolean LanEfetivado = (boolean) table.getValueAt(row, LstLancamento.colLanEfetivado);
-        boolean LanEstornado = (boolean) table.getValueAt(row, LstLancamento.colLanEstornado);
         
-        Map attributes = this.getFont().getAttributes();
-        attributes.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
-        Font fontEstornado = new Font(attributes);
-        
-        switch (column) {
-            case LstLancamento.colLanDataHora:
-            case LstLancamento.colLanContaCapital:
-            case LstLancamento.colLanPlanoContas:
-            case LstLancamento.colLanDescricao:
-                if (LanEstornado) {
-                    this.setFont(fontEstornado);
-                    this.setForeground(Lancamento.COR_ESTORNADO);
-                } else {
+        if (row == LstLancamento.rowTotal) {
+            Map attributes = this.getFont().getAttributes();
+            attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+            this.setFont(new Font(attributes));
+            switch (column) {
+                case LstLancamento.colLanDescricao:
+                    this.setHorizontalAlignment(SwingConstants.LEFT);
                     this.setForeground(Color.black);
-                }
-                break;
-            case LstLancamento.colLanValorSaida:
-                if (LanEstornado) {
-                    this.setFont(fontEstornado);
-                    this.setForeground(Lancamento.COR_ESTORNADO);
-                } else {
-                    if (LanEfetivado)
-                        if (isSelected)
-                            this.setForeground(Lancamento.COR_SAIDA_SEL);
-                        else
-                            this.setForeground(Lancamento.COR_SAIDA);
+                    break;
+                case LstLancamento.colLanValorSaida:
+                    this.setHorizontalAlignment(SwingConstants.RIGHT);
+                    if (isSelected)
+                        this.setForeground(Lancamento.COR_SAIDA_SEL);
                     else
-                        if (isSelected)
-                            this.setForeground(Lancamento.COR_INATIVO_SEL);
-                        else
-                            this.setForeground(Lancamento.COR_INATIVO);
-                }
-                break;
-            case LstLancamento.colLanValorEntrada:
-                if (LanEstornado) {
-                    this.setFont(fontEstornado);
-                    this.setForeground(Lancamento.COR_ESTORNADO);
-                } else {
-                    if (LanEfetivado)
-                        if (isSelected)
-                            this.setForeground(Lancamento.COR_ENTRADA_SEL);
-                        else
-                            this.setForeground(Lancamento.COR_ENTRADA);
+                        this.setForeground(Lancamento.COR_SAIDA);
+                    break;
+                case LstLancamento.colLanValorEntrada:
+                    this.setHorizontalAlignment(SwingConstants.RIGHT);
+                    if (isSelected)
+                        this.setForeground(Lancamento.COR_ENTRADA_SEL);
                     else
-                        if (isSelected)
-                            this.setForeground(Lancamento.COR_INATIVO_SEL);
+                        this.setForeground(Lancamento.COR_ENTRADA);
+                    break;
+                default:
+                    this.setIcon(null);
+                    this.setForeground(Color.black);
+                    break;
+            }
+        } else {
+            boolean LanEfetivado = (boolean) table.getValueAt(row, LstLancamento.colLanEfetivado);
+            boolean LanEstornado = (boolean) table.getValueAt(row, LstLancamento.colLanEstornado);
+
+            Map attributes = this.getFont().getAttributes();
+            attributes.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+            Font fontEstornado = new Font(attributes);
+
+            switch (column) {
+                case LstLancamento.colLanDataHora:
+                case LstLancamento.colLanContaCapital:
+                case LstLancamento.colLanPlanoContas:
+                case LstLancamento.colLanDescricao:
+                    this.setHorizontalAlignment(SwingConstants.LEFT);
+                    if (LanEstornado) {
+                        this.setFont(fontEstornado);
+                        this.setForeground(Lancamento.COR_ESTORNADO);
+                    } else {
+                        if (LanEfetivado)
+                            this.setForeground(Color.black);
                         else
-                            this.setForeground(Lancamento.COR_INATIVO);
-                }
-                break;
-            case LstLancamento.colBtnEfetivar:
-                this.setHorizontalAlignment(SwingConstants.CENTER);
-                this.setText(null);
-                if (LanEfetivado || LanEstornado)
-                    this.setIcon(LstLancamento.iconEfetivarInativo);
-                else
-                    this.setIcon(LstLancamento.iconEfetivar);
-                break;
-            case LstLancamento.colBtnEstornar:
-                this.setHorizontalAlignment(SwingConstants.CENTER);
-                this.setText(null);
-                if (LanEstornado)
-                    this.setIcon(LstLancamento.iconEstornarInativo);
-                else
-                    this.setIcon(LstLancamento.iconEstornar);
-                break;
+                            if (isSelected)
+                                this.setForeground(Lancamento.COR_INATIVO_SEL);
+                            else
+                                this.setForeground(Lancamento.COR_INATIVO);
+                    }
+                    break;
+                case LstLancamento.colLanValorSaida:
+                    this.setHorizontalAlignment(SwingConstants.RIGHT);
+                    if (LanEstornado) {
+                        this.setFont(fontEstornado);
+                        this.setForeground(Lancamento.COR_ESTORNADO);
+                    } else {
+                        if (LanEfetivado)
+                            if (isSelected)
+                                this.setForeground(Lancamento.COR_SAIDA_SEL);
+                            else
+                                this.setForeground(Lancamento.COR_SAIDA);
+                        else
+                            if (isSelected)
+                                this.setForeground(Lancamento.COR_INATIVO_SEL);
+                            else
+                                this.setForeground(Lancamento.COR_INATIVO);
+                    }
+                    break;
+                case LstLancamento.colLanValorEntrada:
+                    this.setHorizontalAlignment(SwingConstants.RIGHT);
+                    if (LanEstornado) {
+                        this.setFont(fontEstornado);
+                        this.setForeground(Lancamento.COR_ESTORNADO);
+                    } else {
+                        if (LanEfetivado)
+                            if (isSelected)
+                                this.setForeground(Lancamento.COR_ENTRADA_SEL);
+                            else
+                                this.setForeground(Lancamento.COR_ENTRADA);
+                        else
+                            if (isSelected)
+                                this.setForeground(Lancamento.COR_INATIVO_SEL);
+                            else
+                                this.setForeground(Lancamento.COR_INATIVO);
+                    }
+                    break;
+                case LstLancamento.colBtnEfetivar:
+                    this.setHorizontalAlignment(SwingConstants.CENTER);
+                    this.setText(null);
+                    if (LanEfetivado || LanEstornado)
+                        this.setIcon(LstLancamento.iconEfetivarInativo);
+                    else
+                        this.setIcon(LstLancamento.iconEfetivar);
+                    break;
+                case LstLancamento.colBtnEstornar:
+                    this.setHorizontalAlignment(SwingConstants.CENTER);
+                    this.setText(null);
+                    if (LanEstornado)
+                        this.setIcon(LstLancamento.iconEstornarInativo);
+                    else
+                        this.setIcon(LstLancamento.iconEstornar);
+                    break;
+            }
         }
-        return this;
-    }
-}
-
-class UpdateCellRenderer extends DefaultTableCellRenderer {
-    public UpdateCellRenderer() {
-        this.setIcon(ListJFrame.iconUpdate);
-        this.setHorizontalAlignment(SwingConstants.CENTER);
-    }
-
-    @Override
-    public Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        setText(null);
         return this;
     }
 }

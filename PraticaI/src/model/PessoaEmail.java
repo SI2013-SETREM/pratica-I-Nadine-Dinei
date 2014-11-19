@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +28,7 @@ public class PessoaEmail extends ModelTemplate {
     /**
      * @see model.ModelTemplate#prlTitle
      */
-    public static String prlTitle = "E-mail's";
+    public static String prlTitle = "E-mails";
     /**
      * @see model.ModelTemplate#iconTitle
      */
@@ -86,16 +87,17 @@ public class PessoaEmail extends ModelTemplate {
         this.PesEmlEmail = PesEmlEmail;
     }
 
-    public void load(int PesEmlCodigo, int PesCod) {
+    public void load(int PesCod, int PesEmlCodigo) {
         try {
-            String sql = "select * from pessoaemail where PesCodigo=? and PesEmlCodigo=?;";
+            String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(PessoaEmail.class);
+            sql += " WHERE PesCodigo = ? AND PesEmlCodigo = ?";
             ResultSet rs = DB.executeQuery(sql, new Object[]{PesCod, PesEmlCodigo});
             rs.next();
             this.setPesCodigo((Pessoa) rs.getObject("PesCodigo"));
             this.setPesEmlCodigo(rs.getInt("PesEmlCodigo"));
             this.setPesEmlEmail(rs.getString("PesEmlEmail"));
-        } catch (Exception e) {
-            Logger.getLogger(PessoaEmail.class.getName()).log(Level.SEVERE, null, e);
+        } catch (SQLException ex) {
+            Log.log(Pessoa.fncNome, Log.INT_OUTRA, "Falha ao buscar o " + sngTitle + " da " + Pessoa.sngTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
     }
 
@@ -112,8 +114,8 @@ public class PessoaEmail extends ModelTemplate {
                 pe.setPesEmlEmail(rs.getString("PesEmlEmail"));
                 list.add(pe);
             }
-        } catch (Exception e) {
-            Logger.getLogger(PessoaEmail.class.getName()).log(Level.SEVERE, null, e);
+        } catch (SQLException ex) {
+            Log.log(Pessoa.fncNome, Log.INT_OUTRA, "Falha ao buscar os " + prlTitle + " da " + Pessoa.sngTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return (PessoaEmail[]) list.toArray(new PessoaEmail[list.size()]);
     }

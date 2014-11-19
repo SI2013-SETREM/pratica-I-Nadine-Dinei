@@ -37,8 +37,8 @@ public class FrmCidade extends FormJDialog {
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setIconImage(icone.getImage());
-        btnSalvar.setIcon(new ImageIcon(util.Util.getImageUrl("tick.png", util.ImageSize.P)));
-        btnCancelar.setIcon(new ImageIcon(util.Util.getImageUrl("cancel.png", util.ImageSize.P)));
+        btnSalvar.setIcon(util.Util.getImageIconOk());
+        btnCancelar.setIcon(util.Util.getImageIconCancel());
         Util.setLimitChars(txtNomeCidade, 200);
 
         ArrayList<Pais> listP = model.Pais.getAll();

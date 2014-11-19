@@ -168,4 +168,11 @@ public abstract class Util {
     public static java.net.URL getImageUrl(String imgName, String imgsize) {
         return Util.class.getResource("../" + Config.imageFolder + "/" + imgsize + "/" + imgName);
     }
+    
+    public static javax.swing.ImageIcon getImageIconOk() {
+        return new javax.swing.ImageIcon(getIconUrl("tick.png"));
+    }
+    public static javax.swing.ImageIcon getImageIconCancel() {
+        return new javax.swing.ImageIcon(getIconUrl("cancel.png"));
+    }
 }

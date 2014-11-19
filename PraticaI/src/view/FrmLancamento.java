@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import model.ContaCapital;
 import model.Lancamento;
+import model.Pessoa;
 import model.PlanoContas;
 import util.DB;
 import util.ImageSize;
@@ -25,6 +26,8 @@ import util.field.ComboBoxItem;
 public class FrmLancamento extends reflection.FormJDialog {
     
     public Lancamento lancamento = new Lancamento();
+    private Pessoa pessoa = null;
+    
     private int LanTipo = Lancamento.TIPO_ENTRADA;
     
     private ImageIcon imgEntrada = new ImageIcon(util.Util.getImageUrl("moneyadd.png", ImageSize.M));
@@ -45,8 +48,8 @@ public class FrmLancamento extends reflection.FormJDialog {
         ImageIcon icone = new ImageIcon(util.Util.getIconUrl(Lancamento.iconTitle));
         this.setLocationRelativeTo(null);
         this.setIconImage(icone.getImage());
-        btnSalvar.setIcon(new ImageIcon(util.Util.getImageUrl("tick.png", util.ImageSize.P)));
-        btnCancelar.setIcon(new ImageIcon(util.Util.getImageUrl("cancel.png", util.ImageSize.P)));
+        btnSalvar.setIcon(Util.getImageIconOk());
+        btnCancelar.setIcon(Util.getImageIconCancel());
 //        cmbContaCapital.setModel(new ComboBoxModel());
         util.Util.setMoneyField(txtLanValor);
         util.Util.setLimitChars(txtLanDescricao, 200);
@@ -71,6 +74,7 @@ public class FrmLancamento extends reflection.FormJDialog {
         }
         cmbPlanoContas.setModel(new DefaultComboBoxModel((ComboBoxItem[]) cboxItensPlanoContas.toArray(new ComboBoxItem[cboxItensPlanoContas.size()])));
         
+        chkEfetivadoActionPerformed(null);
     }
     
     public void setEntrada() {
@@ -94,10 +98,15 @@ public class FrmLancamento extends reflection.FormJDialog {
 //        btnTrocaLanTipo.setIcon(imgEntradaP);
     }
     
+    private void setDateNow() {
+        txtLanDataHora.setText(util.Util.getFormattedDateTime(new java.util.Date()));
+    }
+    
     @Override
     public void loadInsert() {
         lancamento = new Lancamento();
-        txtLanDataHora.setText(util.Util.getFormattedDateTime(new java.util.Date()));
+        this.setDateNow();
+        chkEfetivadoActionPerformed(null);
     }
 
     @Override
@@ -129,6 +138,8 @@ public class FrmLancamento extends reflection.FormJDialog {
             txtLanDescricao.setText(lancamento.getLanDescricao());
             txtLanDocumento.setText(lancamento.getLanDocumento());
             chkEfetivado.setSelected(lancamento.isLanEfetivado());
+            
+            chkEfetivadoActionPerformed(null);
         } else {
             JOptionPane.showMessageDialog(this, "Registro não encontrado!", "Erro", JOptionPane.ERROR_MESSAGE);
             //Fechar form
@@ -200,6 +211,9 @@ public class FrmLancamento extends reflection.FormJDialog {
         lblLanTipo = new javax.swing.JLabel();
         lblImg = new javax.swing.JLabel();
         chkEfetivado = new javax.swing.JCheckBox();
+        jLabel7 = new javax.swing.JLabel();
+        txtPessoa = new javax.swing.JTextField();
+        btnBuscaPessoa = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -283,6 +297,18 @@ public class FrmLancamento extends reflection.FormJDialog {
             }
         });
 
+        jLabel7.setText("Pessoa Relacionada:");
+
+        txtPessoa.setEnabled(false);
+        txtPessoa.setFocusable(false);
+
+        btnBuscaPessoa.setText("...");
+        btnBuscaPessoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscaPessoaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -307,13 +333,18 @@ public class FrmLancamento extends reflection.FormJDialog {
                                     .addComponent(jLabel4)
                                     .addComponent(jLabel2)
                                     .addComponent(jLabel5)
-                                    .addComponent(jLabel6))
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel7))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(txtLanDescricao, javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(cmbPlanoContas, javax.swing.GroupLayout.Alignment.LEADING, 0, 245, Short.MAX_VALUE))
                                     .addComponent(txtLanDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(txtPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnBuscaPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addGroup(layout.createSequentialGroup()
                                             .addComponent(txtLanValor, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -335,17 +366,23 @@ public class FrmLancamento extends reflection.FormJDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(lblLanTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblImg, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(txtPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBuscaPessoa))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtLanDataHora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(txtLanValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chkEfetivado))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(chkEfetivado)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel4)
+                        .addComponent(txtLanValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmbPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -401,8 +438,25 @@ public class FrmLancamento extends reflection.FormJDialog {
     }//GEN-LAST:event_cmbPlanoContasActionPerformed
 
     private void chkEfetivadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkEfetivadoActionPerformed
-        System.out.println(chkEfetivado.isSelected());
+        if (chkEfetivado.isSelected()) {
+            this.setDateNow();
+            txtLanDataHora.setEnabled(false);
+        } else {
+            txtLanDataHora.setEnabled(true);
+        }
     }//GEN-LAST:event_chkEfetivadoActionPerformed
+
+    private void btnBuscaPessoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscaPessoaActionPerformed
+        SlcPessoa slc = new SlcPessoa(null, true);
+        slc.isCliente = true;
+        slc.isFuncionario = true;
+        slc.isFornecedor = true;
+        slc.setVisible(true);
+        if (slc.getPessoa() != null) {
+            pessoa = slc.getPessoa();
+            txtPessoa.setText(pessoa.getPesNome());
+        }
+    }//GEN-LAST:event_btnBuscaPessoaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -448,6 +502,7 @@ public class FrmLancamento extends reflection.FormJDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBuscaPessoa;
     private javax.swing.JButton btnCancelar;
     private javax.swing.ButtonGroup btnGrpLanEfetivado;
     private javax.swing.ButtonGroup btnGrpLanTipo;
@@ -461,11 +516,13 @@ public class FrmLancamento extends reflection.FormJDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel lblImg;
     private javax.swing.JLabel lblLanTipo;
     private javax.swing.JFormattedTextField txtLanDataHora;
     private javax.swing.JTextField txtLanDescricao;
     private javax.swing.JTextField txtLanDocumento;
     private javax.swing.JTextField txtLanValor;
+    private javax.swing.JTextField txtPessoa;
     // End of variables declaration//GEN-END:variables
 }

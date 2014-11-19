@@ -5,28 +5,55 @@
  */
 package view;
 
+import java.awt.Toolkit;
+import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 import model.Pessoa;
+import util.ImageSize;
+import util.Util;
 
 /**
  *
  * @author Nadine
  */
 public class SlcPessoa extends javax.swing.JDialog {
-
+    
+    private Pessoa pessoa = null;
+    public boolean isFuncionario = false;
+    public boolean isCliente = false;
+    public boolean isUsuario = false;
+    public boolean isFornecedor = false;
+    
     /**
      * Creates new form bscPessoa
      */
     public SlcPessoa(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        
+        java.net.URL urlImage = Util.getImageUrl(Pessoa.iconTitle, ImageSize.M);
+        if (urlImage != null)
+            this.setIconImage(Toolkit.getDefaultToolkit().getImage(urlImage));
+        
         initComponents();
-
+        
+        this.setLocationRelativeTo(null);
+        
+        btnSelecionar.setIcon(Util.getImageIconOk());
+        btnCancelar.setIcon(Util.getImageIconCancel());
     }
-
-    public void list() {
+    
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+    
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+    }
+    
+    public void listar() {
         DefaultTableModel dados = (DefaultTableModel) tblPessoa.getModel();
         dados.setNumRows(0);
-        for (Pessoa p : Pessoa.listBusca()) {
+        for (Pessoa p : Pessoa.listBusca(isFuncionario, isCliente, isUsuario, isFornecedor)) {
             dados.addRow(new String[]{String.valueOf(p.getPesCodigo()), p.getPesNome(), p.getPesCPFCNPJ()});
         }
     }
@@ -42,6 +69,7 @@ public class SlcPessoa extends javax.swing.JDialog {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPessoa = new javax.swing.JTable();
+        btnCancelar = new javax.swing.JButton();
         btnSelecionar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -73,6 +101,11 @@ public class SlcPessoa extends javax.swing.JDialog {
                 tblPessoaMouseClicked(evt);
             }
         });
+        tblPessoa.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tblPessoaKeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblPessoa);
         if (tblPessoa.getColumnModel().getColumnCount() > 0) {
             tblPessoa.getColumnModel().getColumn(0).setMinWidth(0);
@@ -81,6 +114,13 @@ public class SlcPessoa extends javax.swing.JDialog {
             tblPessoa.getColumnModel().getColumn(1).setPreferredWidth(290);
             tblPessoa.getColumnModel().getColumn(2).setPreferredWidth(100);
         }
+
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         btnSelecionar.setText("Selecionar");
         btnSelecionar.addActionListener(new java.awt.event.ActionListener() {
@@ -96,37 +136,55 @@ public class SlcPessoa extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnSelecionar)))
+                        .addComponent(btnSelecionar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSelecionar))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCancelar)
+                    .addComponent(btnSelecionar))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        list();
+        listar();
     }//GEN-LAST:event_formWindowOpened
 
-    private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
-        Pes.load(Integer.parseInt(String.valueOf(tblPessoa.getValueAt(tblPessoa.getSelectedRow(), 0))));
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        pessoa = null;
         this.dispose();
-    }//GEN-LAST:event_btnSelecionarActionPerformed
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void tblPessoaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblPessoaMouseClicked
         if (evt.getClickCount() > 1)
             btnSelecionarActionPerformed(null);
     }//GEN-LAST:event_tblPessoaMouseClicked
+
+    private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
+        if (tblPessoa.getSelectedRow() != -1) {
+            pessoa = new Pessoa();
+            pessoa.load(Integer.parseInt(String.valueOf(tblPessoa.getValueAt(tblPessoa.getSelectedRow(), 0))));
+            this.dispose();
+        }
+    }//GEN-LAST:event_btnSelecionarActionPerformed
+
+    private void tblPessoaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblPessoaKeyPressed
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) 
+            btnSelecionarActionPerformed(null);
+    }//GEN-LAST:event_tblPessoaKeyPressed
 
     /**
      * @param args the command line arguments
@@ -171,15 +229,8 @@ public class SlcPessoa extends javax.swing.JDialog {
         });
     }
 
-    public Pessoa getPessoa() {
-        return Pes;
-    }
-
-    public void setPessoa(Pessoa p) {
-        this.Pes = p;
-    }
-    private Pessoa Pes = new Pessoa();
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnSelecionar;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblPessoa;

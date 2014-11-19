@@ -4,8 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.DB;
 import util.field.FilterField;
 import util.field.FilterFieldText;
@@ -23,7 +21,7 @@ public class Pessoa extends ModelTemplate {
     
     private int PesCodigo;
     private String PesNome;
-    private PessoaEmail[] PesEmlCodigo;
+    private PessoaEmail PesEmlCodigo;
     private int PesSexo;
     private String PesCPFCNPJ;
     private String PesRG;
@@ -43,6 +41,10 @@ public class Pessoa extends ModelTemplate {
      * @see model.ModelTemplate#prlTitle
      */
     public static String prlTitle = "Pessoas";
+    /**
+     * @see model.ModelTemplate#fncNome
+     */
+    public static String fncNome = "PESSOAS";
     /**
      * @see model.ModelTemplate#iconTitle
      */
@@ -90,11 +92,11 @@ public class Pessoa extends ModelTemplate {
         this.PesNome = PesNome;
     }
 
-    public PessoaEmail[] getPesEmlCodigo() {
+    public PessoaEmail getPesEmlCodigo() {
         return PesEmlCodigo;
     }
 
-    public void setPesEmlCodigo(PessoaEmail[] PesEmlCodigo) {
+    public void setPesEmlCodigo(PessoaEmail PesEmlCodigo) {
         this.PesEmlCodigo = PesEmlCodigo;
     }
 
@@ -187,7 +189,12 @@ public class Pessoa extends ModelTemplate {
             if (rs.next()) {
                 this.setPesCPFCNPJ(rs.getString("PesCPFCNPJ"));
                 this.setPesDtaNascimento(rs.getDate("PesDtaNascimento"));
-                this.setPesEmlCodigo(PessoaEmail.getAll(this));
+                int PesEmlCodigo = rs.getInt("PesEmlCodigo");
+                if (PesEmlCodigo != 0) {
+                    PessoaEmail pEm = new PessoaEmail();
+                    pEm.load(PesCodigo, PesEmlCodigo);
+                    this.setPesEmlCodigo(pEm);
+                }
                 this.setPesIsCliente(rs.getInt("PesIsCliente"));
                 this.setPesIsFornecedor(rs.getInt("PesIsFornecedor"));
                 this.setPesIsFuncionario(rs.getInt("PesIsFuncionario"));
@@ -198,15 +205,49 @@ public class Pessoa extends ModelTemplate {
                 this.setPesTipoPessoa(rs.getString("PesTipoPessoa"));
                 return true;
             }
-        } catch (Exception ex) {
-            Logger.getLogger(Pessoa.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar a " + sngTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
     }
 
     public static Pessoa[] listBusca() {
+        return listBusca(true, true, true, true);
+    }
+    public static Pessoa[] listBusca(boolean isFuncionario, boolean isCliente, boolean isUsuario, boolean isFornecedor) {
         ArrayList<Pessoa> list = new ArrayList<>();
         String sql = "SELECT PesCodigo, PesNome, PesCPFCNPJ FROM pessoa";
+        if (isFuncionario || isCliente || isUsuario || isFornecedor) {
+            sql += " WHERE ";
+            boolean isWhere = true;
+            if (isFuncionario) {
+                if (!isWhere)
+                    sql += " OR ";
+                sql += "PesIsFuncionario";
+                isWhere = false;
+            }
+            if (isCliente) {
+                if (!isWhere)
+                    sql += " OR ";
+                sql += "PesIsCliente";
+                isWhere = false;
+            }
+            if (isUsuario) {
+                if (!isWhere)
+                    sql += " OR ";
+                sql += "PesIsUsuario";
+                isWhere = false;
+            }
+            if (isFornecedor) {
+                if (!isWhere)
+                    sql += " OR ";
+                sql += "PesIsFornecedor";
+                isWhere = false;
+            }
+        } else {
+            sql += " WHERE 1=2"; //Não traz nada, não selecionou nenhum
+        }
+        System.out.println(sql);
         try {
             ResultSet rs = DB.executeQuery(sql);
             while (rs.next()) {
@@ -217,7 +258,7 @@ public class Pessoa extends ModelTemplate {
                 list.add(p);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Pessoa.class.getName()).log(Level.SEVERE, null, ex);
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar as " + prlTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return (Pessoa[]) list.toArray(new Pessoa[list.size()]);
     }
