@@ -149,14 +149,17 @@ public class Log extends ModelTemplate {
             int UsuCodigo = 0;
             if (this.getUsuCodigo() != null)
                 UsuCodigo = this.getUsuCodigo().getUsuCodigo();
-            util.Util.debug(sql);
-            util.Util.debug(this.getLogCodigo()+", "
+            
+            util.Util.debug("LOG" 
+                + "(LogCodigo, FncNome, UsuCodigo, LogDtaHora, LogInteracao, LogDescricao, LogNivel)\r\n"
+                + this.getLogCodigo()+", "
                 + this.getFncNome()+", "
                 + UsuCodigo + ", "
                 + this.getLogDtaHora()+", "
                 + this.getLogInteracao()+", "
                 + this.getLogDescricao()+", "
                 + this.getLogNivel());
+            
             DB.executeUpdate(sql, new Object[]{
                 this.getLogCodigo(), 
                 this.getFncNome(), 
@@ -165,6 +168,7 @@ public class Log extends ModelTemplate {
                 this.getLogInteracao(), 
                 this.getLogDescricao(), 
                 this.getLogNivel()});
+            
             return true;
         } catch (SQLException ex) {
             Logger.getLogger(Lancamento.class.getName()).log(Level.SEVERE, null, ex);

@@ -386,10 +386,17 @@ public class ListJFrame extends javax.swing.JFrame {
                                 }
                             }
                             if (!isJoinExists) {
-                                Join join = new LeftOuterJoin(clsInJoin, clsJoin);
+                                Join newJoin = new LeftOuterJoin(clsInJoin, clsJoin);
                                 if (clsInJoin == cls) 
-                                    join.setLeftAlias(mainTable);
-                                joins.add(join);
+                                    newJoin.setLeftAlias(mainTable);
+                                else {
+                                    for (Join join : joins) {
+                                        if (clsInJoin == join.getRightClass()) {
+                                            newJoin.setLeftAlias(join.getRightAlias());
+                                        }
+                                    }
+                                }
+                                joins.add(newJoin);
                             }
                         }
                     }
@@ -440,10 +447,18 @@ public class ListJFrame extends javax.swing.JFrame {
                                     }
                                 }
                                 if (!isJoinExists) {
-                                    Join join = new LeftOuterJoin(clsInJoin, clsJoin);
+                                    Join newJoin = new LeftOuterJoin(clsInJoin, clsJoin);
                                     if (clsInJoin == cls) 
-                                        join.setLeftAlias(mainTable);
-                                    joins.add(join);
+                                        newJoin.setLeftAlias(mainTable);
+                                    else {
+                                        for (Join join : joins) {
+                                            if (clsInJoin == join.getRightClass()) {
+                                                newJoin.setLeftAlias(join.getRightAlias());
+                                            }
+                                        }
+                                    }
+                                    joinToUse = newJoin;
+                                    joins.add(newJoin);
                                 }
                                 clsInJoin = clsJoin;
                             }
@@ -497,9 +512,9 @@ public class ListJFrame extends javax.swing.JFrame {
             }
 
             // Faz os JOIN na SQL
-            for (Join join : joins) 
+            for (Join join : joins) {
                 sql += " " + join.getJoinSQL();
-            
+            }
             // Filtros
             if (softDelete != null && !"".equals(softDelete))
                 sql += " WHERE " + softDelete + " IS NULL";

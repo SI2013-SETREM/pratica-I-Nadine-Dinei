@@ -27,10 +27,10 @@ public class Pessoa extends ModelTemplate {
     private String PesRG;
     private String PesTipoPessoa;
     private Date PesDtaNascimento;
-    private int PesIsFuncionario;
-    private int PesIsCliente;
-    private int PesIsUsuario;
-    private int PesIsFornecedor;
+    private boolean PesIsFuncionario;
+    private boolean PesIsCliente;
+    private boolean PesIsUsuario;
+    private boolean PesIsFornecedor;
     private Date PesDtaDelecao;
     
     private String flag = DB.FLAG_INSERT;
@@ -145,35 +145,47 @@ public class Pessoa extends ModelTemplate {
         this.PesDtaNascimento = PesDtaNascimento;
     }
 
-    public int getPesIsFuncionario() {
+    public boolean isFuncionario() {
+        return PesIsFuncionario;
+    }
+    public boolean getPesIsFuncionario() {
         return PesIsFuncionario;
     }
 
-    public void setPesIsFuncionario(int PesIsFuncionario) {
+    public void setPesIsFuncionario(boolean PesIsFuncionario) {
         this.PesIsFuncionario = PesIsFuncionario;
     }
 
-    public int getPesIsCliente() {
+    public boolean isCliente() {
+        return PesIsCliente;
+    }
+    public boolean getPesIsCliente() {
         return PesIsCliente;
     }
 
-    public void setPesIsCliente(int PesIsCliente) {
+    public void setPesIsCliente(boolean PesIsCliente) {
         this.PesIsCliente = PesIsCliente;
     }
 
-    public int getPesIsUsuario() {
+    public boolean isUsuario() {
+        return PesIsUsuario;
+    }
+    public boolean getPesIsUsuario() {
         return PesIsUsuario;
     }
 
-    public void setPesIsUsuario(int PesIsUsuario) {
+    public void setPesIsUsuario(boolean PesIsUsuario) {
         this.PesIsUsuario = PesIsUsuario;
     }
 
-    public int getPesIsFornecedor() {
+    public boolean isFornecedor() {
+        return PesIsFornecedor;
+    }
+    public boolean getPesIsFornecedor() {
         return PesIsFornecedor;
     }
 
-    public void setPesIsFornecedor(int PesIsFornecedor) {
+    public void setPesIsFornecedor(boolean PesIsFornecedor) {
         this.PesIsFornecedor = PesIsFornecedor;
     }
 
@@ -220,10 +232,10 @@ public class Pessoa extends ModelTemplate {
             pEm.load(this.getPesCodigo(), PesEmlCodigo);
             this.setPesEmlCodigo(pEm);
         }
-        this.setPesIsCliente(rs.getInt("PesIsCliente"));
-        this.setPesIsFornecedor(rs.getInt("PesIsFornecedor"));
-        this.setPesIsFuncionario(rs.getInt("PesIsFuncionario"));
-        this.setPesIsUsuario(rs.getInt("PesIsUsuario"));
+        this.setPesIsCliente(rs.getBoolean("PesIsCliente"));
+        this.setPesIsFornecedor(rs.getBoolean("PesIsFornecedor"));
+        this.setPesIsFuncionario(rs.getBoolean("PesIsFuncionario"));
+        this.setPesIsUsuario(rs.getBoolean("PesIsUsuario"));
         this.setPesNome(rs.getString("PesNome"));
         this.setPesRG(rs.getString("PesRG"));
         this.setPesSexo(rs.getInt("PesSexo"));
