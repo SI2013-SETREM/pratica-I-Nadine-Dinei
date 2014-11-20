@@ -59,6 +59,9 @@ public class Cliente extends ModelTemplate{
     public Cliente (int CliCodigo){
         this.load(CliCodigo);
     }
+    public Cliente (Pessoa pessoa){
+        this.load(pessoa);
+    }
 
     public int getCliCodigo() {
         return CliCodigo;
@@ -91,6 +94,22 @@ public class Cliente extends ModelTemplate{
         this.flag = flag;
     }
     
+    public boolean load(Pessoa pessoa) {
+        this.setPesCodigo(pessoa);
+        try {
+            String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this) + " c";
+            sql += " WHERE c.PesCodigo = ?";
+            ResultSet rs = DB.executeQuery(sql, new Object[] {pessoa.getPesCodigo()});
+            if (rs.next()) {
+                this.setCliCodigo(rs.getInt("CliCodigo"));
+                this.setCliDtaDelecao((java.sql.Timestamp) DB.getColumnByType(rs, "CliDtaDelecao", java.sql.Timestamp.class));
+                return true;
+            }
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar o " + sngTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+        }
+        return false;
+    }
     public boolean load(int CliCodigo) {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this) + " c";
@@ -102,7 +121,7 @@ public class Cliente extends ModelTemplate{
                 return true;
             }
         } catch (SQLException ex) {
-            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar o lançamento [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar o " + sngTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
     }

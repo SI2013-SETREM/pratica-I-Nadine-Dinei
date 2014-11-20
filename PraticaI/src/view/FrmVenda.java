@@ -12,6 +12,7 @@ import model.Pessoa;
 import model.PessoaTelefone;
 import model.Produto;
 import model.Venda;
+import model.VendaProduto;
 
 /**
  *
@@ -22,7 +23,7 @@ public class FrmVenda extends reflection.FormJFrame {
     private Venda venda = new Venda();
     private Cliente cliente;
     private PessoaTelefone[] pesTel;
-    private ArrayList<Produto> vendaProdutos = new ArrayList<>();
+    private ArrayList<VendaProduto> vendaProdutos = new ArrayList<>();
 
     /**
      * Creates new form FrmVenda
@@ -41,6 +42,30 @@ public class FrmVenda extends reflection.FormJFrame {
         util.Util.setMoneyField(txtEntrada);
     }
 
+    @Override
+    public void loadUpdate() {
+        cliente=new Cliente((int) idCols[0]);
+        venda.load(cliente, (int) idCols[1]); //To change body of generated methods, choose Tools | Templates.
+        txtDataOperacao.setText(String.valueOf(venda.getVenData()));
+        txtDesconto.setText(util.Util.getFormattedMoney(venda.getVenDesconto()));
+        txtEntrada.setText(util.Util.getFormattedMoney(venda.getVenEntrada()));
+        txtValor.setText(util.Util.getFormattedMoney(venda.getVenValor()));
+        fillCliente();
+        
+    }
+
+    private void fillCliente() {
+        Pessoa pessoa = cliente.getPesCodigo();
+        lblCliente.setText(pessoa.getPesNome());
+        lblClienteCpf.setText(pessoa.getPesCPFCNPJ());
+        String clienteTelefone = "";
+        for (PessoaTelefone pTel : PessoaTelefone.getAll(pessoa)) {
+            clienteTelefone = pTel.getPesFonTelefone();
+            break;
+        }
+        lblClienteTelefone.setText(clienteTelefone);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -82,6 +107,7 @@ public class FrmVenda extends reflection.FormJFrame {
         txtEntrada = new javax.swing.JTextField();
         jLabel17 = new javax.swing.JLabel();
         lblNumPedido = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -110,6 +136,7 @@ public class FrmVenda extends reflection.FormJFrame {
         jLabel5.setText("Tipo de pagamento:");
 
         VendaTipo.add(rdbAvista);
+        rdbAvista.setSelected(true);
         rdbAvista.setText("À vista");
         rdbAvista.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -319,6 +346,8 @@ public class FrmVenda extends reflection.FormJFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jButton1.setText("Excluir");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -338,7 +367,10 @@ public class FrmVenda extends reflection.FormJFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel9)
-                            .addComponent(btnAddProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnAddProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -352,7 +384,9 @@ public class FrmVenda extends reflection.FormJFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAddProduto)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAddProduto)
+                    .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -384,36 +418,27 @@ public class FrmVenda extends reflection.FormJFrame {
 
     private void btnSelecionarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarClienteActionPerformed
         SlcPessoa slcpessoa = new SlcPessoa(this, true);
-        //slcpessoa.isCliente = true;
+        slcpessoa.isCliente = true;
         slcpessoa.setVisible(true);
         if (slcpessoa.getPessoa() != null) {
-            //cliente = slcpessoa.getCliente();
-            Pessoa pessoa = cliente.getPesCodigo();
-            lblCliente.setText(pessoa.getPesNome());
-            lblClienteCpf.setText(pessoa.getPesCPFCNPJ());
-            String clienteTelefone = "";
-            for (PessoaTelefone pTel : PessoaTelefone.getAll(pessoa)) {
-                clienteTelefone = pTel.getPesFonTelefone();
-                break;
-            }
-            lblClienteTelefone.setText(clienteTelefone);
-            //    lblClienteTelefone.setText();
+            cliente = new Cliente(slcpessoa.getPessoa());
+            fillCliente();
         }
     }//GEN-LAST:event_btnSelecionarClienteActionPerformed
 
     private void btnAddProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddProdutoActionPerformed
         // TODO add your handling code here:
-        Produto p = new Produto();
+        VendaProduto p = new VendaProduto();
         vendaProdutos.add(p);
-        
+
 
     }//GEN-LAST:event_btnAddProdutoActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         venda = new Venda();
         venda.setCliCodigo(cliente);
-        venda.setVendaProduto((Produto[]) vendaProdutos.toArray(new Produto[vendaProdutos.size()]));
-        //venda.save();
+        venda.setVendaProduto((VendaProduto[]) vendaProdutos.toArray(new VendaProduto[vendaProdutos.size()]));
+        venda.save();
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     /**
@@ -458,6 +483,7 @@ public class FrmVenda extends reflection.FormJFrame {
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSelecionarCliente;
     private javax.swing.JCheckBox ckbEfetivada;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;

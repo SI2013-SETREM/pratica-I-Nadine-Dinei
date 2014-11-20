@@ -7,8 +7,6 @@ package model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.DB;
 
 /**
@@ -130,14 +128,13 @@ public class VendaProduto extends ModelTemplate {
             ResultSet rs = DB.executeQuery(sql, new Object[]{PrdCodigo});
             if (rs.next()) {
                 this.setPrdCodigo(new Produto(rs.getInt("PrdCodigo")));
-                //   this.setCliCodigo(new Cliente(rs.getInt("CliCodigo")));
-                this.setVenCodigo(new Venda(rs.getInt("VenCodigo"), this.CliCodigo));
+                this.setCliCodigo(new Cliente(rs.getInt("CliCodigo")));
+                this.setVenCodigo(new Venda(this.getCliCodigo(), rs.getInt("VenCodigo")));
                 this.setVenPrdCodigo(rs.getInt("VenPrdCodigo"));
                 this.setVenPrdDescricao(rs.getString("VenPrdDescricao"));
                 this.setVenPrdNome(rs.getString("VenPrdNome"));
                 this.setVenPrdPreco(rs.getDouble("VenPrdPreco"));
                 this.setVenPrdQuantidade(rs.getFloat("VenPrdQuantidade"));
-                
                 this.setFlag(DB.FLAG_UPDATE);
                 return true;
             }
@@ -162,11 +159,10 @@ public class VendaProduto extends ModelTemplate {
             this.setVenPrdCodigo(Sequencial.getNextSequencial(VendaProduto.class.getSimpleName() + "_"));
             String sql = "insert into " + reflection.ReflectionUtil.getDBTableName(this) + "  (CliCodigo, VenCodigo, VenPrdCodigo, PrdCodigo, VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             DB.executeUpdate(sql, new Object[]{CliCodigo.getCliCodigo(), VenCodigo.getVenCodigo(), VenPrdCodigo, PrdCodigo.getPrdCodigo(), VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade});
-            
             flag = DB.FLAG_UPDATE;
             return true;
         } catch (SQLException ex) {
-            Log.log(fncNome, Log.INT_INSERCAO, "Falha ao buscar o produto " + this.getPrdCodigo() + " da Venda '" + this.getVenCodigo() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+            Log.log(fncNome, Log.INT_INSERCAO, "Falha ao inserir o produto " + this.getPrdCodigo() + " da Venda '" + this.getVenCodigo() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
     }
@@ -181,5 +177,28 @@ public class VendaProduto extends ModelTemplate {
             Log.log(fncNome, Log.INT_ALTERACAO, "Falha ao alterar o produto " + this.getPrdCodigo() + " da Venda '" + this.getVenCodigo() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
+    }
+
+    public static java.util.ArrayList<VendaProduto> getAll(Venda VenCodigo) {
+        java.util.ArrayList<VendaProduto> list = new java.util.ArrayList<>();
+        try {
+            String sql = "Select * from " + reflection.ReflectionUtil.getDBTableName(VendaProduto.class) + " where CliCodigo=? and VenCodigo=?";
+            ResultSet rs = DB.executeQuery(sql, new Object[]{VenCodigo.getCliCodigo().getCliCodigo(), VenCodigo.getVenCodigo()});
+            while (rs.next()) {
+                VendaProduto venPrd = new VendaProduto();
+                venPrd.setCliCodigo(new Cliente(rs.getInt("CliCodigo")));
+                venPrd.setPrdCodigo(new Produto(rs.getInt("PrdCodigo")));
+                venPrd.setVenCodigo(new Venda(venPrd.getCliCodigo(), rs.getInt("VenCodigo")));
+                venPrd.setVenPrdCodigo(rs.getInt("VenPrdCodigo"));
+                venPrd.setVenPrdDescricao(rs.getString("VenPrdDescricao"));
+                venPrd.setVenPrdNome(rs.getString("VenPrdNome"));
+                venPrd.setVenPrdPreco(rs.getDouble("VenPrdPreco"));
+                venPrd.setVenPrdQuantidade(rs.getFloat("VenPrdQuantidade"));
+                list.add(venPrd);
+            }
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar a listagem de " + prlTitle + " " + VenCodigo.getVenCodigo() + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+        }
+        return list;
     }
 }

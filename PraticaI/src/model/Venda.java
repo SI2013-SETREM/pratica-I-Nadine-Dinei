@@ -71,8 +71,8 @@ public class Venda extends ModelTemplate {
     public Venda() {
     }
 
-    public Venda(Cliente CliCodigo, int VenCodigo) {
-        this.load(CliCodigo, VenCodigo);
+    public Venda(Cliente cli, int Venda) {
+        this.load(cli, Venda);
     }
 
     public Cliente getCliCodigo() {
@@ -172,7 +172,7 @@ public class Venda extends ModelTemplate {
             sql += " (CliCodigo, VenCodigo, VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero)";
             sql += " VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
             DB.executeQuery(sql, new Object[]{CliCodigo.getCliCodigo(), VenCodigo, VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero});
-            
+
             for (VendaProduto venPrd : this.getVendaProduto()) {
                 venPrd.setFlag(DB.FLAG_INSERT); //Só por garantia
                 venPrd.save();
@@ -189,12 +189,12 @@ public class Venda extends ModelTemplate {
             sql += " VenData=?, VenValor=?, VenDesconto=?, VenValorFinal=?, VenTipo=?, VenParcelas=?, VenEntrada=?, VenPedNumero=?";
             sql += " WHERE CliCodigo = ? and VenCodigo = ?";
             DB.executeUpdate(sql, new Object[]{VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero, CliCodigo.getCliCodigo(), VenCodigo});
-            
+
             // Exclui todos os produtos e cadastra de novo
             sql = "DELETE FROM " + reflection.ReflectionUtil.getDBTableName(VendaProduto.class);
             sql += " WHERE CliCodigo = ? and VenCodigo = ?";
             DB.executeUpdate(sql, new Object[]{CliCodigo.getCliCodigo(), VenCodigo});
-            
+
             for (VendaProduto venPrd : this.getVendaProduto()) {
                 venPrd.setFlag(DB.FLAG_INSERT); //Só por garantia
                 venPrd.save();
