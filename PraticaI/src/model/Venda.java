@@ -1,6 +1,12 @@
 package model;
 
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static model.VendaProduto.fncNome;
+import util.DB;
 import util.field.FilterField;
 import util.field.FilterFieldDate;
 
@@ -24,6 +30,7 @@ public class Venda extends ModelTemplate {
     private int VenParcelas;
     private double VenEntrada;
     private Produto[] VendaProduto;
+    private String flag = DB.FLAG_INSERT;
 
     /**
      * @see model.ModelTemplate#sngTitle
@@ -61,6 +68,10 @@ public class Venda extends ModelTemplate {
         new FilterFieldDate("VenData", "Data"),};
 
     public Venda() {
+    }
+
+    public Venda(int VenCodigo, Cliente CliCodigo) {
+        this.load(VenCodigo, CliCodigo);
     }
 
     public Cliente getCliCodigo() {
@@ -143,17 +154,59 @@ public class Venda extends ModelTemplate {
         this.VendaProduto = VendaProduto;
     }
 
-    
     public boolean save() {
-        return this.insert();
+        switch (flag) {
+            case DB.FLAG_INSERT:
+                insert();
+                break;
+            case DB.FLAG_UPDATE:
+                update();
+                break;
+        }
+        return false;
     }
-    
+
     public boolean insert() {
-        this.setVenCodigo(Sequencial.getNextSequencial(Venda.class.getSimpleName() + "_" + this.getCliCodigo().getCliCodigo()));        
+        this.setVenCodigo(Sequencial.getNextSequencial(Venda.class.getSimpleName() + "_" + this.getCliCodigo().getCliCodigo()));
+        String sql = "insert into " + reflection.ReflectionUtil.getDBTableName(this) + " (CliCodigo, VenCodigo, VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
         for (Produto venPrd : this.getVendaProduto()) {
             venPrd.save();
         }
         return false;
     }
-    
+
+    public void update() {
+//        try {
+//            String sql = "update " + reflection.ReflectionUtil.getDBTableName(this);
+//            sql += " set PrdCodigo=?, VenPrdNome=?, VenPrdDescricao=?, VenPrdPreco=?, VenPrdQuantidade=? where CliCodigo=? and VenCodigo=? and VenPrdCodigo=?";
+//            DB.executeUpdate(sql, new Object[]{PrdCodigo.getPrdCodigo(), VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade, CliCodigo.getCliCodigo(), VenCodigo.getVenCodigo(), VenPrdCodigo,});
+//        } catch (SQLException ex) {
+//            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar o produto" + this.getPrdCodigo() + " da Venda '" + this.getVenCodigo() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+//        }
+    }
+
+    public boolean load(int VenCodigo, Cliente CliCodigo) {
+        try {
+            String sql = "Select * from " + reflection.ReflectionUtil.getDBTableName(this)
+                    + " where clicodigo=? and vencodigo =?";
+            ResultSet rs = DB.executeQuery(sql, new Object[]{VenCodigo, CliCodigo.getCliCodigo()});
+            if (rs.next()) {
+                //   this.setCliCodigo(new Cliente(rs.getInt("CliCodigo")));
+                this.setVenCodigo(rs.getInt("VenCodigo"));
+                this.setVenData(rs.getDate("VenData"));
+                this.setVenDesconto(rs.getDouble("VenDesconto"));
+                this.setVenEntrada(rs.getDouble("VenEntrada"));
+                this.setVenParcelas(rs.getInt("VenParcelas"));
+                this.setVenTipo((char) rs.getObject("VenTipo"));
+                this.setVenValor(rs.getDouble("VenValor"));
+                this.setVenValorFinal(rs.getDouble("VenValorFinal"));
+                //this.setVendaProduto(VendaProduto); -- carregar listagem de produtos
+            }
+            flag = DB.FLAG_UPDATE;
+        } catch (Exception ex) {
+            Logger.getLogger(Cidade.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 }

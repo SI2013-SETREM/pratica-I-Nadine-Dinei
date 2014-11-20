@@ -51,6 +51,9 @@ public class Cliente extends ModelTemplate{
 
     public Cliente() {
     }
+    public Cliente (int CliCodigo){
+       // this.load(); 
+    }
 
     public int getCliCodigo() {
         return CliCodigo;
