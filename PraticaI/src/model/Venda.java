@@ -29,7 +29,8 @@ public class Venda extends ModelTemplate {
     private char VenTipo;
     private int VenParcelas;
     private double VenEntrada;
-    private Produto[] VendaProduto;
+    private double VenPedNumero;
+    private VendaProduto[] VendaProduto;
     private String flag = DB.FLAG_INSERT;
 
     /**
@@ -146,11 +147,11 @@ public class Venda extends ModelTemplate {
         this.VenEntrada = VenEntrada;
     }
 
-    public Produto[] getVendaProduto() {
+    public VendaProduto[] getVendaProduto() {
         return VendaProduto;
     }
 
-    public void setVendaProduto(Produto[] VendaProduto) {
+    public void setVendaProduto(VendaProduto[] VendaProduto) {
         this.VendaProduto = VendaProduto;
     }
 
@@ -168,21 +169,29 @@ public class Venda extends ModelTemplate {
 
     public boolean insert() {
         this.setVenCodigo(Sequencial.getNextSequencial(Venda.class.getSimpleName() + "_" + this.getCliCodigo().getCliCodigo()));
-        String sql = "insert into " + reflection.ReflectionUtil.getDBTableName(this) + " (CliCodigo, VenCodigo, VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        for (Produto venPrd : this.getVendaProduto()) {
-            venPrd.save();
+        try {
+            String sql = "insert into " + reflection.ReflectionUtil.getDBTableName(this) + " ";
+            sql += " (CliCodigo, VenCodigo, VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero)";
+            sql += " VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            DB.executeQuery(sql, new Object[]{CliCodigo.getCliCodigo(), VenCodigo, VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero});
+            for (VendaProduto venPrd : this.getVendaProduto()) {
+                venPrd.save();
+            }
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_INSERCAO, "Falha ao inserir venda" + this.getVenCodigo() + " - " + this.getCliCodigo().getCliCodigo() + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
     }
 
     public void update() {
-//        try {
-//            String sql = "update " + reflection.ReflectionUtil.getDBTableName(this);
-//            sql += " set PrdCodigo=?, VenPrdNome=?, VenPrdDescricao=?, VenPrdPreco=?, VenPrdQuantidade=? where CliCodigo=? and VenCodigo=? and VenPrdCodigo=?";
-//            DB.executeUpdate(sql, new Object[]{PrdCodigo.getPrdCodigo(), VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade, CliCodigo.getCliCodigo(), VenCodigo.getVenCodigo(), VenPrdCodigo,});
-//        } catch (SQLException ex) {
-//            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar o produto" + this.getPrdCodigo() + " da Venda '" + this.getVenCodigo() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
-//        }
+        try {
+            String sql = "update " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += "  VenData=?, VenValor=?, VenDesconto=?, VenValorFinal=?, VenTipo=?, VenParcelas=?, VenEntrada=?, VenPedNumero=? where CliCodigo=? and VenCodigo=?";
+            DB.executeUpdate(sql, new Object[]{VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero, CliCodigo.getCliCodigo(), VenCodigo});
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_ALTERACAO, "Falha ao alterar venda" + this.getVenCodigo() + "_" + this.getCliCodigo().getCliCodigo() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO
+            );
+        }
     }
 
     public boolean load(int VenCodigo, Cliente CliCodigo) {
