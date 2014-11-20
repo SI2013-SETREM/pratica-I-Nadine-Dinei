@@ -112,8 +112,14 @@ public class FrmLancamento extends reflection.FormJDialog {
     @Override
     public void loadUpdate() {
         if (lancamento.load((int) idCols[0], (int) idCols[1])) {
+            if (lancamento.getPesCodigo() != null) {
+                pessoa = lancamento.getPesCodigo();
+                txtPessoa.setText(pessoa.getPesNome());
+            }
+            
             //CliCodigo;
             //VenCodigo;//@TODO
+            
             if (lancamento.getPlnCodigo() != null) {
                 for (ComboBoxItem cboxItem : cboxItensPlanoContas) {
                     if (lancamento.getPlnCodigo().getPlnCodigo() == (int) cboxItem.getId()) {

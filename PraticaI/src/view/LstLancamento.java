@@ -135,7 +135,7 @@ public class LstLancamento extends javax.swing.JFrame {
         Calendar cl = Calendar.getInstance();
         cl.add(Calendar.DAY_OF_MONTH, -3);
         txtLanDataHoraFrom.setText(Util.getFormattedDate(cl));
-        cl.add(Calendar.DAY_OF_MONTH, +3);
+        cl.add(Calendar.DAY_OF_MONTH, +6);
         txtLanDataHoraTo.setText(Util.getFormattedDate(cl));
         
         listar();

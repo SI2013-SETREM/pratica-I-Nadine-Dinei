@@ -30,11 +30,11 @@ public class VendaProduto extends ModelTemplate {
     /**
      * @see model.ModelTemplate#sngTitle
      */
-    public static String sngTitle = "Venda - Produto";
+    public static String sngTitle = "Produto da Venda";
     /**
      * @see model.ModelTemplate#prlTitle
      */
-    public static String prlTitle = "Vendas - Produtos";
+    public static String prlTitle = "Produtos da Venda";
     /**
      * @see model.ModelTemplate#fncNome
      */
@@ -115,46 +115,6 @@ public class VendaProduto extends ModelTemplate {
         this.VenPrdQuantidade = VenPrdQuantidade;
     }
 
-    public static String getSngTitle() {
-        return sngTitle;
-    }
-
-    public static void setSngTitle(String sngTitle) {
-        VendaProduto.sngTitle = sngTitle;
-    }
-
-    public static String getPrlTitle() {
-        return prlTitle;
-    }
-
-    public static void setPrlTitle(String prlTitle) {
-        VendaProduto.prlTitle = prlTitle;
-    }
-
-    public static String getFncNome() {
-        return fncNome;
-    }
-
-    public static void setFncNome(String fncNome) {
-        VendaProduto.fncNome = fncNome;
-    }
-
-    public static String getIconTitle() {
-        return iconTitle;
-    }
-
-    public static void setIconTitle(String iconTitle) {
-        VendaProduto.iconTitle = iconTitle;
-    }
-
-    public static String[] getIdColumn() {
-        return idColumn;
-    }
-
-    public static void setIdColumn(String[] idColumn) {
-        VendaProduto.idColumn = idColumn;
-    }
-
     public String getFlag() {
         return flag;
     }
@@ -177,44 +137,48 @@ public class VendaProduto extends ModelTemplate {
                 this.setVenPrdNome(rs.getString("VenPrdNome"));
                 this.setVenPrdPreco(rs.getDouble("VenPrdPreco"));
                 this.setVenPrdQuantidade(rs.getFloat("VenPrdQuantidade"));
+                
                 this.setFlag(DB.FLAG_UPDATE);
                 return true;
             }
         } catch (SQLException ex) {
-            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar o produto" + this.getPrdCodigo() + " da Venda '" + this.getVenCodigo() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar o produto " + this.getPrdCodigo() + " da Venda '" + this.getVenCodigo() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
-    }
-
-    public void insert() {
-        try {
-            this.setVenPrdCodigo(Sequencial.getNextSequencial(VendaProduto.class.getSimpleName() + "_"));
-            String sql = "insert into " + reflection.ReflectionUtil.getDBTableName(this) + "  (CliCodigo, VenCodigo, VenPrdCodigo, PrdCodigo, VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            DB.executeUpdate(sql, new Object[]{CliCodigo.getCliCodigo(), VenCodigo.getVenCodigo(), VenPrdCodigo, PrdCodigo.getPrdCodigo(), VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade});
-            flag = DB.FLAG_UPDATE;
-        } catch (SQLException ex) {
-            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar o produto" + this.getPrdCodigo() + " da Venda '" + this.getVenCodigo() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
-        }
-    }
-
-    public void update() {
-        try {
-            String sql = "update " + reflection.ReflectionUtil.getDBTableName(this);
-            sql += " set PrdCodigo=?, VenPrdNome=?, VenPrdDescricao=?, VenPrdPreco=?, VenPrdQuantidade=? where CliCodigo=? and VenCodigo=? and VenPrdCodigo=?";
-            DB.executeUpdate(sql, new Object[]{PrdCodigo.getPrdCodigo(), VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade, CliCodigo.getCliCodigo(), VenCodigo.getVenCodigo(), VenPrdCodigo,});
-        } catch (SQLException ex) {
-            Log.log(fncNome, Log.INT_OUTRA, "Falha ao alterar o produto" + this.getPrdCodigo() + " da Venda '" + this.getVenCodigo() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
-        }
     }
 
     public boolean save() {
         switch (flag) {
             case DB.FLAG_INSERT:
-                insert();
-                break;
+                return insert();
             case DB.FLAG_UPDATE:
-                update();
-                break;
+                return update();
+        }
+        return false;
+    }
+
+    public boolean insert() {
+        try {
+            this.setVenPrdCodigo(Sequencial.getNextSequencial(VendaProduto.class.getSimpleName() + "_"));
+            String sql = "insert into " + reflection.ReflectionUtil.getDBTableName(this) + "  (CliCodigo, VenCodigo, VenPrdCodigo, PrdCodigo, VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            DB.executeUpdate(sql, new Object[]{CliCodigo.getCliCodigo(), VenCodigo.getVenCodigo(), VenPrdCodigo, PrdCodigo.getPrdCodigo(), VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade});
+            
+            flag = DB.FLAG_UPDATE;
+            return true;
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_INSERCAO, "Falha ao buscar o produto " + this.getPrdCodigo() + " da Venda '" + this.getVenCodigo() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+        }
+        return false;
+    }
+
+    public boolean update() {
+        try {
+            String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " SET PrdCodigo=?, VenPrdNome=?, VenPrdDescricao=?, VenPrdPreco=?, VenPrdQuantidade=? where CliCodigo=? and VenCodigo=? and VenPrdCodigo=?";
+            DB.executeUpdate(sql, new Object[]{PrdCodigo.getPrdCodigo(), VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade, CliCodigo.getCliCodigo(), VenCodigo.getVenCodigo(), VenPrdCodigo,});
+            return true;
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_ALTERACAO, "Falha ao alterar o produto " + this.getPrdCodigo() + " da Venda '" + this.getVenCodigo() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return false;
     }

@@ -32,7 +32,9 @@ public class Pessoa extends ModelTemplate {
     private int PesIsUsuario;
     private int PesIsFornecedor;
     private Date PesDtaDelecao;
-
+    
+    private String flag = DB.FLAG_INSERT;
+    
     /**
      * @see model.ModelTemplate#sngTitle
      */
@@ -75,7 +77,10 @@ public class Pessoa extends ModelTemplate {
 
     public Pessoa() {
     }
-
+    public Pessoa(int PesCodigo) {
+        this.load(PesCodigo);
+    }
+    
     public int getPesCodigo() {
         return PesCodigo;
     }
@@ -180,6 +185,15 @@ public class Pessoa extends ModelTemplate {
         this.PesDtaDelecao = PesDtaDelecao;
     }
 
+    public String getFlag() {
+        return flag;
+    }
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
+
+    
+    
     public boolean load(int PesCodigo) {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
@@ -187,22 +201,7 @@ public class Pessoa extends ModelTemplate {
             System.out.println(sql + PesCodigo);
             ResultSet rs = DB.executeQuery(sql, new Object[]{PesCodigo});
             if (rs.next()) {
-                this.setPesCPFCNPJ(rs.getString("PesCPFCNPJ"));
-                this.setPesDtaNascimento(rs.getDate("PesDtaNascimento"));
-                int PesEmlCodigo = rs.getInt("PesEmlCodigo");
-                if (PesEmlCodigo != 0) {
-                    PessoaEmail pEm = new PessoaEmail();
-                    pEm.load(PesCodigo, PesEmlCodigo);
-                    this.setPesEmlCodigo(pEm);
-                }
-                this.setPesIsCliente(rs.getInt("PesIsCliente"));
-                this.setPesIsFornecedor(rs.getInt("PesIsFornecedor"));
-                this.setPesIsFuncionario(rs.getInt("PesIsFuncionario"));
-                this.setPesIsUsuario(rs.getInt("PesIsUsuario"));
-                this.setPesNome(rs.getString("PesNome"));
-                this.setPesRG(rs.getString("PesRG"));
-                this.setPesSexo(rs.getInt("PesSexo"));
-                this.setPesTipoPessoa(rs.getString("PesTipoPessoa"));
+                this.fill(rs);
                 return true;
             }
         } catch (SQLException ex) {
@@ -210,7 +209,101 @@ public class Pessoa extends ModelTemplate {
         }
         return false;
     }
+    
+    public Pessoa fill(ResultSet rs) throws SQLException {
+        this.setPesCodigo(rs.getInt("PesCodigo"));
+        this.setPesCPFCNPJ(rs.getString("PesCPFCNPJ"));
+        this.setPesDtaNascimento(rs.getDate("PesDtaNascimento"));
+        int PesEmlCodigo = rs.getInt("PesEmlCodigo");
+        if (PesEmlCodigo != 0) {
+            PessoaEmail pEm = new PessoaEmail();
+            pEm.load(this.getPesCodigo(), PesEmlCodigo);
+            this.setPesEmlCodigo(pEm);
+        }
+        this.setPesIsCliente(rs.getInt("PesIsCliente"));
+        this.setPesIsFornecedor(rs.getInt("PesIsFornecedor"));
+        this.setPesIsFuncionario(rs.getInt("PesIsFuncionario"));
+        this.setPesIsUsuario(rs.getInt("PesIsUsuario"));
+        this.setPesNome(rs.getString("PesNome"));
+        this.setPesRG(rs.getString("PesRG"));
+        this.setPesSexo(rs.getInt("PesSexo"));
+        this.setPesTipoPessoa(rs.getString("PesTipoPessoa"));
+        
+        this.setFlag(DB.FLAG_UPDATE);
+        
+        return this;
+    }
+    
+    public boolean save() {
+        switch (flag) {
+            case DB.FLAG_INSERT:
+                return insert();
+            case DB.FLAG_UPDATE:
+                return update();
+        }
+        return false;
+    }
+    
+    public boolean insert() {
+        try {
+            this.setPesCodigo(Sequencial.getNextSequencial(Pessoa.class));
+            String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " (PesCodigo, PesNome, PesEmlCodigo, PesSexo, PesCPFCNPJ, PesRG, PesTipoPessoa, PesDtaNascimento, PesIsFuncionario, PesIsCliente, PesIsUsuario, PesIsFornecedor)";
+            sql += " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            DB.executeUpdate(sql, new Object[]{
+                getPesCodigo(),
+                getPesNome(),
+                (getPesEmlCodigo() == null) ? null : getPesEmlCodigo().getPesEmlCodigo(),
+                getPesSexo(),
+                getPesCPFCNPJ(),
+                getPesRG(),
+                getPesTipoPessoa(),
+                getPesDtaNascimento(),
+                getPesIsFuncionario(),
+                getPesIsCliente(),
+                getPesIsUsuario(),
+                getPesIsFornecedor(),
+            });
+            
+            flag = DB.FLAG_UPDATE;
+            
+            return true;
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_INSERCAO, "Falha ao inserir a " + sngTitle + " '" + getPesNome() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+        }
+        return false;
+    }
 
+    public boolean update() {
+        try {
+            String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " SET PesNome = ?, PesEmlCodigo = ?, PesSexo = ?, PesCPFCNPJ = ?, PesRG = ?, PesTipoPessoa = ?,";
+            sql += " PesDtaNascimento = ?, PesIsFuncionario = ?, PesIsCliente = ?, PesIsUsuario = ?, PesIsFornecedor = ?";
+            sql += " WHERE PesCodigo = ?";
+            
+            DB.executeUpdate(sql, new Object[]{
+                getPesNome(),
+                (getPesEmlCodigo() == null) ? null : getPesEmlCodigo().getPesEmlCodigo(),
+                getPesSexo(),
+                getPesCPFCNPJ(),
+                getPesRG(),
+                getPesTipoPessoa(),
+                getPesDtaNascimento(),
+                getPesIsFuncionario(),
+                getPesIsCliente(),
+                getPesIsUsuario(),
+                getPesIsFornecedor(),
+                getPesCodigo(),
+            });
+            
+            return true;
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_ALTERACAO, "Falha ao alterar a " + sngTitle + " '" + getPesNome() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+        }
+        return false;
+    }
+    
+    
     public static Pessoa[] listBusca() {
         return listBusca(true, true, true, true);
     }

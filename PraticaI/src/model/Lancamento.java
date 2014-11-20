@@ -35,7 +35,8 @@ public class Lancamento extends ModelTemplate {
     private ContaCapital CntCodigo;
     private int LanCodigo;
     private Cliente CliCodigo;
-    private Venda VenCodigo; //@TODO
+    private Venda VenCodigo;
+    private Pessoa PesCodigo;
     private PlanoContas PlnCodigo;
     private int LanTipo;
     private Timestamp LanDataHora;
@@ -138,6 +139,14 @@ public class Lancamento extends ModelTemplate {
         this.VenCodigo = VenCodigo;
     }
 
+    public Pessoa getPesCodigo() {
+        return PesCodigo;
+    }
+
+    public void setPesCodigo(Pessoa PesCodigo) {
+        this.PesCodigo = PesCodigo;
+    }
+    
     public PlanoContas getPlnCodigo() {
         return PlnCodigo;
     }
@@ -270,19 +279,25 @@ public class Lancamento extends ModelTemplate {
     private Lancamento fill(ResultSet rs, boolean fillChild) throws SQLException {
         this.setLanCodigo(rs.getInt("LanCodigo"));
         if (fillChild) {
+            Pessoa pessoa = new Pessoa();
+            int PesCodigo = rs.getInt("PesCodigo");
+            if (PesCodigo != 0 && pessoa.load(PesCodigo))
+                this.setPesCodigo(pessoa);
+            
             ContaCapital cntCapital = new ContaCapital();
-            if (cntCapital.load(rs.getInt("CntCodigo")))
+            int CntCodigo = rs.getInt("CntCodigo");
+            if (CntCodigo != 0 && cntCapital.load(CntCodigo))
                 this.setCntCodigo(cntCapital);
             
-            //@TODO
-//            Cliente cliente = new Cliente();
-//            cliente.load()
-//            this.setCliCodigo(rs.getInt("CliCodigo"));
+            Cliente cliente = new Cliente();
+            int CliCodigo = rs.getInt("CliCodigo");
+            if (CliCodigo != 0 && cliente.load(CliCodigo))
+                this.setCliCodigo(cliente);
             
-            //@TODO
-//            Venda venda = new Venda();
-//            venda.load()
-//            this.setVenCodigo(rs.getInt("VenCodigo"));
+            Venda venda = new Venda();
+            int VenCodigo = rs.getInt("VenCodigo");
+            if (VenCodigo != 0 && venda.load(cliente, VenCodigo))
+                this.setVenCodigo(venda);
             
             PlanoContas plnContas = new PlanoContas();
             if (plnContas.load(rs.getInt("PlnCodigo")))
@@ -427,18 +442,12 @@ public class Lancamento extends ModelTemplate {
         }
         if (this.getCliCodigo() != null) 
             parms[i] = this.getCliCodigo().getCliCodigo();
-//        else
-//            parms[i] = "NULL";
         i++;
         if (this.getVenCodigo() != null) 
-            parms[i] = this.getVenCodigo();//.getVenCodigo;
-//        else
-//            parms[i] = "NULL";
+            parms[i] = this.getVenCodigo().getVenCodigo();
         i++;
         if (this.getPlnCodigo() != null) 
             parms[i] = this.getPlnCodigo().getPlnCodigo();
-//        else
-//            parms[i] = "NULL";
         i++;
         parms[i++] = this.getLanTipo();
         parms[i++] = this.getLanDataHora();
@@ -498,7 +507,6 @@ public class Lancamento extends ModelTemplate {
                 parms.add(LanDataHoraTo);
             }
             
-            System.out.println(sql);
             rs = DB.executeQuery(sql, (Object[]) parms.toArray(new Object[0]));
             
         } catch (SQLException ex) {
