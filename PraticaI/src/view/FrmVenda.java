@@ -46,7 +46,6 @@ public class FrmVenda extends reflection.FormJFrame {
 
     @Override
     public void loadUpdate() {
-        System.out.println((int) idCols[0]);
         cliente = new Cliente((int) idCols[0]);
         venda.load(cliente, (int) idCols[1]); //To change body of generated methods, choose Tools | Templates.
         txtDataOperacao.setText(String.valueOf(venda.getVenData()));
@@ -56,13 +55,15 @@ public class FrmVenda extends reflection.FormJFrame {
         fillCliente();
         //lblNumPedido.setText(venda.get);
         lblValorFinal.setText(util.Util.getFormattedMoney(venda.getVenValorFinal()));
-        vendaProdutos = new ArrayList<>(Arrays.asList(venda.getVendaProduto()));
+        if (venda.getVendaProduto() != null) {
+            vendaProdutos = new ArrayList<>(Arrays.asList(venda.getVendaProduto()));
+        }
         fillTable();
     }
 
     private void fillCliente() {
         Pessoa pessoa = cliente.getPesCodigo();
-        if (pessoa != null) {
+//        if (pessoa != null) {
             lblCliente.setText(pessoa.getPesNome());
             lblClienteCpf.setText(pessoa.getPesCPFCNPJ());
             String clienteTelefone = "";
@@ -71,7 +72,7 @@ public class FrmVenda extends reflection.FormJFrame {
                 break;
             }
             lblClienteTelefone.setText(clienteTelefone);
-        }
+//        }
     }
 
     private void fillTable() {

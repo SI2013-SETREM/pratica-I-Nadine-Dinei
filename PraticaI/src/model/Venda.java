@@ -29,7 +29,7 @@ public class Venda extends ModelTemplate {
     private double VenEntrada;
     private double VenPedNumero;
     private boolean VenEfetivada;
-    private VendaProduto[] VendaProduto;
+    private VendaProduto[] vendaProduto;
     
     private String flag = DB.FLAG_INSERT;
 
@@ -150,11 +150,11 @@ public class Venda extends ModelTemplate {
     }
 
     public VendaProduto[] getVendaProduto() {
-        return VendaProduto;
+        return vendaProduto;
     }
 
     public void setVendaProduto(VendaProduto[] VendaProduto) {
-        this.VendaProduto = VendaProduto;
+        this.vendaProduto = VendaProduto;
     }
 
     public double getVenPedNumero() {
@@ -245,7 +245,9 @@ public class Venda extends ModelTemplate {
             ResultSet rs = DB.executeQuery(sql, new Object[]{cliente.getCliCodigo(), VenCodigo});
             if (rs.next()) {
                 fill(rs, cliente);
-                //this.setVendaProduto(VendaProduto); -- carregar listagem de produtos
+                
+                ArrayList<VendaProduto> lstVendaProdutos = VendaProduto.getAll(this);
+                this.setVendaProduto((VendaProduto[]) lstVendaProdutos.toArray(new VendaProduto[lstVendaProdutos.size()]));
             }
             return true;
         } catch (SQLException ex) {

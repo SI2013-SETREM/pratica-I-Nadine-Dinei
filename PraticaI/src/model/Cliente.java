@@ -95,6 +95,7 @@ public class Cliente extends ModelTemplate{
     }
     
     public boolean load(Pessoa pessoa) {
+        Pessoa.fncNome = fncNome;
         this.setPesCodigo(pessoa);
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this) + " c";
@@ -115,7 +116,7 @@ public class Cliente extends ModelTemplate{
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this) + " c";
             sql += " INNER JOIN " + reflection.ReflectionUtil.getDBTableName(Pessoa.class) + " p ON(c.PesCodigo = p.PesCodigo)";
             sql += " WHERE c.CliCodigo = ?";
-            ResultSet rs = DB.executeQuery(sql, new Object[] {this.getCliCodigo()});
+            ResultSet rs = DB.executeQuery(sql, new Object[] {CliCodigo});
             if (rs.next()) {
                 this.fill(rs, true);
                 return true;
