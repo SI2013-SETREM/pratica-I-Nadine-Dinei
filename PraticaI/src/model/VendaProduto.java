@@ -193,7 +193,7 @@ public class VendaProduto extends ModelTemplate {
                 VendaProduto venPrd = new VendaProduto();
                 venPrd.setCliCodigo(new Cliente(rs.getInt("CliCodigo")));
                 venPrd.setPrdCodigo(new Produto(rs.getInt("PrdCodigo")));
-                venPrd.setVenCodigo(new Venda(venPrd.getCliCodigo(), rs.getInt("VenCodigo")));
+                venPrd.setVenCodigo(VenCodigo);
                 venPrd.setVenPrdCodigo(rs.getInt("VenPrdCodigo"));
                 venPrd.setVenPrdDescricao(rs.getString("VenPrdDescricao"));
                 venPrd.setVenPrdNome(rs.getString("VenPrdNome"));
