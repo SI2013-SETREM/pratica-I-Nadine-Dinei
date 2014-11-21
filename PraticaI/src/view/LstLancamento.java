@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package view;
 
@@ -37,7 +32,6 @@ import model.Pessoa;
 import model.PlanoContas;
 import model.Usuario;
 import model.Venda;
-import reflection.ListJFrame;
 import util.DB;
 import util.ImageSize;
 import util.Util;
@@ -157,12 +151,20 @@ public class LstLancamento extends javax.swing.JFrame {
     }
     public void setPessoa(Pessoa pessoa) {
         this.pessoa = pessoa;
+        if (pessoa != null)
+            txtPessoa.setText(pessoa.getPesNome());
+        else
+            txtPessoa.setText("");
     }
     public Venda getVenda() {
         return venda;
     }
     public void setVenda(Venda venda) {
         this.venda = venda;
+        if (venda != null) 
+            txtVenda.setText(venda.toString());
+        else
+            txtVenda.setText("");
     }
     
     public void listar() {
@@ -627,7 +629,6 @@ public class LstLancamento extends javax.swing.JFrame {
         slc.setVisible(true);
         if (slc.getPessoa() != null) {
             setPessoa(slc.getPessoa());
-            txtPessoa.setText(getPessoa().getPesNome());
         }
     }//GEN-LAST:event_btnBuscaPessoaActionPerformed
 
@@ -640,7 +641,6 @@ public class LstLancamento extends javax.swing.JFrame {
         slc.setVisible(true);
         if (slc.getVenda() != null) {
             setVenda(slc.getVenda());
-            txtVenda.setText(getVenda().toString());
         }
     }//GEN-LAST:event_btnBuscaVendaActionPerformed
 

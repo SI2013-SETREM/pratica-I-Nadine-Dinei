@@ -284,4 +284,11 @@ public class ContaCapital extends ModelTemplate {
         return list;
     }
 
+    @Override
+    public String toString() {
+        return getCntNome();
+    }
+
+    
+    
 }

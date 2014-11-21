@@ -63,17 +63,25 @@ public abstract class Util {
         return getFormattedDate(cl) + " " + getFormattedTime(cl);
     }
     
+    public static java.sql.Date getDateFromString(String strDate) {
+        return java.sql.Date.valueOf(getDateStr(strDate, java.sql.Date.class));
+    }
     public static java.sql.Timestamp getTimestampFromString(String strDate) {
+        return java.sql.Timestamp.valueOf(getDateStr(strDate, java.sql.Timestamp.class));
+    }
+    private static String getDateStr(String strDate, Class<?> type) {
         String[] dateTimeParts = strDate.split("\\s");
         String[] dateParts = dateTimeParts[0].split("/");
-        String timestamp = "";
+        String dateStr = "";
         if (dateParts.length == 3) 
-            timestamp += dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
-        if (dateTimeParts.length == 2) 
-            timestamp += " " + dateTimeParts[1];
-        else
-            timestamp += " 00:00:00";
-        return java.sql.Timestamp.valueOf(timestamp);
+            dateStr += dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
+        if (type == java.sql.Time.class || type == java.sql.Timestamp.class) {
+            if (dateTimeParts.length == 2) 
+                dateStr += " " + dateTimeParts[1];
+            else
+                dateStr += " 00:00:00";
+        }
+        return dateStr;
     }
     
     public static double getMoneyFromText(String txtText) {

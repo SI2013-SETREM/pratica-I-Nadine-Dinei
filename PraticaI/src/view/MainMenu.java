@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import model.Cidade;
 import model.Estado;
+import model.FechamentoCaixa;
 import model.Lancamento;
 import model.Log;
 import model.NivelAcesso;
@@ -18,7 +19,6 @@ import model.Pais;
 import model.Pessoa;
 import model.Usuario;
 import model.Venda;
-import reflection.ListJFrame;
 import util.ImageSize;
 import util.Util;
 
@@ -71,7 +71,7 @@ public class MainMenu extends javax.swing.JFrame {
         
         btnEfetuarLancamentoEntrada.setIcon(new ImageIcon(util.Util.getImageUrl("moneyadd.png", util.ImageSize.M)));
         btnEfetuarLancamentoSaida.setIcon(new ImageIcon(util.Util.getImageUrl("moneydelete.png", util.ImageSize.M)));
-        btnFecharCaixa.setIcon(new ImageIcon(util.Util.getImageUrl("accept.png", util.ImageSize.M)));
+        btnFecharCaixa.setIcon(new ImageIcon(util.Util.getImageUrl(FechamentoCaixa.iconTitle, util.ImageSize.M)));
         btnContatos.setIcon(new ImageIcon(util.Util.getImageUrl("email.png", util.ImageSize.M)));
         btnSair.setIcon(new ImageIcon(util.Util.getImageUrl("doorout.png", util.ImageSize.M)));
         btnLancamento.setIcon(new ImageIcon(util.Util.getImageUrl("moneydollar.png", util.ImageSize.M)));

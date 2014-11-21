@@ -460,6 +460,12 @@ public class Lancamento extends ModelTemplate {
         return parms;
     }
     
+    public static ResultSet getList(ContaCapital contaCapital, Timestamp LanDataHoraFrom, Timestamp LanDataHoraTo) {
+        int CntCodigo = 0;
+        if (contaCapital != null)
+            CntCodigo = contaCapital.getCntCodigo();
+        return getList(CntCodigo, 0, null, null, null, LanDataHoraFrom, LanDataHoraTo, null, null);
+    }
     public static ResultSet getList(int CntCodigo, int PlnCodigo, Pessoa pessoa, Venda venda, String LanDescricao, Timestamp LanDataHoraFrom, Timestamp LanDataHoraTo, Boolean LanEfetivado, Boolean LanEstornado) {
         ResultSet rs = null;
         try {
@@ -517,7 +523,7 @@ public class Lancamento extends ModelTemplate {
                         sql += "NOT LanEfetivado";
                     }
                 }
-                sql += " OR ";
+                sql += ") AND (";
                 if (LanEstornado == null) {
                     sql += "LanEstornado OR NOT LanEstornado"; // necessário caso tenha LanEfetivado
                 } else {
