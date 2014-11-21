@@ -26,6 +26,7 @@ public class ContaCapital extends ModelTemplate {
     private static String CntPadraoNome;
     
     private String flag = DB.FLAG_INSERT;
+    
     /**
      * @see model.ModelTemplate#sngTitle
      */
@@ -124,6 +125,14 @@ public class ContaCapital extends ModelTemplate {
     public void setCntSaldo(double CntSaldo) {
         this.CntSaldo = CntSaldo;
     }
+
+    public String getFlag() {
+        return flag;
+    }
+
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
     
     public void debito(double valor) {
         this.setCntSaldo(this.getCntSaldo() + valor);
@@ -153,7 +162,7 @@ public class ContaCapital extends ModelTemplate {
                 }
 
                 flag = DB.FLAG_UPDATE;
-
+                
                 return true;
             }
         } catch (SQLException ex) {
@@ -164,10 +173,7 @@ public class ContaCapital extends ModelTemplate {
 
     public boolean insert() {
         try {
-            int CntPadrao = 0;
-            if (this.CntPadrao == true) {
-                CntPadrao = 1;
-            }
+            int CntPadrao = (this.CntPadrao ? 1 : 0);
             this.setCntCodigo(Sequencial.getNextSequencial(ContaCapital.class));
             String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " (CntCodigo, CntNome, CntBncNumero, CntBncAgencia, CntBncTitular, CntPadrao, CntSaldo)";
@@ -180,6 +186,9 @@ public class ContaCapital extends ModelTemplate {
             }
             
             flag = DB.FLAG_UPDATE;
+            
+            Log.log(fncNome, Log.INT_INSERCAO, "Inseriu a " + sngTitle + " '" + this.getCntNome() + "'", Log.NV_INFO);
+            
             return true;
         } catch (SQLException ex) {
             Log.log(fncNome, Log.INT_INSERCAO, "Falha ao inserir a " + sngTitle + " '" + this.getCntNome() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
@@ -189,10 +198,7 @@ public class ContaCapital extends ModelTemplate {
 
     public boolean update() {
         try {
-            int CntPadrao = 0;
-            if (this.CntPadrao) {
-                CntPadrao = 1;
-            }
+            int CntPadrao = (this.CntPadrao ? 1 : 0);
             String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " SET CntNome = ?,CntBncNumero = ?,CntBncAgencia = ?,CntBncTitular = ?,CntPadrao = ?,CntSaldo = ?";
             sql += " WHERE (CntCodigo = ?)";
@@ -203,6 +209,9 @@ public class ContaCapital extends ModelTemplate {
                 ContaCapital.setCntPadraoCodigo(CntCodigo);
                 ContaCapital.setCntPadraoNome(CntNome);
             }
+            
+            Log.log(fncNome, Log.INT_ALTERACAO, "Alterou a " + sngTitle + " '" + this.getCntNome() + "'", Log.NV_INFO);
+            
             return true;
         } catch (SQLException ex) {
             Log.log(fncNome, Log.INT_ALTERACAO, "Falha ao alterar a " + sngTitle + " '" + this.getCntNome() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);

@@ -352,7 +352,7 @@ public class Pessoa extends ModelTemplate {
         } else {
             sql += " WHERE 1=2"; //Não traz nada, não selecionou nenhum
         }
-        System.out.println(sql);
+        
         try {
             ResultSet rs = DB.executeQuery(sql);
             while (rs.next()) {

@@ -29,6 +29,11 @@ public abstract class Util {
     public static String getFormattedDate() {
         return getFormattedDate(Calendar.getInstance());
     }
+    public static String getFormattedDate(java.sql.Date date) {
+        Calendar cl = Calendar.getInstance();
+        cl.setTimeInMillis(date.getTime());
+        return getFormattedDate(cl);
+    }
     public static String getFormattedDate(Calendar cl) {
         String data = String.format("%02d", cl.get(Calendar.DAY_OF_MONTH)) + "/";
         data += String.format("%02d", cl.get(Calendar.MONTH)+1) + "/";
@@ -102,32 +107,11 @@ public abstract class Util {
         txtToFormat.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
-                
-                //@TODO
-                //http://stackoverflow.com/questions/2379221/java-currency-number-format
-                
-//                DecimalFormat formatter = new DecimalFormat("###,###,###.00");
-//                String txt = formatter.format(Double.parseDouble(txtToFormat.getText()));
-                
-//                String txt = String.format("%10.2f", txtToFormat.getText());
-                
-//                String txt = txtToFormat.getText();
-//                String valTxt = txt.replaceAll("[^1-9,.]", "");
-//                if ("".equals(valTxt) || Double.parseDouble(valTxt) == 0) 
-//                    txt = "0,00";
-//                if (txt.indexOf(",") == -1)
-//                    txt += ",00";
-//                txtToFormat.setText("R$ " + txt);
-                
                 txtToFormat.setText(getFormattedMoney(txtToFormat.getText()));
-                
             }
             @Override
             public void focusGained(FocusEvent e) {
                 String txt = txtToFormat.getText().replaceAll("[^0-9,]", "");
-//                String valTxt = txt.replace(",", "");
-//                if (!"".equals(valTxt) && Integer.parseInt(valTxt) == 0) 
-//                    txt = "";
                 txtToFormat.setText(txt);
                 txtToFormat.selectAll();
             }
@@ -153,6 +137,10 @@ public abstract class Util {
     
     public static void setLimitChars(final javax.swing.JTextField txtToLimit, final int charLimit) {
         txtToLimit.setDocument(new JTextFieldLimit(charLimit));
+    }
+    
+    public static void setSlcButton(final javax.swing.JButton btn) {
+        btn.setText("...");
     }
     
     public static String strRepeat(String s, int n) {

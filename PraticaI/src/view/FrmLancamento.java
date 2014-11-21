@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import model.Cliente;
 import model.ContaCapital;
 import model.Lancamento;
 import model.Pessoa;
@@ -57,6 +58,9 @@ public class FrmLancamento extends reflection.FormJDialog {
         util.Util.setLimitChars(txtLanDescricao, 200);
         util.Util.setLimitChars(txtLanDocumento, 50);
         
+        util.Util.setSlcButton(btnBuscaPessoa);
+        util.Util.setSlcButton(btnBuscaVenda);
+        
         this.setEntrada(); //Só por garantia
         
         ComboBoxItem sel = null;
@@ -82,22 +86,29 @@ public class FrmLancamento extends reflection.FormJDialog {
     public Pessoa getPessoa() {
         return pessoa;
     }
-    
     public void setPessoa(Pessoa pessoa) {
         this.pessoa = pessoa;
-        if (pessoa.isCliente()) {
-            lblVenda.setVisible(true);
-            txtVenda.setVisible(true);
-            btnBuscaVenda.setVisible(true);
-        } else {
-            venda = null;
-            lblVenda.setVisible(false);
-            txtVenda.setVisible(false);
-            btnBuscaVenda.setVisible(false);
-        }
+        if (getPessoa() != null)
+            txtPessoa.setText(getPessoa().getPesNome());
+//        if (pessoa != null && pessoa.isCliente()) {
+//            lblVenda.setVisible(true);
+//            txtVenda.setVisible(true);
+//            btnBuscaVenda.setVisible(true);
+//        } else {
+//            venda = null;
+//            lblVenda.setVisible(false);
+//            txtVenda.setVisible(false);
+//            btnBuscaVenda.setVisible(false);
+//        }
     }
-    
-    
+    public Venda getVenda() {
+        return venda;
+    }
+    public void setVenda(Venda venda) {
+        this.venda = venda;
+        if (getVenda() != null)
+            txtVenda.setText(venda.toString());
+    }
     
     public void setEntrada() {
         LanTipo = Lancamento.TIPO_ENTRADA;
@@ -127,20 +138,22 @@ public class FrmLancamento extends reflection.FormJDialog {
     @Override
     public void loadInsert() {
         lancamento = new Lancamento();
-        this.setDateNow();
+        setPessoa(null);
+        setDateNow();
         chkEfetivadoActionPerformed(null);
     }
 
     @Override
     public void loadUpdate() {
+        setPessoa(null);
         if (lancamento.load((int) idCols[0], (int) idCols[1])) {
             if (lancamento.getPesCodigo() != null) {
-                pessoa = lancamento.getPesCodigo();
-                txtPessoa.setText(pessoa.getPesNome());
+                setPessoa(lancamento.getPesCodigo());
             }
             
-            //CliCodigo;
-            //VenCodigo;//@TODO
+            if (lancamento.getVenCodigo() != null) {
+                setVenda(lancamento.getVenCodigo());
+            }
             
             if (lancamento.getPlnCodigo() != null) {
                 for (ComboBoxItem cboxItem : cboxItensPlanoContas) {
@@ -149,6 +162,8 @@ public class FrmLancamento extends reflection.FormJDialog {
                     }
                 }
             }
+            cmbContaCapital.setEnabled(false);
+            
             switch (lancamento.getLanTipo()) {
                 case Lancamento.TIPO_ENTRADA:
                     this.setEntrada();
@@ -169,22 +184,29 @@ public class FrmLancamento extends reflection.FormJDialog {
             
             chkEfetivadoActionPerformed(null);
         } else {
-            JOptionPane.showMessageDialog(this, "Registro não encontrado!", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, Lancamento.sngTitle + " não encontrado!", "Erro", JOptionPane.ERROR_MESSAGE);
             //Fechar form
         }
     }
     
     public void save() {
         lancamento.setLanTipo(LanTipo);
-        if (cmbContaCapital.getSelectedItem() != null) {
+        if (lancamento.getFlag().equals(DB.FLAG_INSERT) && cmbContaCapital.getSelectedItem() != null) {
             for (ContaCapital cc : ContasDeCapital) {
-                if ((int) ((ComboBoxItem) cmbContaCapital.getSelectedItem()).getId() == cc.getCntCodigo())
+                if ((int) ((ComboBoxItem) cmbContaCapital.getSelectedItem()).getId() == cc.getCntCodigo()) {
                     lancamento.setCntCodigo(cc);
+                    lancamento.getCntCodigo().setFlag(DB.FLAG_UPDATE);
+                }
             }
         }
-//        private int LanCodigo;
-//        private Cliente CliCodigo;
-//        private Venda VenCodigo; //@TODO
+        
+        if (pessoa != null) {
+            lancamento.setPesCodigo(pessoa);
+        }
+        
+        if (venda != null) {
+            lancamento.setVenCodigo(venda);
+        }
         
         if (cmbPlanoContas.getSelectedItem() != null) {
             for (PlanoContas pln : PlanosDeContas) {
@@ -382,28 +404,27 @@ public class FrmLancamento extends reflection.FormJDialog {
                                         .addComponent(txtLanValor, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(chkEfetivado))
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(txtVenda, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
-                                                .addComponent(txtPessoa))
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(btnBuscaPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(btnBuscaVenda, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addGroup(layout.createSequentialGroup()
-                                                    .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(jLabel3))
-                                                .addGroup(layout.createSequentialGroup()
-                                                    .addGap(263, 263, 263)
-                                                    .addComponent(jLabel6)))
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(txtLanDataHora, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
-                                                .addComponent(txtLanDocumento))))))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtPessoa)
+                                            .addComponent(txtVenda))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(btnBuscaVenda, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(btnBuscaPessoa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jLabel3))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGap(263, 263, 263)
+                                                .addComponent(jLabel6)))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(txtLanDataHora, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
+                                            .addComponent(txtLanDocumento)))))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addGroup(layout.createSequentialGroup()
                                     .addGap(34, 34, 34)
@@ -514,13 +535,19 @@ public class FrmLancamento extends reflection.FormJDialog {
         slc.isFornecedor = true;
         slc.setVisible(true);
         if (slc.getPessoa() != null) {
-            pessoa = slc.getPessoa();
-            txtPessoa.setText(pessoa.getPesNome());
+            setPessoa(slc.getPessoa());
         }
     }//GEN-LAST:event_btnBuscaPessoaActionPerformed
 
     private void btnBuscaVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscaVendaActionPerformed
-//        SlcVenda slc = new SlcVenda(null, true);
+        SlcVenda slc = new SlcVenda(null, true);
+        if (pessoa != null && pessoa.isCliente()) {
+            slc.cliente = new Cliente(pessoa);
+        }
+        slc.setVisible(true);
+        if (slc.getVenda() != null) {
+            setVenda(slc.getVenda());
+        }
     }//GEN-LAST:event_btnBuscaVendaActionPerformed
 
     /**

@@ -126,7 +126,7 @@ public class Cliente extends ModelTemplate{
         return false;
     }
     
-    private Cliente fill(ResultSet rs, boolean joinPessoa) throws SQLException {
+    public Cliente fill(ResultSet rs, boolean joinPessoa) throws SQLException {
         this.setCliCodigo(rs.getInt("CliCodigo"));
         this.setCliDtaDelecao((java.sql.Timestamp) DB.getColumnByType(rs, "CliDtaDelecao", java.sql.Timestamp.class));
         Pessoa pessoa = new Pessoa();

@@ -34,7 +34,6 @@ public class Lancamento extends ModelTemplate {
     
     private ContaCapital CntCodigo;
     private int LanCodigo;
-    private Cliente CliCodigo;
     private Venda VenCodigo;
     private Pessoa PesCodigo;
     private PlanoContas PlnCodigo;
@@ -121,14 +120,6 @@ public class Lancamento extends ModelTemplate {
 
     public void setLanCodigo(int LanCodigo) {
         this.LanCodigo = LanCodigo;
-    }
-
-    public Cliente getCliCodigo() {
-        return CliCodigo;
-    }
-
-    public void setCliCodigo(Cliente CliCodigo) {
-        this.CliCodigo = CliCodigo;
     }
 
     public Venda getVenCodigo() {
@@ -289,14 +280,10 @@ public class Lancamento extends ModelTemplate {
             if (CntCodigo != 0 && cntCapital.load(CntCodigo))
                 this.setCntCodigo(cntCapital);
             
-            Cliente cliente = new Cliente();
-            int CliCodigo = rs.getInt("CliCodigo");
-            if (CliCodigo != 0 && cliente.load(CliCodigo))
-                this.setCliCodigo(cliente);
-            
             Venda venda = new Venda();
             int VenCodigo = rs.getInt("VenCodigo");
-            if (VenCodigo != 0 && venda.load(cliente, VenCodigo))
+            int CliCodigo = rs.getInt("CliCodigo");
+            if (VenCodigo != 0 && CliCodigo != 0 && venda.load(CliCodigo, VenCodigo))
                 this.setVenCodigo(venda);
             
             PlanoContas plnContas = new PlanoContas();
@@ -315,7 +302,9 @@ public class Lancamento extends ModelTemplate {
         this.setLanEfetivadoOriginal(rs.getBoolean("LanEfetivado"));
         this.setLanEstornado(rs.getBoolean("LanEstornado"));
         this.setLanEstornadoOriginal(rs.getBoolean("LanEstornado"));
+        
         this.setFlag(DB.FLAG_UPDATE);
+        
         return this;
     }
     
@@ -345,9 +334,9 @@ public class Lancamento extends ModelTemplate {
         try {
             this.setLanCodigo(Sequencial.getNextSequencial(Lancamento.class.getSimpleName() + "_" + this.getCntCodigo().getCntCodigo()));
             String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(Lancamento.class);
-            sql += "(CntCodigo, LanCodigo, CliCodigo, VenCodigo, PlnCodigo, LanTipo, LanDataHora,";
+            sql += "(CntCodigo, LanCodigo, CliCodigo, VenCodigo, PesCodigo, PlnCodigo, LanTipo, LanDataHora,";
             sql += " LanValorEntrada, LanValorSaida, LanDescricao, LanDocumento, LanEfetivado, LanEstornado)";
-            sql += " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql += " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             Object[] parms = this.getSQLParms();
             DB.executeUpdate(sql, parms);
             
@@ -364,10 +353,11 @@ public class Lancamento extends ModelTemplate {
     public boolean update() {
         try {
             String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(Lancamento.class) + " SET";
-            sql += " CliCodigo = ?, VenCodigo = ?, PlnCodigo = ?, LanTipo = ?, LanDataHora = ?, LanValorEntrada = ?,";
+            sql += " CliCodigo = ?, VenCodigo = ?, PesCodigo = ?, PlnCodigo = ?, LanTipo = ?, LanDataHora = ?, LanValorEntrada = ?,";
             sql += " LanValorSaida = ?, LanDescricao = ?, LanDocumento = ?, LanEfetivado = ?, LanEstornado = ?";
             sql += " WHERE CntCodigo = ? AND LanCodigo = ?";
             Object[] parms = this.getSQLParms();
+            System.out.println("UPDATE " + sql + "\r\n" + getCntCodigo().getCntCodigo() + "," + getLanCodigo());
             DB.executeUpdate(sql, parms);
             
             Log.log(fncNome, Log.INT_INSERCAO, "Alterou o " + sngTitle + " de código " + this.getLanCodigo() + " da Conta de Capital " + this.getCntCodigo().getCntCodigo() + " (" + this.getCntCodigo().getCntNome() + ")", Log.NV_INFO);
@@ -434,20 +424,26 @@ public class Lancamento extends ModelTemplate {
     }
     
     private Object[] getSQLParms() {
-        Object[] parms = new Object[13];
+        Object[] parms = new Object[14];
         int i = 0;
         if (this.flag.equals(DB.FLAG_INSERT)) {
             parms[i++] = this.getCntCodigo().getCntCodigo();
             parms[i++] = this.getLanCodigo();
         }
-        if (this.getCliCodigo() != null) 
-            parms[i] = this.getCliCodigo().getCliCodigo();
+        if (this.getVenCodigo() != null) {
+            parms[i++] = this.getVenCodigo().getCliCodigo().getCliCodigo();
+            parms[i++] = this.getVenCodigo().getVenCodigo();
+        } else {
+            i++;
+            i++;
+        }
+        if (this.getPesCodigo() != null) {
+            parms[i] = this.getPesCodigo().getPesCodigo();
+        }
         i++;
-        if (this.getVenCodigo() != null) 
-            parms[i] = this.getVenCodigo().getVenCodigo();
-        i++;
-        if (this.getPlnCodigo() != null) 
+        if (this.getPlnCodigo() != null) {
             parms[i] = this.getPlnCodigo().getPlnCodigo();
+        }
         i++;
         parms[i++] = this.getLanTipo();
         parms[i++] = this.getLanDataHora();
@@ -464,25 +460,20 @@ public class Lancamento extends ModelTemplate {
         return parms;
     }
     
-    public static ResultSet getList(int CntCodigo, int PlnCodigo, String LanDescricao, Timestamp LanDataHoraFrom, Timestamp LanDataHoraTo, Boolean LanEfetivado) {
+    public static ResultSet getList(int CntCodigo, int PlnCodigo, Pessoa pessoa, Venda venda, String LanDescricao, Timestamp LanDataHoraFrom, Timestamp LanDataHoraTo, Boolean LanEfetivado, Boolean LanEstornado) {
         ResultSet rs = null;
         try {
-            String sql = "SELECT l.CntCodigo, l.LanCodigo, l.LanEfetivado, l.LanEstornado, l.LanDataHora, cc.CntNome, p.PlnNome, l.LanDescricao, l.LanValorSaida, l.LanValorEntrada, pes.PesNome";
+            String sql = "SELECT l.CntCodigo, l.LanCodigo, l.LanEfetivado, l.LanEstornado, l.LanDataHora, cc.CntNome, p.PlnNome,";
+            sql += " l.LanDescricao, l.LanValorSaida, l.LanValorEntrada, pes.PesNome, l.VenCodigo, ven.VenData, ven.VenValorFinal";
             sql += " FROM " + reflection.ReflectionUtil.getDBTableName(Lancamento.class) + " l";
             sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(PlanoContas.class) + " p ON (l.PlnCodigo = p.PlnCodigo)";
             sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(ContaCapital.class) + " cc ON (l.CntCodigo = cc.CntCodigo)";
-            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Cliente.class) + " cli ON (l.CliCodigo =cli.CliCodigo)";
-            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Pessoa.class) + " pes ON (cli.PesCodigo = pes.PesCodigo)";
+            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Venda.class) + " ven ON (l.CliCodigo = ven.CliCodigo AND l.VenCodigo = ven.VenCodigo)";
+//            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Cliente.class) + " cli ON (l.CliCodigo = cli.CliCodigo)";
+            sql += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Pessoa.class) + " pes ON (l.PesCodigo = pes.PesCodigo)";
             sql += " WHERE 1=1";
             
             ArrayList<Object> parms = new ArrayList<>();
-            if (LanEfetivado != null) {
-                if (LanEfetivado) {
-                    sql += " AND LanEfetivado";
-                } else {
-                    sql += " AND NOT LanEfetivado";
-                }
-            }
             if (CntCodigo != 0) {
                 sql += " AND l.CntCodigo = ?";
                 parms.add(CntCodigo);
@@ -490,6 +481,15 @@ public class Lancamento extends ModelTemplate {
             if (PlnCodigo != 0) {
                 sql += " AND l.PlnCodigo = ?";
                 parms.add(PlnCodigo);
+            }
+            if (pessoa != null) {
+                sql += " AND l.PesCodigo = ?";
+                parms.add(pessoa.getPesCodigo());
+            }
+            if (venda != null) {
+                sql += " AND l.CliCodigo = ? AND l.VenCodigo = ?";
+                parms.add(venda.getCliCodigo().getCliCodigo());
+                parms.add(venda.getVenCodigo());
             }
             if (LanDescricao != null && !"".equals(LanDescricao)) {
                 sql += " AND l.LanDescricao LIKE ?";
@@ -506,7 +506,30 @@ public class Lancamento extends ModelTemplate {
                 sql += " AND l.LanDataHora <= ?";
                 parms.add(LanDataHoraTo);
             }
-            
+            if (LanEfetivado != null || LanEstornado != null) {
+                sql += " AND (";
+                if (LanEfetivado == null) {
+                    sql += "LanEfetivado OR NOT LanEfetivado"; // necessário caso tenha LanEstornado
+                } else {
+                    if (LanEfetivado) {
+                        sql += "LanEfetivado";
+                    } else {
+                        sql += "NOT LanEfetivado";
+                    }
+                }
+                sql += " OR ";
+                if (LanEstornado == null) {
+                    sql += "LanEstornado OR NOT LanEstornado"; // necessário caso tenha LanEfetivado
+                } else {
+                    if (LanEstornado) {
+                        sql += "LanEstornado";
+                    } else {
+                        sql += "NOT LanEstornado";
+                    }
+                }
+                sql += ")";
+            }
+//            System.out.println("SQL LANCAMENTOS: " + sql);
             rs = DB.executeQuery(sql, (Object[]) parms.toArray(new Object[0]));
             
         } catch (SQLException ex) {

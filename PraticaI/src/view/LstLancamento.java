@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -28,11 +29,14 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import model.Cliente;
 import model.ContaCapital;
 import model.Lancamento;
 import model.Log;
+import model.Pessoa;
 import model.PlanoContas;
 import model.Usuario;
+import model.Venda;
 import reflection.ListJFrame;
 import util.DB;
 import util.ImageSize;
@@ -54,15 +58,17 @@ public class LstLancamento extends javax.swing.JFrame {
     public static final int colLanDataHora = 0;
     public static final int colLanContaCapital = 1;
     public static final int colLanPlanoContas = 2;
-    public static final int colLanDescricao = 3;
-    public static final int colLanValorSaida = 4;
-    public static final int colLanValorEntrada = 5;
-    public static final int colBtnEfetivar = 6;
-    public static final int colBtnEstornar = 7;
-    public static final int colCntCodigo = 8;
-    public static final int colLanCodigo = 9;
-    public static final int colLanEfetivado = 10;
-    public static final int colLanEstornado = 11;
+    public static final int colLanPessoa = 3;
+    public static final int colLanVenda = 4;
+    public static final int colLanDescricao = 5;
+    public static final int colLanValorSaida = 6;
+    public static final int colLanValorEntrada = 7;
+    public static final int colBtnEfetivar = 8;
+    public static final int colBtnEstornar = 9;
+    public static final int colCntCodigo = 10;
+    public static final int colLanCodigo = 11;
+    public static final int colLanEfetivado = 12;
+    public static final int colLanEstornado = 13;
     
     public static int rowTotal = 0;
     
@@ -71,6 +77,9 @@ public class LstLancamento extends javax.swing.JFrame {
     
     private ArrayList<ContaCapital> ContasDeCapital = ContaCapital.getAll();
     private ArrayList<PlanoContas> PlanosDeContas = PlanoContas.getAllOrdered();
+    
+    private Pessoa pessoa;
+    private Venda venda;
     
     /**
      * Creates new form LstLancamento
@@ -87,6 +96,8 @@ public class LstLancamento extends javax.swing.JFrame {
         btnFiltrar.setIcon(new ImageIcon(Util.getIconUrl("filter.png")));
         btnAddEntrada.setIcon(new ImageIcon(Util.getIconUrl("moneyadd.png")));
         btnAddSaida.setIcon(new ImageIcon(Util.getIconUrl("moneydelete.png")));
+        Util.setSlcButton(btnBuscaPessoa);
+        Util.setSlcButton(btnBuscaVenda);
         
         boolean[] acessos = Usuario.UsuLogado.verificaAcesso(Lancamento.fncNome);
         if (!acessos[Usuario.IDX_INSERIR]) {
@@ -140,6 +151,19 @@ public class LstLancamento extends javax.swing.JFrame {
         
         listar();
     }
+
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+    }
+    public Venda getVenda() {
+        return venda;
+    }
+    public void setVenda(Venda venda) {
+        this.venda = venda;
+    }
     
     public void listar() {
         int CntCodigo = 0;
@@ -158,7 +182,29 @@ public class LstLancamento extends javax.swing.JFrame {
             }
         }
         
-        ResultSet rs = Lancamento.getList(CntCodigo, PlnCodigo, txtLanDescricao.getText(), Util.getTimestampFromString(txtLanDataHoraFrom.getText() + " 00:00:00"), Util.getTimestampFromString(txtLanDataHoraTo.getText() + " 23:59:59"), null);
+        Boolean LanEfetivado = null;
+        if (chkEfetivados.isSelected() && chkNaoEfetivados.isSelected())
+            LanEfetivado = null;
+        else if (chkEfetivados.isSelected())
+            LanEfetivado = true;
+        else if (chkNaoEfetivados.isSelected())
+            LanEfetivado = false;
+        
+        Boolean LanEstornado = null;
+        if (chkEstornados.isSelected())
+            LanEstornado = true;
+        else
+            LanEstornado = false;
+        
+        Timestamp LanDataHoraFrom = null;
+        Timestamp LanDataHoraTo = null;
+        if (!txtLanDataHoraFrom.getText().replaceAll("[^0-9]", "").equals("")) {
+            LanDataHoraFrom = Util.getTimestampFromString(txtLanDataHoraFrom.getText() + " 00:00:00");
+        }
+        if (!txtLanDataHoraTo.getText().replaceAll("[^0-9]", "").equals("")) {
+            LanDataHoraTo = Util.getTimestampFromString(txtLanDataHoraTo.getText() + " 23:59:59");
+        }
+        ResultSet rs = Lancamento.getList(CntCodigo, PlnCodigo, getPessoa(), getVenda(), txtLanDescricao.getText(), LanDataHoraFrom, LanDataHoraTo, LanEfetivado, LanEstornado);
         
         DefaultTableModel dtm = (DefaultTableModel) tbl.getModel();
         dtm.setNumRows(0);
@@ -172,6 +218,17 @@ public class LstLancamento extends javax.swing.JFrame {
                     row[colLanDataHora] = DB.formatColumn(rs.getTimestamp("LanDataHora"));
                     row[colLanContaCapital] = rs.getString("CntNome");
                     row[colLanPlanoContas] = rs.getString("PlnNome");
+                    row[colLanPessoa] = rs.getString("PesNome");
+                    
+                    row[colLanVenda] = "";
+                    int VenCodigo = rs.getInt("VenCodigo");
+                    if (VenCodigo != 0) {
+                        java.sql.Date VenData = rs.getDate("VenData");
+                        if (VenData != null)
+                            row[colLanVenda] += util.Util.getFormattedDate(VenData) + " - ";
+                        row[colLanVenda] += util.Util.getFormattedMoney(rs.getDouble("VenValorFinal"));
+                    }
+                    
                     row[colLanDescricao] = rs.getString("LanDescricao");
                     row[colLanValorSaida] = Util.getFormattedMoney(rs.getDouble("LanValorSaida"));
                     row[colLanValorEntrada] = Util.getFormattedMoney(rs.getDouble("LanValorEntrada"));
@@ -185,10 +242,13 @@ public class LstLancamento extends javax.swing.JFrame {
                     totalSaida += rs.getDouble("LanValorSaida");
                     totalEntrada += rs.getDouble("LanValorEntrada");
                 } while (rs.next());
+                
                 Object[] row = new Object[tbl.getColumnCount()];
                 row[colLanDataHora] = null;
                 row[colLanContaCapital] = null;
                 row[colLanPlanoContas] = null;
+                row[colLanPessoa] = null;
+                row[colLanVenda] = null;
                 row[colLanDescricao] = "Total:";
                 row[colLanValorSaida] = Util.getFormattedMoney(totalSaida);
                 row[colLanValorEntrada] = Util.getFormattedMoney(totalEntrada);
@@ -263,6 +323,7 @@ public class LstLancamento extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        rdgStatus = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         cmbContaCapital = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
@@ -278,6 +339,16 @@ public class LstLancamento extends javax.swing.JFrame {
         txtLanDataHoraTo = new javax.swing.JFormattedTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl = new javax.swing.JTable();
+        jLabel6 = new javax.swing.JLabel();
+        txtPessoa = new javax.swing.JTextField();
+        btnBuscaPessoa = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        txtVenda = new javax.swing.JTextField();
+        btnBuscaVenda = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        chkEfetivados = new javax.swing.JCheckBox();
+        chkNaoEfetivados = new javax.swing.JCheckBox();
+        chkEstornados = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -319,7 +390,7 @@ public class LstLancamento extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setText("De:");
+        jLabel4.setText("De");
 
         jLabel5.setText("até");
 
@@ -331,17 +402,17 @@ public class LstLancamento extends javax.swing.JFrame {
 
         tbl.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Data", "Conta de Capital", "Plano de Contas", "Descrição", "Saída", "Entrada", "Efetivar", "Estornar", "CntCodigo", "LanCodigo", "LanEfetivado", "LanEstornado"
+                "Data", "Conta de Capital", "Plano de Contas", "Pessoa", "Venda", "Descrição", "Saída", "Entrada", "Efetivar", "Estornar", "CntCodigo", "LanCodigo", "LanEfetivado", "LanEstornado"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -352,23 +423,80 @@ public class LstLancamento extends javax.swing.JFrame {
         if (tbl.getColumnModel().getColumnCount() > 0) {
             tbl.getColumnModel().getColumn(0).setMinWidth(100);
             tbl.getColumnModel().getColumn(0).setPreferredWidth(100);
-            tbl.getColumnModel().getColumn(6).setResizable(false);
-            tbl.getColumnModel().getColumn(6).setPreferredWidth(35);
-            tbl.getColumnModel().getColumn(7).setResizable(false);
-            tbl.getColumnModel().getColumn(7).setPreferredWidth(35);
-            tbl.getColumnModel().getColumn(8).setMinWidth(0);
-            tbl.getColumnModel().getColumn(8).setPreferredWidth(0);
-            tbl.getColumnModel().getColumn(8).setMaxWidth(0);
-            tbl.getColumnModel().getColumn(9).setMinWidth(0);
-            tbl.getColumnModel().getColumn(9).setPreferredWidth(0);
-            tbl.getColumnModel().getColumn(9).setMaxWidth(0);
+            tbl.getColumnModel().getColumn(8).setResizable(false);
+            tbl.getColumnModel().getColumn(8).setPreferredWidth(35);
+            tbl.getColumnModel().getColumn(9).setResizable(false);
+            tbl.getColumnModel().getColumn(9).setPreferredWidth(35);
             tbl.getColumnModel().getColumn(10).setMinWidth(0);
             tbl.getColumnModel().getColumn(10).setPreferredWidth(0);
             tbl.getColumnModel().getColumn(10).setMaxWidth(0);
             tbl.getColumnModel().getColumn(11).setMinWidth(0);
             tbl.getColumnModel().getColumn(11).setPreferredWidth(0);
             tbl.getColumnModel().getColumn(11).setMaxWidth(0);
+            tbl.getColumnModel().getColumn(12).setMinWidth(0);
+            tbl.getColumnModel().getColumn(12).setPreferredWidth(0);
+            tbl.getColumnModel().getColumn(12).setMaxWidth(0);
+            tbl.getColumnModel().getColumn(13).setMinWidth(0);
+            tbl.getColumnModel().getColumn(13).setPreferredWidth(0);
+            tbl.getColumnModel().getColumn(13).setMaxWidth(0);
         }
+
+        jLabel6.setText("Pessoa");
+
+        txtPessoa.setEnabled(false);
+
+        btnBuscaPessoa.setText("...");
+        btnBuscaPessoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscaPessoaActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("Venda");
+
+        txtVenda.setEnabled(false);
+
+        btnBuscaVenda.setText("...");
+        btnBuscaVenda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscaVendaActionPerformed(evt);
+            }
+        });
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Exibir Lançamentos"));
+
+        chkEfetivados.setSelected(true);
+        chkEfetivados.setText("Efetivados");
+
+        chkNaoEfetivados.setSelected(true);
+        chkNaoEfetivados.setText("Não Efetivados");
+
+        chkEstornados.setText("Estornados");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(chkEfetivados)
+                        .addGap(0, 0, 0))
+                    .addComponent(chkEstornados)
+                    .addComponent(chkNaoEfetivados)))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chkEfetivados)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkNaoEfetivados)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkEstornados)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -379,61 +507,89 @@ public class LstLancamento extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnBuscaPessoa)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel7))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtLanDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel4))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                                .addComponent(jLabel2)))
+                        .addGap(4, 4, 4)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(cmbPlanoContas, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(130, 130, 130))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(txtVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnBuscaVenda))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(txtLanDataHoraFrom, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel5)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtLanDataHoraTo, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnAddSaida, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnAddEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtLanDescricao)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cmbPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtLanDataHoraFrom, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtLanDataHoraTo, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 149, Short.MAX_VALUE)))
+                        .addComponent(btnAddEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(cmbPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(txtPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnBuscaPessoa)
+                            .addComponent(jLabel7)
+                            .addComponent(txtVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnBuscaVenda))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2)
+                            .addComponent(cmbPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(txtLanDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtLanDataHoraFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5)
+                            .addComponent(txtLanDataHoraTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txtLanDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtLanDataHoraFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(txtLanDataHoraTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnFiltrar)
                     .addComponent(btnAddEntrada)
-                    .addComponent(btnAddSaida))
+                    .addComponent(btnAddSaida)
+                    .addComponent(btnFiltrar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -461,6 +617,32 @@ public class LstLancamento extends javax.swing.JFrame {
     private void txtLanDataHoraFromActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLanDataHoraFromActionPerformed
         listar();
     }//GEN-LAST:event_txtLanDataHoraFromActionPerformed
+
+    private void btnBuscaPessoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscaPessoaActionPerformed
+        setPessoa(null);
+        SlcPessoa slc = new SlcPessoa(null, true);
+        slc.isCliente = true;
+        slc.isFuncionario = true;
+        slc.isFornecedor = true;
+        slc.setVisible(true);
+        if (slc.getPessoa() != null) {
+            setPessoa(slc.getPessoa());
+            txtPessoa.setText(getPessoa().getPesNome());
+        }
+    }//GEN-LAST:event_btnBuscaPessoaActionPerformed
+
+    private void btnBuscaVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscaVendaActionPerformed
+        setVenda(null);
+        SlcVenda slc = new SlcVenda(null, true);
+        if (pessoa != null && pessoa.isCliente()) {
+            slc.cliente = new Cliente(pessoa);
+        }
+        slc.setVisible(true);
+        if (slc.getVenda() != null) {
+            setVenda(slc.getVenda());
+            txtVenda.setText(getVenda().toString());
+        }
+    }//GEN-LAST:event_btnBuscaVendaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -500,7 +682,12 @@ public class LstLancamento extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddEntrada;
     private javax.swing.JButton btnAddSaida;
+    private javax.swing.JButton btnBuscaPessoa;
+    private javax.swing.JButton btnBuscaVenda;
     private javax.swing.JButton btnFiltrar;
+    private javax.swing.JCheckBox chkEfetivados;
+    private javax.swing.JCheckBox chkEstornados;
+    private javax.swing.JCheckBox chkNaoEfetivados;
     private javax.swing.JComboBox cmbContaCapital;
     private javax.swing.JComboBox cmbPlanoContas;
     private javax.swing.JLabel jLabel1;
@@ -508,11 +695,17 @@ public class LstLancamento extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.ButtonGroup rdgStatus;
     private javax.swing.JTable tbl;
     private javax.swing.JFormattedTextField txtLanDataHoraFrom;
     private javax.swing.JFormattedTextField txtLanDataHoraTo;
     private javax.swing.JTextField txtLanDescricao;
+    private javax.swing.JTextField txtPessoa;
+    private javax.swing.JTextField txtVenda;
     // End of variables declaration//GEN-END:variables
 }
 
@@ -565,6 +758,8 @@ class LancamentoCellRenderer extends DefaultTableCellRenderer {
                 case LstLancamento.colLanDataHora:
                 case LstLancamento.colLanContaCapital:
                 case LstLancamento.colLanPlanoContas:
+                case LstLancamento.colLanPessoa:
+                case LstLancamento.colLanVenda:
                 case LstLancamento.colLanDescricao:
                     this.setHorizontalAlignment(SwingConstants.LEFT);
                     if (LanEstornado) {
