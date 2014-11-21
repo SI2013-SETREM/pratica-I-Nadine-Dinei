@@ -245,7 +245,6 @@ public class Venda extends ModelTemplate {
             ResultSet rs = DB.executeQuery(sql, new Object[]{cliente.getCliCodigo(), VenCodigo});
             if (rs.next()) {
                 fill(rs, cliente);
-                
                 ArrayList<VendaProduto> lstVendaProdutos = VendaProduto.getAll(this);
                 this.setVendaProduto((VendaProduto[]) lstVendaProdutos.toArray(new VendaProduto[lstVendaProdutos.size()]));
             }

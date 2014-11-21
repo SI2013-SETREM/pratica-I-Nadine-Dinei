@@ -182,13 +182,14 @@ public class Produto extends ModelTemplate {
     public static Produto[] listBusca() {
         ArrayList<Produto> list = new ArrayList<>();
         try {
-            String sql = "select PrdNome,PrdPreco,PrdCodigo from produto where PrdDtaDelecao is null";
+            String sql = "select * from produto where PrdDtaDelecao is null";
             ResultSet rs = DB.executeQuery(sql);
             while (rs.next()) {
                 Produto p = new Produto();
-                p.setPrdCodigo(rs.getInt("PrdCodigo"));
                 p.setPrdNome(rs.getString(rs.getString("PrdNome")));
                 p.setPrdPreco(rs.getDouble("PrdPreco"));
+                p.setPrdDescricao(rs.getString("PrdDescricao"));
+                p.setPrdCodigo(rs.getInt("PrdCodigo"));
                 list.add(p);
             }
         } catch (SQLException ex) {

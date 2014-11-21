@@ -59,19 +59,42 @@ public class FrmVenda extends reflection.FormJFrame {
             vendaProdutos = new ArrayList<>(Arrays.asList(venda.getVendaProduto()));
         }
         fillTable();
+        if (String.valueOf(venda.getVenTipo()) == "P") {
+            rdbAprazo.setSelected(true);
+        } else {
+            rdbAvista.setSelected(true);
+        }
+        if (venda.isVenEfetivada() == true) {
+            ckbEfetivada.setSelected(true);
+            ckbEfetivada.setEnabled(false);
+            txtDataOperacao.setEnabled(false);
+            txtDesconto.setEnabled(false);
+            txtEntrada.setEnabled(false);
+            txtValor.setEnabled(false);
+            rdbAprazo.setEnabled(false);
+            rdbAvista.setEnabled(false);
+            btnSelecionarCliente.setEnabled(false);
+            tblProdutos.setEnabled(false);
+            btnAddProduto.setEnabled(false);
+            btnExcluir.setEnabled(false);
+            btnSalvar.setEnabled(false);
+            txtNParcelas.setEditable(false);
+        } else {
+            ckbEfetivada.setSelected(false);
+        }
     }
 
     private void fillCliente() {
         Pessoa pessoa = cliente.getPesCodigo();
 //        if (pessoa != null) {
-            lblCliente.setText(pessoa.getPesNome());
-            lblClienteCpf.setText(pessoa.getPesCPFCNPJ());
-            String clienteTelefone = "";
-            for (PessoaTelefone pTel : PessoaTelefone.getAll(pessoa)) {
-                clienteTelefone = pTel.getPesFonTelefone();
-                break;
-            }
-            lblClienteTelefone.setText(clienteTelefone);
+        lblCliente.setText(pessoa.getPesNome());
+        lblClienteCpf.setText(pessoa.getPesCPFCNPJ());
+        String clienteTelefone = "";
+        for (PessoaTelefone pTel : PessoaTelefone.getAll(pessoa)) {
+            clienteTelefone = pTel.getPesFonTelefone();
+            break;
+        }
+        lblClienteTelefone.setText(clienteTelefone);
 //        }
     }
 
@@ -132,9 +155,9 @@ public class FrmVenda extends reflection.FormJFrame {
         txtEntrada = new javax.swing.JTextField();
         jLabel17 = new javax.swing.JLabel();
         lblNumPedido = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnExcluir = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -374,7 +397,7 @@ public class FrmVenda extends reflection.FormJFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jButton1.setText("Excluir");
+        btnExcluir.setText("Excluir");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -398,7 +421,7 @@ public class FrmVenda extends reflection.FormJFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnAddProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -414,7 +437,7 @@ public class FrmVenda extends reflection.FormJFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAddProduto)
-                    .addComponent(jButton1))
+                    .addComponent(btnExcluir))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -508,10 +531,10 @@ public class FrmVenda extends reflection.FormJFrame {
     private javax.swing.ButtonGroup VendaTipo;
     private javax.swing.JButton btnAddProduto;
     private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSelecionarCliente;
     private javax.swing.JCheckBox ckbEfetivada;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
