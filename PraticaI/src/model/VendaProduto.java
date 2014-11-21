@@ -23,6 +23,7 @@ public class VendaProduto extends ModelTemplate {
     public String VenPrdDescricao;
     public double VenPrdPreco;
     public float VenPrdQuantidade;
+
     private String flag = DB.FLAG_INSERT;
 
     /**
@@ -111,6 +112,10 @@ public class VendaProduto extends ModelTemplate {
 
     public void setVenPrdQuantidade(float VenPrdQuantidade) {
         this.VenPrdQuantidade = VenPrdQuantidade;
+    }
+
+    public double getVenPrdTotal() {
+        return (double) (this.VenPrdPreco * this.VenPrdQuantidade);
     }
 
     public String getFlag() {

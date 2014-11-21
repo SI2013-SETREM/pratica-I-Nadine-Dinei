@@ -3,6 +3,9 @@ package model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.DB;
 import util.field.FilterField;
 import util.field.FilterFieldText;
@@ -176,4 +179,21 @@ public class Produto extends ModelTemplate {
         return false;
     }
 
+    public static Produto[] listBusca() {
+        ArrayList<Produto> list = new ArrayList<>();
+        try {
+            String sql = "select PrdNome,PrdPreco,PrdCodigo from produto where PrdDtaDelecao is null";
+            ResultSet rs = DB.executeQuery(sql);
+            while (rs.next()) {
+                Produto p = new Produto();
+                p.setPrdCodigo(rs.getInt("PrdCodigo"));
+                p.setPrdNome(rs.getString(rs.getString("PrdNome")));
+                p.setPrdPreco(rs.getDouble("PrdPreco"));
+                list.add(p);
+            }
+        } catch (SQLException ex) {
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar as " + prlTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+        }
+        return (Produto[]) list.toArray(new Produto[list.size()]);
+    }
 }

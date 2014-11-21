@@ -6,7 +6,9 @@
 package view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.ImageIcon;
+import javax.swing.table.DefaultTableModel;
 import model.Cliente;
 import model.Pessoa;
 import model.PessoaTelefone;
@@ -44,14 +46,17 @@ public class FrmVenda extends reflection.FormJFrame {
 
     @Override
     public void loadUpdate() {
-        cliente=new Cliente((int) idCols[0]);
+        cliente = new Cliente((int) idCols[0]);
         venda.load(cliente, (int) idCols[1]); //To change body of generated methods, choose Tools | Templates.
         txtDataOperacao.setText(String.valueOf(venda.getVenData()));
         txtDesconto.setText(util.Util.getFormattedMoney(venda.getVenDesconto()));
         txtEntrada.setText(util.Util.getFormattedMoney(venda.getVenEntrada()));
         txtValor.setText(util.Util.getFormattedMoney(venda.getVenValor()));
         fillCliente();
-        
+        //lblNumPedido.setText(venda.get);
+        lblValorFinal.setText(util.Util.getFormattedMoney(venda.getVenValorFinal()));
+        vendaProdutos = new ArrayList<>(Arrays.asList(venda.getVendaProduto()));
+        fillTable();
     }
 
     private void fillCliente() {
@@ -65,7 +70,23 @@ public class FrmVenda extends reflection.FormJFrame {
         }
         lblClienteTelefone.setText(clienteTelefone);
     }
-    
+
+    private void fillTable() {
+        DefaultTableModel dtm = (DefaultTableModel) tblProdutos.getModel();
+        dtm.setNumRows(0);
+        for (VendaProduto vp : vendaProdutos) {
+            Object[] row = new Object[]{
+                vp.getVenPrdNome(),
+                util.Util.getFormattedMoney(vp.getVenPrdPreco()),
+                vp.getVenPrdQuantidade(),
+                vp.getVenPrdTotal(),
+                null,
+                vp.getVenPrdCodigo()
+            };
+            dtm.addRow(row);
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -210,17 +231,17 @@ public class FrmVenda extends reflection.FormJFrame {
 
         tblProdutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Nome", "Preço", "Qtde", "Total", "Remover"
+                "Nome", "Preço", "Qtde", "Total", "Remover", "VenPrdCodigo"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true, true, false
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -233,6 +254,9 @@ public class FrmVenda extends reflection.FormJFrame {
             tblProdutos.getColumnModel().getColumn(0).setPreferredWidth(200);
             tblProdutos.getColumnModel().getColumn(4).setResizable(false);
             tblProdutos.getColumnModel().getColumn(4).setPreferredWidth(50);
+            tblProdutos.getColumnModel().getColumn(5).setMinWidth(0);
+            tblProdutos.getColumnModel().getColumn(5).setPreferredWidth(0);
+            tblProdutos.getColumnModel().getColumn(5).setMaxWidth(0);
         }
 
         btnCancelar.setText("Cancelar");
