@@ -15,7 +15,6 @@ import util.DB;
  */
 public class VendaProduto extends ModelTemplate {
 
-    public Cliente CliCodigo;
     public Venda VenCodigo;
     public int VenPrdCodigo;
     public Produto PrdCodigo;
@@ -45,23 +44,12 @@ public class VendaProduto extends ModelTemplate {
     /**
      * @see model.ModelTemplate#idColumn
      */
-    public static String[] idColumn = {"Cliente.CliCodigo", "Venda.VenCodigo", "VenPrdCodigo"};
-
-    /**
-     * @see model.ModelTemplate#listTableFields
-     */
-    public Cliente getCliCodigo() {
-        return CliCodigo;
-    }
-
-    public void setCliCodigo(Cliente CliCodigo) {
-        this.CliCodigo = CliCodigo;
-    }
-
+    public static String[] idColumn = {"Venda.CliCodigo", "Venda.VenCodigo", "VenPrdCodigo"};
+    
     public Venda getVenCodigo() {
         return VenCodigo;
     }
-
+    
     public void setVenCodigo(Venda VenCodigo) {
         this.VenCodigo = VenCodigo;
     }
@@ -133,8 +121,7 @@ public class VendaProduto extends ModelTemplate {
             ResultSet rs = DB.executeQuery(sql, new Object[]{PrdCodigo});
             if (rs.next()) {
                 this.setPrdCodigo(new Produto(rs.getInt("PrdCodigo")));
-                this.setCliCodigo(new Cliente(rs.getInt("CliCodigo")));
-                this.setVenCodigo(new Venda(this.getCliCodigo(), rs.getInt("VenCodigo")));
+                this.setVenCodigo(new Venda(new Cliente(rs.getInt("CliCodigo")), rs.getInt("VenCodigo")));
                 this.setVenPrdCodigo(rs.getInt("VenPrdCodigo"));
                 this.setVenPrdDescricao(rs.getString("VenPrdDescricao"));
                 this.setVenPrdNome(rs.getString("VenPrdNome"));
@@ -163,7 +150,7 @@ public class VendaProduto extends ModelTemplate {
         try {
             this.setVenPrdCodigo(Sequencial.getNextSequencial(VendaProduto.class.getSimpleName() + "_"));
             String sql = "insert into " + reflection.ReflectionUtil.getDBTableName(this) + "  (CliCodigo, VenCodigo, VenPrdCodigo, PrdCodigo, VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            DB.executeUpdate(sql, new Object[]{CliCodigo.getCliCodigo(), VenCodigo.getVenCodigo(), VenPrdCodigo, PrdCodigo.getPrdCodigo(), VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade});
+            DB.executeUpdate(sql, new Object[]{VenCodigo.getCliCodigo().getCliCodigo(), VenCodigo.getVenCodigo(), VenPrdCodigo, PrdCodigo.getPrdCodigo(), VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade});
             flag = DB.FLAG_UPDATE;
             return true;
         } catch (SQLException ex) {
@@ -176,7 +163,7 @@ public class VendaProduto extends ModelTemplate {
         try {
             String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " SET PrdCodigo=?, VenPrdNome=?, VenPrdDescricao=?, VenPrdPreco=?, VenPrdQuantidade=? where CliCodigo=? and VenCodigo=? and VenPrdCodigo=?";
-            DB.executeUpdate(sql, new Object[]{PrdCodigo.getPrdCodigo(), VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade, CliCodigo.getCliCodigo(), VenCodigo.getVenCodigo(), VenPrdCodigo,});
+            DB.executeUpdate(sql, new Object[]{PrdCodigo.getPrdCodigo(), VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade, VenCodigo.getCliCodigo().getCliCodigo(), VenCodigo.getVenCodigo(), VenPrdCodigo,});
             return true;
         } catch (SQLException ex) {
             Log.log(fncNome, Log.INT_ALTERACAO, "Falha ao alterar o produto " + this.getPrdCodigo() + " da Venda '" + this.getVenCodigo() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
@@ -191,9 +178,8 @@ public class VendaProduto extends ModelTemplate {
             ResultSet rs = DB.executeQuery(sql, new Object[]{VenCodigo.getCliCodigo().getCliCodigo(), VenCodigo.getVenCodigo()});
             while (rs.next()) {
                 VendaProduto venPrd = new VendaProduto();
-                venPrd.setCliCodigo(new Cliente(rs.getInt("CliCodigo")));
-                venPrd.setPrdCodigo(new Produto(rs.getInt("PrdCodigo")));
                 venPrd.setVenCodigo(VenCodigo);
+                venPrd.setPrdCodigo(new Produto(rs.getInt("PrdCodigo")));
                 venPrd.setVenPrdCodigo(rs.getInt("VenPrdCodigo"));
                 venPrd.setVenPrdDescricao(rs.getString("VenPrdDescricao"));
                 venPrd.setVenPrdNome(rs.getString("VenPrdNome"));

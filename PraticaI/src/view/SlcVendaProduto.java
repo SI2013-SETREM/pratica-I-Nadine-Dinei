@@ -6,9 +6,12 @@
 package view;
 
 import java.awt.Toolkit;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Pessoa;
 import model.Produto;
+import model.Venda;
+import model.VendaProduto;
 import util.ImageSize;
 import util.Util;
 
@@ -16,9 +19,27 @@ import util.Util;
  *
  * @author Nadine
  */
-public class SlcProduto extends reflection.FormJDialog {
+public class SlcVendaProduto extends reflection.FormJDialog {
 
+    private Venda venda;
     private Produto produto = null;
+    private VendaProduto vp = null;
+
+    public Venda getVenda() {
+        return venda;
+    }
+
+    public void setVenda(Venda venda) {
+        this.venda = venda;
+    }
+
+    public VendaProduto getVp() {
+        return vp;
+    }
+
+    public void setVp(VendaProduto Vp) {
+        this.vp = Vp;
+    }
 
     public Produto getProduto() {
         return produto;
@@ -32,14 +53,14 @@ public class SlcProduto extends reflection.FormJDialog {
         DefaultTableModel dados = (DefaultTableModel) tblProdutos.getModel();
         dados.setNumRows(0);
         for (Produto p : produto.listBusca()) {
-            dados.addRow(new String[]{String.valueOf(p.getPrdNome()), util.Util.getFormattedMoney(p.getPrdPreco()),String.valueOf(p.getPrdCodigo()),String.valueOf(p.getPrdDescricao())});
+            dados.addRow(new Object[]{String.valueOf(p.getPrdNome()), util.Util.getFormattedMoney(p.getPrdPreco()), p});
         }
     }
 
     /**
      * Creates new form FrmSlcProduto
      */
-    public SlcProduto(java.awt.Frame parent, boolean modal) {
+    public SlcVendaProduto(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         java.net.URL urlImage = Util.getImageUrl(Pessoa.iconTitle, ImageSize.M);
@@ -49,6 +70,7 @@ public class SlcProduto extends reflection.FormJDialog {
         this.setLocationRelativeTo(null);
         btnSelecionar.setIcon(Util.getImageIconOk());
         btnCancelar.setIcon(Util.getImageIconCancel());
+        util.Util.setMoneyField(txtPrdPreco);
     }
 
     /**
@@ -86,11 +108,11 @@ public class SlcProduto extends reflection.FormJDialog {
 
             },
             new String [] {
-                "Nome", "Valor", "PrdCodigo", "PrdDescricao"
+                "Nome", "Valor", "produto"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, true, false, false
+                true, true, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -107,9 +129,6 @@ public class SlcProduto extends reflection.FormJDialog {
             tblProdutos.getColumnModel().getColumn(2).setMinWidth(0);
             tblProdutos.getColumnModel().getColumn(2).setPreferredWidth(0);
             tblProdutos.getColumnModel().getColumn(2).setMaxWidth(0);
-            tblProdutos.getColumnModel().getColumn(3).setMinWidth(0);
-            tblProdutos.getColumnModel().getColumn(3).setPreferredWidth(0);
-            tblProdutos.getColumnModel().getColumn(3).setMaxWidth(0);
         }
 
         btnSelecionar.setText("Selecionar");
@@ -223,19 +242,30 @@ public class SlcProduto extends reflection.FormJDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        // TODO add your handling code here:
         listar();
     }//GEN-LAST:event_formWindowOpened
 
     private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
-        // TODO add your handling code here:
-
+        if (tblProdutos.getSelectedRow() != -1) {
+            vp = new VendaProduto();
+            vp.setPrdCodigo(produto);
+            vp.setVenCodigo(venda);
+            vp.setVenPrdDescricao(txtDescricao.getText());
+            vp.setVenPrdNome(txtNome.getText());
+            vp.setVenPrdPreco(util.Util.getMoneyFromText(txtPrdPreco.getText()));
+            vp.setVenPrdQuantidade(Float.valueOf(txtQuantidade.getText()));
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, "Nenhum registro selecionado.");
+        }
     }//GEN-LAST:event_btnSelecionarActionPerformed
 
     private void tblProdutosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProdutosMouseClicked
-        // TODO add your handling code here:
         int rowSel = tblProdutos.getSelectedRow();
-        txtDescricao.setText((String) tblProdutos.getValueAt(rowSel, 0));
+        produto = (Produto) tblProdutos.getValueAt(rowSel, 2);
+        txtDescricao.setText(produto.getPrdDescricao());
+        txtNome.setText(produto.getPrdNome());
+        txtPrdPreco.setText(util.Util.getFormattedMoney(produto.getPrdPreco()));
     }//GEN-LAST:event_tblProdutosMouseClicked
 
     /**
@@ -255,21 +285,23 @@ public class SlcProduto extends reflection.FormJDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SlcProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SlcVendaProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SlcProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SlcVendaProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SlcProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SlcVendaProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SlcProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SlcVendaProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                SlcProduto dialog = new SlcProduto(new javax.swing.JFrame(), true);
+                SlcVendaProduto dialog = new SlcVendaProduto(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

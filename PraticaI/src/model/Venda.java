@@ -27,7 +27,7 @@ public class Venda extends ModelTemplate {
     private char VenTipo;
     private int VenParcelas;
     private double VenEntrada;
-    private double VenPedNumero;
+    private int VenPedNumero;
     private boolean VenEfetivada;
     private VendaProduto[] vendaProduto;
     
@@ -161,7 +161,7 @@ public class Venda extends ModelTemplate {
         return VenPedNumero;
     }
 
-    public void setVenPedNumero(double VenPedNumero) {
+    public void setVenPedNumero(int VenPedNumero) {
         this.VenPedNumero = VenPedNumero;
     }
 
@@ -194,12 +194,12 @@ public class Venda extends ModelTemplate {
 
     public boolean insert() {
         this.setVenCodigo(Sequencial.getNextSequencial(Venda.class.getSimpleName() + "_" + this.getCliCodigo().getCliCodigo()));
+        this.setVenPedNumero(Sequencial.getNextSequencial(Venda.class.getSimpleName()+"_Pedido"));
         try {
             String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " (CliCodigo, VenCodigo, VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero)";
             sql += " VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            DB.executeQuery(sql, new Object[]{CliCodigo.getCliCodigo(), VenCodigo, VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero});
-            
+            DB.executeUpdate(sql, new Object[]{CliCodigo.getCliCodigo(), VenCodigo, VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero});
             saveVendaProdutos();
             return true;
         } catch (SQLException ex) {

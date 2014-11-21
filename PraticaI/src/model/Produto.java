@@ -186,14 +186,14 @@ public class Produto extends ModelTemplate {
             ResultSet rs = DB.executeQuery(sql);
             while (rs.next()) {
                 Produto p = new Produto();
-                p.setPrdNome(rs.getString(rs.getString("PrdNome")));
+                p.setPrdNome(rs.getString("PrdNome"));
                 p.setPrdPreco(rs.getDouble("PrdPreco"));
                 p.setPrdDescricao(rs.getString("PrdDescricao"));
                 p.setPrdCodigo(rs.getInt("PrdCodigo"));
                 list.add(p);
             }
         } catch (SQLException ex) {
-            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar as " + prlTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+            Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar os " + prlTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
         return (Produto[]) list.toArray(new Produto[list.size()]);
     }
