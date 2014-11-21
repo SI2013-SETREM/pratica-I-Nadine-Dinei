@@ -210,7 +210,7 @@ public class Venda extends ModelTemplate {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this)
                     + " WHERE CliCodigo = ? AND VenCodigo = ?";
-            ResultSet rs = DB.executeQuery(sql, new Object[]{VenCodigo, CliCodigo.getCliCodigo()});
+            ResultSet rs = DB.executeQuery(sql, new Object[]{CliCodigo.getCliCodigo(), VenCodigo});
             if (rs.next()) {
                 //   this.setCliCodigo(new Cliente(rs.getInt("CliCodigo")));
                 this.setVenCodigo(rs.getInt("VenCodigo"));
