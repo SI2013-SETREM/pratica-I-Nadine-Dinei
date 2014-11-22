@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptLancamentosPorPeriodo" language="groovy" pageWidth="595" pageHeight="842" columnWidth="585" leftMargin="5" rightMargin="5" topMargin="5" bottomMargin="5" uuid="d93d6a85-03bd-4ab8-98ee-6c9349216d09">
-	<property name="ireport.zoom" value="1.464100000000001"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="Periodo" class="java.lang.String"/>
@@ -68,7 +68,7 @@
 				<text><![CDATA[Lista de Lançamentos]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="457" y="19" width="126" height="20" uuid="ba97dfd6-8443-458e-980f-7e6b9a164d5d"/>
+				<reportElement x="371" y="19" width="212" height="20" uuid="ba97dfd6-8443-458e-980f-7e6b9a164d5d"/>
 				<textElement textAlignment="Right">
 					<font fontName="Arial" size="10"/>
 				</textElement>
