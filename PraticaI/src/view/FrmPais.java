@@ -193,8 +193,10 @@ public class FrmPais extends FormJDialog {
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         pais.setPaiAlfa2(txtPaiAlfa2.getText());
         pais.setPaiAlfa3(txtPaiAlfa3.getText());
-        pais.setPaiBacenIbge(Integer.parseInt(txtPaiIBGE.getText()));
-        pais.setPaiISO3166(Integer.parseInt(txtPaiISO3166.getText()));
+        if (!txtPaiIBGE.getText().equals(""))
+            pais.setPaiBacenIbge(Integer.parseInt(txtPaiIBGE.getText()));
+        if (!txtPaiISO3166.getText().equals(""))
+            pais.setPaiISO3166(Integer.parseInt(txtPaiISO3166.getText()));
         pais.setPaiNome(txtPaiNome.getText());
         pais.save();
         this.dispose();

@@ -5,10 +5,12 @@
  */
 package view;
 
+import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import model.ContaCapital;
 import reflection.FormJDialog;
+import util.ImageSize;
 import util.Util;
 
 /**
@@ -23,6 +25,10 @@ public class FrmContaCapital extends FormJDialog {
      * Creates new form FrmContaCapital
      */
     public FrmContaCapital() {
+        java.net.URL urlImage = Util.getImageUrl(ContaCapital.iconTitle, ImageSize.M);
+        if (urlImage != null)
+            this.setIconImage(Toolkit.getDefaultToolkit().getImage(urlImage));
+        
         initComponents();
         this.setTitle("Manutenção de " + ContaCapital.sngTitle);
         ImageIcon icone = new ImageIcon(util.Util.getImageUrl(ContaCapital.iconTitle, util.ImageSize.P));
@@ -38,6 +44,11 @@ public class FrmContaCapital extends FormJDialog {
         Util.setMoneyField(txtSaldo);
     }
 
+    @Override
+    public void loadInsert() {
+        txtSaldo.setText(Util.getFormattedMoney(0));
+    }
+    
     @Override
     public void loadUpdate() {
         lblSaldo.setText("Saldo:");
@@ -114,6 +125,8 @@ public class FrmContaCapital extends FormJDialog {
                 ckbContaPadraoActionPerformed(evt);
             }
         });
+
+        txtSaldo.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

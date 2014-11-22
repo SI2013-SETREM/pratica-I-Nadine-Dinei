@@ -54,6 +54,11 @@ public abstract class Util {
     public static String getFormattedDateTime() {
         return Util.getFormattedDateTime(Calendar.getInstance());
     }
+    public static String getFormattedDateTime(java.sql.Timestamp date) {
+        Calendar cl = Calendar.getInstance();
+        cl.setTime(date);
+        return Util.getFormattedDateTime(cl);
+    }
     public static String getFormattedDateTime(java.util.Date date) {
         Calendar cl = Calendar.getInstance();
         cl.setTime(date);

@@ -464,9 +464,17 @@ public class Lancamento extends ModelTemplate {
         int CntCodigo = 0;
         if (contaCapital != null)
             CntCodigo = contaCapital.getCntCodigo();
-        return getList(CntCodigo, 0, null, null, null, LanDataHoraFrom, LanDataHoraTo, null, null);
+        return getList(CntCodigo, 0, null, null, null, LanDataHoraFrom, LanDataHoraTo);
     }
-    public static ResultSet getList(int CntCodigo, int PlnCodigo, Pessoa pessoa, Venda venda, String LanDescricao, Timestamp LanDataHoraFrom, Timestamp LanDataHoraTo, Boolean LanEfetivado, Boolean LanEstornado) {
+    public static ResultSet getList(
+            int CntCodigo, 
+            int PlnCodigo, 
+            Pessoa pessoa, 
+            Venda venda, 
+            String LanDescricao, 
+            Timestamp LanDataHoraFrom, 
+            Timestamp LanDataHoraTo) {
+        
         ResultSet rs = null;
         try {
             String sql = "SELECT l.CntCodigo, l.LanCodigo, l.LanEfetivado, l.LanEstornado, l.LanDataHora, cc.CntNome, p.PlnNome,";
@@ -512,30 +520,7 @@ public class Lancamento extends ModelTemplate {
                 sql += " AND l.LanDataHora <= ?";
                 parms.add(LanDataHoraTo);
             }
-            if (LanEfetivado != null || LanEstornado != null) {
-                sql += " AND (";
-                if (LanEfetivado == null) {
-                    sql += "LanEfetivado OR NOT LanEfetivado"; // necessário caso tenha LanEstornado
-                } else {
-                    if (LanEfetivado) {
-                        sql += "LanEfetivado";
-                    } else {
-                        sql += "NOT LanEfetivado";
-                    }
-                }
-                sql += ") AND (";
-                if (LanEstornado == null) {
-                    sql += "LanEstornado OR NOT LanEstornado"; // necessário caso tenha LanEfetivado
-                } else {
-                    if (LanEstornado) {
-                        sql += "LanEstornado";
-                    } else {
-                        sql += "NOT LanEstornado";
-                    }
-                }
-                sql += ")";
-            }
-//            System.out.println("SQL LANCAMENTOS: " + sql);
+            
             rs = DB.executeQuery(sql, (Object[]) parms.toArray(new Object[0]));
             
         } catch (SQLException ex) {

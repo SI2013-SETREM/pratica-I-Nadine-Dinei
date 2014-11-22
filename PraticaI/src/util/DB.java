@@ -106,9 +106,9 @@ public abstract class DB {
                 r = rs.getString(colLabel);
             else if (model.ModelTemplate.class.isAssignableFrom(colType)) {
 //                model.ModelTemplate mdl = (model.ModelTemplate) colType.newInstance();
-//                String[] idColumn = (String[]) reflection.ReflectionUtil.getAttibute(cls, "idColumn");
-//                r = rs.getInt(colLabel);
-                r = null;
+//                String[] idColumn = (String[]) reflection.ReflectionUtil.getAttibute(colType, "idColumn");
+                r = rs.getInt(colLabel);
+//                r = null;
             }
         } catch (SQLException ex) {
             // Comentar esta linha:

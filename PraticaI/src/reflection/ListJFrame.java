@@ -76,7 +76,7 @@ public class ListJFrame extends javax.swing.JFrame {
     private String orderBy;
     private FilterField[] listFilterFields;
     
-    private int width = 500;
+    private int width = 600;
     private int height = 300;
     private final int btnColWidth = 30;
     

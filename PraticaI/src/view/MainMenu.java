@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import model.Cidade;
+import model.ContaCapital;
 import model.Estado;
 import model.FechamentoCaixa;
 import model.Lancamento;
@@ -71,13 +72,13 @@ public class MainMenu extends javax.swing.JFrame {
         
         btnEfetuarLancamentoEntrada.setIcon(new ImageIcon(util.Util.getImageUrl("moneyadd.png", util.ImageSize.M)));
         btnEfetuarLancamentoSaida.setIcon(new ImageIcon(util.Util.getImageUrl("moneydelete.png", util.ImageSize.M)));
-        //btnFecharCaixa.setIcon(new ImageIcon(util.Util.getImageUrl(FechamentoCaixa.iconTitle, util.ImageSize.M)));
-        btnContatos.setIcon(new ImageIcon(util.Util.getImageUrl("email.png", util.ImageSize.M)));
+        btnFecharCaixa.setIcon(new ImageIcon(util.Util.getImageUrl(FechamentoCaixa.iconTitle, util.ImageSize.M)));
+//        btnContatos.setIcon(new ImageIcon(util.Util.getImageUrl("email.png", util.ImageSize.M)));
         btnSair.setIcon(new ImageIcon(util.Util.getImageUrl("doorout.png", util.ImageSize.M)));
         btnLancamento.setIcon(new ImageIcon(util.Util.getImageUrl("moneydollar.png", util.ImageSize.M)));
         btnPlanoContas.setIcon(new ImageIcon(util.Util.getImageUrl("category.png", util.ImageSize.M)));
-        btnContasCapital.setIcon(new ImageIcon(util.Util.getImageUrl("safe.png", util.ImageSize.M)));
-        btnFechaCaixa2.setIcon(new ImageIcon(util.Util.getImageUrl("accept.png", util.ImageSize.M)));
+        btnContasCapital.setIcon(new ImageIcon(util.Util.getImageUrl(ContaCapital.iconTitle, util.ImageSize.M)));
+        btnFechaCaixa2.setIcon(new ImageIcon(util.Util.getImageUrl(FechamentoCaixa.iconTitle, util.ImageSize.M)));
         btnVendas.setIcon(new ImageIcon(util.Util.getImageUrl(Venda.iconTitle, util.ImageSize.M)));
         btnClientes.setIcon(new ImageIcon(util.Util.getImageUrl("clientes.png", util.ImageSize.M)));
         btnProdutos.setIcon(new ImageIcon(util.Util.getImageUrl("produtos.png", util.ImageSize.M)));
@@ -86,13 +87,17 @@ public class MainMenu extends javax.swing.JFrame {
         btnClientes1.setIcon(new ImageIcon(util.Util.getImageUrl("clientes.png", util.ImageSize.M)));
         btnUsuarios.setIcon(new ImageIcon(util.Util.getImageUrl("user.png", util.ImageSize.M)));
         btnPerfilUsuario.setIcon(new ImageIcon(util.Util.getImageUrl(NivelAcesso.iconTitle, util.ImageSize.M)));
-        btnContatos1.setIcon(new ImageIcon(util.Util.getImageUrl("email.png", util.ImageSize.M)));
+//        btnContatos1.setIcon(new ImageIcon(util.Util.getImageUrl("email.png", util.ImageSize.M)));
         btnCargos.setIcon(new ImageIcon(util.Util.getImageUrl("briefcase.png", util.ImageSize.M)));
-        btnConfiguracoes.setIcon(new ImageIcon(util.Util.getImageUrl("tools.png", util.ImageSize.M)));
+//        btnConfiguracoes.setIcon(new ImageIcon(util.Util.getImageUrl("tools.png", util.ImageSize.M)));
         btnLogs.setIcon(new ImageIcon(util.Util.getImageUrl(Log.iconTitle, util.ImageSize.M)));
         btnPaises.setIcon(new ImageIcon(util.Util.getImageUrl(Pais.iconTitle, util.ImageSize.M)));
         btnEstados.setIcon(new ImageIcon(util.Util.getImageUrl(Estado.iconTitle, util.ImageSize.M)));
         btnCidades.setIcon(new ImageIcon(util.Util.getImageUrl(Cidade.iconTitle, util.ImageSize.M)));
+        
+        btnContatos.setVisible(false);
+        btnContatos1.setVisible(false);
+        btnConfiguracoes.setVisible(false);
     }
 
     /**
@@ -743,7 +748,8 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEfetuarLancamentoEntradaActionPerformed
 
     private void btnFecharCaixaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharCaixaActionPerformed
-        // TODO add your handling code here:
+        FecharPeriodo lst = new FecharPeriodo();
+        lst.setVisible(true);
     }//GEN-LAST:event_btnFecharCaixaActionPerformed
 
     private void btnContatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContatosActionPerformed
@@ -817,7 +823,7 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnConfiguracoesActionPerformed
 
     private void btnLogsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogsActionPerformed
-        openList(model.Log.class);
+        openList(model.Log.class, 700);
     }//GEN-LAST:event_btnLogsActionPerformed
 
     private void btnPaisesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPaisesActionPerformed
@@ -862,10 +868,10 @@ public class MainMenu extends javax.swing.JFrame {
         
         if (checkAcesso(FncNome, Usuario.IDX_VISUALIZAR, true)) {
             reflection.ListJFrame list = new reflection.ListJFrame();
-            list.setClass(cls);
-            list.initListComponents();
             if (width > 0)
                 list.setWidth(width);
+            list.setClass(cls);
+            list.initListComponents();
 //            list.setAlwaysOnTop(true);
             list.setVisible(true);
         }

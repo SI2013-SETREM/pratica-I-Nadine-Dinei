@@ -261,7 +261,7 @@ public class ContaCapital extends ModelTemplate {
                 Logger.getLogger(ContaCapital.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return CntPadraoCodigo;
+        return (CntPadraoCodigo == null) ? 0 : CntPadraoCodigo;
     }
     
     private static void setCntPadraoCodigo(int CntCodigo) {

@@ -184,19 +184,19 @@ public class LstLancamento extends javax.swing.JFrame {
             }
         }
         
-        Boolean LanEfetivado = null;
-        if (chkEfetivados.isSelected() && chkNaoEfetivados.isSelected())
-            LanEfetivado = null;
-        else if (chkEfetivados.isSelected())
-            LanEfetivado = true;
-        else if (chkNaoEfetivados.isSelected())
-            LanEfetivado = false;
-        
-        Boolean LanEstornado = null;
-        if (chkEstornados.isSelected())
-            LanEstornado = true;
-        else
-            LanEstornado = false;
+//        Boolean LanEfetivado = null;
+//        if (chkEfetivados.isSelected() && chkNaoEfetivados.isSelected())
+//            LanEfetivado = null;
+//        else if (chkEfetivados.isSelected())
+//            LanEfetivado = true;
+//        else if (chkNaoEfetivados.isSelected())
+//            LanEfetivado = false;
+//        
+//        Boolean LanEstornado = null;
+//        if (chkEstornados.isSelected())
+//            LanEstornado = true;
+//        else
+//            LanEstornado = false;
         
         Timestamp LanDataHoraFrom = null;
         Timestamp LanDataHoraTo = null;
@@ -206,7 +206,7 @@ public class LstLancamento extends javax.swing.JFrame {
         if (!txtLanDataHoraTo.getText().replaceAll("[^0-9]", "").equals("")) {
             LanDataHoraTo = Util.getTimestampFromString(txtLanDataHoraTo.getText() + " 23:59:59");
         }
-        ResultSet rs = Lancamento.getList(CntCodigo, PlnCodigo, getPessoa(), getVenda(), txtLanDescricao.getText(), LanDataHoraFrom, LanDataHoraTo, LanEfetivado, LanEstornado);
+        ResultSet rs = Lancamento.getList(CntCodigo, PlnCodigo, getPessoa(), getVenda(), txtLanDescricao.getText(), LanDataHoraFrom, LanDataHoraTo);
         
         DefaultTableModel dtm = (DefaultTableModel) tbl.getModel();
         dtm.setNumRows(0);
@@ -234,7 +234,6 @@ public class LstLancamento extends javax.swing.JFrame {
                     row[colLanDescricao] = rs.getString("LanDescricao");
                     row[colLanValorSaida] = Util.getFormattedMoney(rs.getDouble("LanValorSaida"));
                     row[colLanValorEntrada] = Util.getFormattedMoney(rs.getDouble("LanValorEntrada"));
-                    row[colBtnEfetivar] = null;
                     row[colCntCodigo] = rs.getInt("CntCodigo");
                     row[colLanCodigo] = rs.getInt("LanCodigo");
                     row[colLanEfetivado] = rs.getBoolean("LanEfetivado");
@@ -246,19 +245,9 @@ public class LstLancamento extends javax.swing.JFrame {
                 } while (rs.next());
                 
                 Object[] row = new Object[tbl.getColumnCount()];
-                row[colLanDataHora] = null;
-                row[colLanContaCapital] = null;
-                row[colLanPlanoContas] = null;
-                row[colLanPessoa] = null;
-                row[colLanVenda] = null;
                 row[colLanDescricao] = "Total:";
                 row[colLanValorSaida] = Util.getFormattedMoney(totalSaida);
                 row[colLanValorEntrada] = Util.getFormattedMoney(totalEntrada);
-                row[colBtnEfetivar] = null;
-                row[colCntCodigo] = null;
-                row[colLanCodigo] = null;
-                row[colLanEfetivado] = null;
-                row[colLanEstornado] = null;
                 dtm.addRow(row);
                 
                 rowTotal = dtm.getRowCount()-1;
@@ -347,10 +336,6 @@ public class LstLancamento extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         txtVenda = new javax.swing.JTextField();
         btnBuscaVenda = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
-        chkEfetivados = new javax.swing.JCheckBox();
-        chkNaoEfetivados = new javax.swing.JCheckBox();
-        chkEstornados = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -465,41 +450,6 @@ public class LstLancamento extends javax.swing.JFrame {
             }
         });
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Exibir Lançamentos"));
-
-        chkEfetivados.setSelected(true);
-        chkEfetivados.setText("Efetivados");
-
-        chkNaoEfetivados.setSelected(true);
-        chkNaoEfetivados.setText("Não Efetivados");
-
-        chkEstornados.setText("Estornados");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(chkEfetivados)
-                        .addGap(0, 0, 0))
-                    .addComponent(chkEstornados)
-                    .addComponent(chkNaoEfetivados)))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(chkEfetivados)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(chkNaoEfetivados)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(chkEstornados)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -507,7 +457,6 @@ public class LstLancamento extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
@@ -528,13 +477,13 @@ public class LstLancamento extends javax.swing.JFrame {
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                                 .addComponent(jLabel2)))
                         .addGap(4, 4, 4)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(cmbPlanoContas, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(130, 130, 130))
+                                .addComponent(cmbPlanoContas, 0, 239, Short.MAX_VALUE)
+                                .addGap(275, 275, 275))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -547,49 +496,48 @@ public class LstLancamento extends javax.swing.JFrame {
                                         .addComponent(jLabel5)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(txtLanDataHoraTo, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)))
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnAddSaida, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnAddEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnAddSaida, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnAddEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
-                            .addComponent(txtPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnBuscaPessoa)
-                            .addComponent(jLabel7)
-                            .addComponent(txtVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnBuscaVenda))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2)
-                            .addComponent(cmbPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(txtLanDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtLanDataHoraFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(txtLanDataHoraTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(txtPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBuscaPessoa)
+                    .addComponent(jLabel7)
+                    .addComponent(txtVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBuscaVenda))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(cmbPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(txtLanDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtLanDataHoraFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5)
+                    .addComponent(txtLanDataHoraTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAddEntrada)
                     .addComponent(btnAddSaida)
-                    .addComponent(btnFiltrar))
+                    .addComponent(btnFiltrar)
+                    .addComponent(btnAddEntrada))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -685,9 +633,6 @@ public class LstLancamento extends javax.swing.JFrame {
     private javax.swing.JButton btnBuscaPessoa;
     private javax.swing.JButton btnBuscaVenda;
     private javax.swing.JButton btnFiltrar;
-    private javax.swing.JCheckBox chkEfetivados;
-    private javax.swing.JCheckBox chkEstornados;
-    private javax.swing.JCheckBox chkNaoEfetivados;
     private javax.swing.JComboBox cmbContaCapital;
     private javax.swing.JComboBox cmbPlanoContas;
     private javax.swing.JLabel jLabel1;
@@ -697,7 +642,6 @@ public class LstLancamento extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.ButtonGroup rdgStatus;
     private javax.swing.JTable tbl;

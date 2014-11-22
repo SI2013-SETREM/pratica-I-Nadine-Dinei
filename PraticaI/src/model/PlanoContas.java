@@ -143,7 +143,7 @@ public class PlanoContas extends ModelTemplate {
                 pln.setPlnNome(util.Util.strRepeat(CHILD_SIGNAL, iterations) + pln.getPlnNome());
                 dstList.add(pln);
                 newList.remove(pln);
-                findChilds(newList, dstList, pln.getPlnCodigo(), iterations + 1);
+                newList = findChilds(newList, dstList, pln.getPlnCodigo(), iterations + 1);
             }
         }
         return newList;

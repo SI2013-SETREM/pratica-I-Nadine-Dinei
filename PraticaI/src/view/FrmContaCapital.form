@@ -207,6 +207,9 @@
           </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="txtSaldo">
+          <Properties>
+            <Property name="horizontalAlignment" type="int" value="11"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

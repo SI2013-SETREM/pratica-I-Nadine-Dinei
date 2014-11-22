@@ -157,7 +157,7 @@ public class Venda extends ModelTemplate {
         this.vendaProduto = VendaProduto;
     }
 
-    public double getVenPedNumero() {
+    public int getVenPedNumero() {
         return VenPedNumero;
     }
 
@@ -194,12 +194,12 @@ public class Venda extends ModelTemplate {
 
     public boolean insert() {
         this.setVenCodigo(Sequencial.getNextSequencial(Venda.class.getSimpleName() + "_" + this.getCliCodigo().getCliCodigo()));
-        this.setVenPedNumero(Sequencial.getNextSequencial(Venda.class.getSimpleName()+"_Pedido"));
+        this.setVenPedNumero(Sequencial.getNextSequencial(Venda.class.getSimpleName() + "_Pedido"));
         try {
             String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
-            sql += " (CliCodigo, VenCodigo, VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero)";
-            sql += " VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            DB.executeUpdate(sql, new Object[]{CliCodigo.getCliCodigo(), VenCodigo, VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero});
+            sql += " (CliCodigo, VenCodigo, VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero, VenEfetivada)";
+            sql += " VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            DB.executeUpdate(sql, new Object[]{CliCodigo.getCliCodigo(), VenCodigo, VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero, isVenEfetivada()});
             saveVendaProdutos();
             return true;
         } catch (SQLException ex) {
@@ -210,10 +210,10 @@ public class Venda extends ModelTemplate {
 
     public boolean update() {
         try {
-            String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this);
-            sql += " VenData=?, VenValor=?, VenDesconto=?, VenValorFinal=?, VenTipo=?, VenParcelas=?, VenEntrada=?, VenPedNumero=?";
+            String sql = "UPDATE " + reflection.ReflectionUtil.getDBTableName(this) + " SET";
+            sql += " VenData=?, VenValor=?, VenDesconto=?, VenValorFinal=?, VenTipo=?, VenParcelas=?, VenEntrada=?, VenPedNumero=?, VenEfetivada=?";
             sql += " WHERE CliCodigo = ? and VenCodigo = ?";
-            DB.executeUpdate(sql, new Object[]{VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero, CliCodigo.getCliCodigo(), VenCodigo});
+            DB.executeUpdate(sql, new Object[]{VenData, VenValor, VenDesconto, VenValorFinal, VenTipo, VenParcelas, VenEntrada, VenPedNumero, isVenEfetivada(), CliCodigo.getCliCodigo(), VenCodigo});
 
             // Exclui todos os produtos e cadastra de novo
             sql = "DELETE FROM " + reflection.ReflectionUtil.getDBTableName(VendaProduto.class);
@@ -231,6 +231,7 @@ public class Venda extends ModelTemplate {
     private void saveVendaProdutos() {
         for (VendaProduto venPrd : this.getVendaProduto()) {
             venPrd.setFlag(DB.FLAG_INSERT); //Só por garantia
+            venPrd.setVenCodigo(this);
             venPrd.save();
         }
     }

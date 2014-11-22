@@ -149,8 +149,21 @@ public class VendaProduto extends ModelTemplate {
     public boolean insert() {
         try {
             this.setVenPrdCodigo(Sequencial.getNextSequencial(VendaProduto.class.getSimpleName() + "_"));
-            String sql = "insert into " + reflection.ReflectionUtil.getDBTableName(this) + "  (CliCodigo, VenCodigo, VenPrdCodigo, PrdCodigo, VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            DB.executeUpdate(sql, new Object[]{VenCodigo.getCliCodigo().getCliCodigo(), VenCodigo.getVenCodigo(), VenPrdCodigo, PrdCodigo.getPrdCodigo(), VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade});
+            String sql = "insert into " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " (CliCodigo, VenCodigo, VenPrdCodigo, PrdCodigo, VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade)";
+            sql += " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            DB.executeUpdate(sql, new Object[]{
+                getVenCodigo().getCliCodigo().getCliCodigo(), 
+                getVenCodigo().getVenCodigo(), 
+                VenPrdCodigo, 
+                PrdCodigo.getPrdCodigo(), 
+                VenPrdNome, 
+                VenPrdDescricao, 
+                VenPrdPreco, 
+                VenPrdQuantidade
+            });
+            
             flag = DB.FLAG_UPDATE;
             return true;
         } catch (SQLException ex) {
