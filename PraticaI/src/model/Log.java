@@ -146,15 +146,15 @@ public class Log extends ModelTemplate {
             String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(Log.class);
             sql += "(LogCodigo, FncNome, UsuCodigo, LogDtaHora, LogInteracao, LogDescricao, LogNivel)";
             sql += " VALUES(?, ?, ?, ?, ?, ?, ?)";
-            int UsuCodigo = 0;
-            if (this.getUsuCodigo() != null)
-                UsuCodigo = this.getUsuCodigo().getUsuCodigo();
+//            int UsuCodigo = 0;
+//            if (this.getUsuCodigo() != null)
+//                UsuCodigo = this.getUsuCodigo().getUsuCodigo();
             
             util.Util.debug("LOG" 
                 + "(LogCodigo, FncNome, UsuCodigo, LogDtaHora, LogInteracao, LogDescricao, LogNivel)\r\n"
                 + this.getLogCodigo()+", "
                 + this.getFncNome()+", "
-                + UsuCodigo + ", "
+                + getUsuCodigo() + ", "
                 + this.getLogDtaHora()+", "
                 + this.getLogInteracao()+", "
                 + this.getLogDescricao()+", "
@@ -163,7 +163,7 @@ public class Log extends ModelTemplate {
             DB.executeUpdate(sql, new Object[]{
                 this.getLogCodigo(), 
                 this.getFncNome(), 
-                UsuCodigo, 
+                (getUsuCodigo() != null ? getUsuCodigo().getUsuCodigo() : null), 
                 this.getLogDtaHora(), 
                 this.getLogInteracao(), 
                 this.getLogDescricao(), 
