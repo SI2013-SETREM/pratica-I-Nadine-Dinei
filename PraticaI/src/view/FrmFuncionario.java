@@ -20,7 +20,6 @@ public class FrmFuncionario extends FormJFrame {
      * Creates new form FrmPessoa
      */
     public FrmFuncionario() {
-        System.out.println("Pessoa");
         initComponents();
         this.setTitle("Manutenção de " + Pessoa.sngTitle);
         ImageIcon icone = new ImageIcon(util.Util.getImageUrl(Pessoa.iconTitle, util.ImageSize.P));

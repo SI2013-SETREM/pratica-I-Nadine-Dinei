@@ -148,7 +148,7 @@ public class VendaProduto extends ModelTemplate {
 
     public boolean insert() {
         try {
-            this.setVenPrdCodigo(Sequencial.getNextSequencial(VendaProduto.class.getSimpleName() + "_"));
+            this.setVenPrdCodigo(Sequencial.getNextSequencial(VendaProduto.class.getSimpleName() + "_" + getVenCodigo().getCliCodigo().getCliCodigo() + "_" + getVenCodigo().getVenCodigo()));
             String sql = "insert into " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " (CliCodigo, VenCodigo, VenPrdCodigo, PrdCodigo, VenPrdNome, VenPrdDescricao, VenPrdPreco, VenPrdQuantidade)";
             sql += " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";

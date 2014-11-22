@@ -87,21 +87,55 @@ public class PessoaEmail extends ModelTemplate {
         this.PesEmlEmail = PesEmlEmail;
     }
 
-    public void load(int PesCod, int PesEmlCodigo) {
+    public String getFlag() {
+        return flag;
+    }
+
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
+
+    public boolean load(int PesCod, int PesEmlCodigo) {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(PessoaEmail.class);
             sql += " WHERE PesCodigo = ? AND PesEmlCodigo = ?";
             ResultSet rs = DB.executeQuery(sql, new Object[]{PesCod, PesEmlCodigo});
-            rs.next();
-            this.setPesCodigo((Pessoa) rs.getObject("PesCodigo"));
-            this.setPesEmlCodigo(rs.getInt("PesEmlCodigo"));
-            this.setPesEmlEmail(rs.getString("PesEmlEmail"));
+            if (rs.next()) {
+                this.setPesCodigo((Pessoa) rs.getObject("PesCodigo"));
+                this.setPesEmlCodigo(rs.getInt("PesEmlCodigo"));
+                this.setPesEmlEmail(rs.getString("PesEmlEmail"));
+                
+                this.setFlag(DB.FLAG_UPDATE);
+                return true;
+            }
         } catch (SQLException ex) {
             Log.log(Pessoa.fncNome, Log.INT_OUTRA, "Falha ao buscar o " + sngTitle + " da " + Pessoa.sngTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
+        return false;
+    }
+    
+    public boolean insert() {
+        try {
+            setPesEmlCodigo(Sequencial.getNextSequencial(PessoaEmail.class.getName() + "_" + getPesCodigo().getPesCodigo()));
+            String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " (PesCodigo, PesEmlCodigo, PesEmlEmail)";
+            sql += " VALUES (?, ?, ?)";
+            
+            DB.executeUpdate(sql, new Object[] {
+                getPesCodigo().getPesCodigo(),
+                getPesEmlCodigo(),
+                getPesEmlEmail(),
+            });
+            
+            setFlag(DB.FLAG_UPDATE);
+            return true;
+        } catch (SQLException ex) {
+            Log.log(Pessoa.fncNome, Log.INT_INSERCAO, "Falha ao inserir o " + sngTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+        }
+        return false;
     }
 
-    public static PessoaEmail[] getAll(Pessoa PesCodigo) {
+    public static ArrayList<PessoaEmail> getAll(Pessoa PesCodigo) {
         ArrayList<PessoaEmail> list = new ArrayList<>();
         String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(PessoaEmail.class);
         sql += " WHERE PesCodigo = ?";
@@ -112,11 +146,13 @@ public class PessoaEmail extends ModelTemplate {
                 pe.setPesCodigo(PesCodigo);
                 pe.setPesEmlCodigo(rs.getInt("PesEmlCodigo"));
                 pe.setPesEmlEmail(rs.getString("PesEmlEmail"));
+                pe.setFlag(DB.FLAG_UPDATE);
                 list.add(pe);
             }
         } catch (SQLException ex) {
             Log.log(Pessoa.fncNome, Log.INT_OUTRA, "Falha ao buscar os " + prlTitle + " da " + Pessoa.sngTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
-        return (PessoaEmail[]) list.toArray(new PessoaEmail[list.size()]);
+        return list;
+//        return (PessoaEmail[]) list.toArray(new PessoaEmail[list.size()]);
     }
 }

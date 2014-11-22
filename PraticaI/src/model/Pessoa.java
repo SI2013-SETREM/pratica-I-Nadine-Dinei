@@ -3,7 +3,8 @@ package model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Timestamp;
 import util.DB;
 import util.field.FilterField;
 import util.field.FilterFieldText;
@@ -19,6 +20,10 @@ public class Pessoa extends ModelTemplate {
     public static final int SEXO_FEMININO = 2;
     public static final int SEXO_NAOESPECIFICADO = 9;
     
+    public static final String TIPO_FISICA = "F";
+    public static final String TIPO_JURIDICA = "J";
+    
+    
     private int PesCodigo;
     private String PesNome;
     private PessoaEmail PesEmlCodigo;
@@ -31,7 +36,11 @@ public class Pessoa extends ModelTemplate {
     private boolean PesIsCliente;
     private boolean PesIsUsuario;
     private boolean PesIsFornecedor;
-    private Date PesDtaDelecao;
+    private Timestamp PesDtaDelecao;
+    
+    private PessoaEmail[] pessoaEmail = new PessoaEmail[0];
+    private PessoaTelefone[] pessoaTelefone = new PessoaTelefone[0];
+    private PessoaEndereco[] pessoaEndereco = new PessoaEndereco[0];
     
     private String flag = DB.FLAG_INSERT;
     
@@ -189,12 +198,36 @@ public class Pessoa extends ModelTemplate {
         this.PesIsFornecedor = PesIsFornecedor;
     }
 
-    public Date getPesDtaDelecao() {
+    public Timestamp getPesDtaDelecao() {
         return PesDtaDelecao;
     }
 
-    public void setPesDtaDelecao(Date PesDtaDelecao) {
+    public void setPesDtaDelecao(Timestamp PesDtaDelecao) {
         this.PesDtaDelecao = PesDtaDelecao;
+    }
+
+    public PessoaEmail[] getPessoaEmail() {
+        return pessoaEmail;
+    }
+
+    public void setPessoaEmail(PessoaEmail[] pessoaEmail) {
+        this.pessoaEmail = pessoaEmail;
+    }
+
+    public PessoaTelefone[] getPessoaTelefone() {
+        return pessoaTelefone;
+    }
+
+    public void setPessoaTelefone(PessoaTelefone[] pessoaTelefone) {
+        this.pessoaTelefone = pessoaTelefone;
+    }
+
+    public PessoaEndereco[] getPessoaEndereco() {
+        return pessoaEndereco;
+    }
+
+    public void setPessoaEndereco(PessoaEndereco[] pessoaEndereco) {
+        this.pessoaEndereco = pessoaEndereco;
     }
 
     public String getFlag() {
@@ -210,8 +243,9 @@ public class Pessoa extends ModelTemplate {
         try {
             String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " WHERE PesCodigo = ?";
-            System.out.println(sql + PesCodigo);
+            
             ResultSet rs = DB.executeQuery(sql, new Object[]{PesCodigo});
+            
             if (rs.next()) {
                 this.fill(rs);
                 return true;
@@ -259,9 +293,11 @@ public class Pessoa extends ModelTemplate {
     public boolean insert() {
         try {
             this.setPesCodigo(Sequencial.getNextSequencial(Pessoa.class));
+            
             String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
             sql += " (PesCodigo, PesNome, PesEmlCodigo, PesSexo, PesCPFCNPJ, PesRG, PesTipoPessoa, PesDtaNascimento, PesIsFuncionario, PesIsCliente, PesIsUsuario, PesIsFornecedor)";
             sql += " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            
             DB.executeUpdate(sql, new Object[]{
                 getPesCodigo(),
                 getPesNome(),
@@ -278,6 +314,12 @@ public class Pessoa extends ModelTemplate {
             });
             
             flag = DB.FLAG_UPDATE;
+            
+            savePessoaEnderecos();
+            
+            savePessoaTelefones();
+            
+            savePessoaEmails();
             
             return true;
         } catch (SQLException ex) {
@@ -308,6 +350,22 @@ public class Pessoa extends ModelTemplate {
                 getPesCodigo(),
             });
             
+            // Exclui todos os dados filhos e cadastra de novo
+            sql = "DELETE FROM " + reflection.ReflectionUtil.getDBTableName(PessoaEndereco.class);
+            sql += " WHERE PesCodigo = ?";
+            DB.executeUpdate(sql, new Object[]{getPesCodigo()});
+            savePessoaEnderecos();
+            
+            sql = "DELETE FROM " + reflection.ReflectionUtil.getDBTableName(PessoaTelefone.class);
+            sql += " WHERE PesCodigo = ?";
+            DB.executeUpdate(sql, new Object[]{getPesCodigo()});
+            savePessoaTelefones();
+            
+            sql = "DELETE FROM " + reflection.ReflectionUtil.getDBTableName(PessoaEmail.class);
+            sql += " WHERE PesCodigo = ?";
+            DB.executeUpdate(sql, new Object[]{getPesCodigo()});
+            savePessoaEmails();
+            
             return true;
         } catch (SQLException ex) {
             Log.log(fncNome, Log.INT_ALTERACAO, "Falha ao alterar a " + sngTitle + " '" + getPesNome() + "' [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
@@ -315,6 +373,26 @@ public class Pessoa extends ModelTemplate {
         return false;
     }
     
+    public void savePessoaEnderecos() {
+        for (PessoaEndereco pe : getPessoaEndereco()) {
+            pe.setPesCodigo(this);
+            pe.insert();
+        }
+    }
+    
+    public void savePessoaTelefones() {
+        for (PessoaTelefone pt : getPessoaTelefone()) {
+            pt.setPesCodigo(this);
+            pt.insert();
+        }
+    }
+    
+    public void savePessoaEmails() {
+        for (PessoaEmail pe : getPessoaEmail()) {
+            pe.setPesCodigo(this);
+            pe.insert();
+        }
+    }
     
     public static Pessoa[] listBusca() {
         return listBusca(true, true, true, true);

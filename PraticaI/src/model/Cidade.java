@@ -120,6 +120,7 @@ public class Cidade extends ModelTemplate {
                     this.setPaiCodigo(this.getEstSigla().getPaiCodigo());
                 }
                 flag = DB.FLAG_UPDATE;
+                return true;
             }
         } catch (Exception ex) {
             Logger.getLogger(Cidade.class

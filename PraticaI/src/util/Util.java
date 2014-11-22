@@ -30,63 +30,89 @@ public abstract class Util {
         return getFormattedDate(Calendar.getInstance());
     }
     public static String getFormattedDate(java.sql.Date date) {
-        Calendar cl = Calendar.getInstance();
-        cl.setTimeInMillis(date.getTime());
-        return getFormattedDate(cl);
+        if (date != null) {
+            Calendar cl = Calendar.getInstance();
+            cl.setTimeInMillis(date.getTime());
+            return getFormattedDate(cl);
+        } else {
+            return null;
+        }
     }
     public static String getFormattedDate(Calendar cl) {
-        String data = String.format("%02d", cl.get(Calendar.DAY_OF_MONTH)) + "/";
-        data += String.format("%02d", cl.get(Calendar.MONTH)+1) + "/";
-        data += String.valueOf(cl.get(Calendar.YEAR));
-        return data;
+        if (cl != null) {
+            String data = String.format("%02d", cl.get(Calendar.DAY_OF_MONTH)) + "/";
+            data += String.format("%02d", cl.get(Calendar.MONTH)+1) + "/";
+            data += String.valueOf(cl.get(Calendar.YEAR));
+            return data;
+        } else {
+            return null;
+        }
     }
     
     public static String getFormattedTime() {
         return getFormattedTime(Calendar.getInstance());
     }
     public static String getFormattedTime(Calendar cl) {
-        String hora = String.format("%02d", cl.get(Calendar.HOUR_OF_DAY)) + ":";
-        hora += String.format("%02d", cl.get(Calendar.MINUTE)) + ":";
-        hora += String.format("%02d", cl.get(Calendar.SECOND));
-        return hora;
+        if (cl != null) {
+            String hora = String.format("%02d", cl.get(Calendar.HOUR_OF_DAY)) + ":";
+            hora += String.format("%02d", cl.get(Calendar.MINUTE)) + ":";
+            hora += String.format("%02d", cl.get(Calendar.SECOND));
+            return hora;
+        } else {
+            return null;
+        }
     }
     
     public static String getFormattedDateTime() {
         return Util.getFormattedDateTime(Calendar.getInstance());
     }
     public static String getFormattedDateTime(java.sql.Timestamp date) {
-        Calendar cl = Calendar.getInstance();
-        cl.setTime(date);
-        return Util.getFormattedDateTime(cl);
+        if (date != null) {
+            Calendar cl = Calendar.getInstance();
+            cl.setTime(date);
+            return Util.getFormattedDateTime(cl);
+        } else {
+            return null;
+        }
     }
     public static String getFormattedDateTime(java.util.Date date) {
-        Calendar cl = Calendar.getInstance();
-        cl.setTime(date);
-        return Util.getFormattedDateTime(cl);
+        if (date != null) {
+            Calendar cl = Calendar.getInstance();
+            cl.setTime(date);
+            return Util.getFormattedDateTime(cl);
+        } else {
+            return null;
+        }
     }
     public static String getFormattedDateTime(Calendar cl) {
         return getFormattedDate(cl) + " " + getFormattedTime(cl);
     }
     
     public static java.sql.Date getDateFromString(String strDate) {
-        return java.sql.Date.valueOf(getDateStr(strDate, java.sql.Date.class));
+        String r = getDateStr(strDate, java.sql.Date.class);
+        return r != null ? java.sql.Date.valueOf(r) : null;
     }
     public static java.sql.Timestamp getTimestampFromString(String strDate) {
-        return java.sql.Timestamp.valueOf(getDateStr(strDate, java.sql.Timestamp.class));
+        String r = getDateStr(strDate, java.sql.Timestamp.class);
+        return r != null ? java.sql.Timestamp.valueOf(r) : null;
     }
     private static String getDateStr(String strDate, Class<?> type) {
-        String[] dateTimeParts = strDate.split("\\s");
-        String[] dateParts = dateTimeParts[0].split("/");
-        String dateStr = "";
-        if (dateParts.length == 3) 
-            dateStr += dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
-        if (type == java.sql.Time.class || type == java.sql.Timestamp.class) {
-            if (dateTimeParts.length == 2) 
-                dateStr += " " + dateTimeParts[1];
-            else
-                dateStr += " 00:00:00";
+        if (!strDate.replaceAll("[^0-9]", "").equals("")) {
+            String[] dateTimeParts = strDate.split("\\s");
+            String[] dateParts = dateTimeParts[0].split("/");
+            String dateStr = "";
+            if (dateParts.length == 3) 
+                dateStr += dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
+            if (type == java.sql.Time.class || type == java.sql.Timestamp.class) {
+                if (dateTimeParts.length == 2) 
+                    dateStr += " " + dateTimeParts[1];
+                else
+                    dateStr += " 00:00:00";
+            }
+            return dateStr;
+        } else {
+            return null;
         }
-        return dateStr;
     }
     
     public static double getMoneyFromText(String txtText) {

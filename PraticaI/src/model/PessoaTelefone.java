@@ -76,7 +76,7 @@ public class PessoaTelefone extends ModelTemplate {
         this.PesFonTelefone = PesFonTelefone;
     }
 
-    public static PessoaTelefone[] getAll(Pessoa pes) {
+    public static ArrayList<PessoaTelefone> getAll(Pessoa pes) {
         ArrayList<PessoaTelefone> list = new ArrayList<>();
         String sql = "SELECT * FROM " + reflection.ReflectionUtil.getDBTableName(PessoaTelefone.class);
         sql += " WHERE PesCodigo = ?";
@@ -93,7 +93,31 @@ public class PessoaTelefone extends ModelTemplate {
         } catch (SQLException ex) {
            Log.log(Pessoa.fncNome, Log.INT_OUTRA, "Falha ao buscar o " + sngTitle + " [" + ex.getErrorCode()+ " - " + ex.getMessage() + "]", Log.NV_ERRO);
         }
-        return (PessoaTelefone[]) list.toArray(new PessoaTelefone[list.size()]);
+        return list;
+//        return (PessoaTelefone[]) list.toArray(new PessoaTelefone[list.size()]);
     }
+    
+    public boolean insert() {
+        try {
+            setPesFonCodigo(Sequencial.getNextSequencial(PessoaTelefone.class.getName() + "_" + getPesCodigo().getPesCodigo()));
+            String sql = "INSERT INTO " + reflection.ReflectionUtil.getDBTableName(this);
+            sql += " (PesCodigo, PesFonCodigo, PesFonDescricao, PesFonTelefone)";
+            sql += " VALUES (?, ?, ?, ?)";
+            
+            DB.executeUpdate(sql, new Object[] {
+                getPesCodigo().getPesCodigo(),
+                getPesFonCodigo(),
+                getPesFonDescricao(),
+                getPesFonTelefone(),
+            });
+            
+            return true;
+        } catch (SQLException ex) {
+            Log.log(Pessoa.fncNome, Log.INT_INSERCAO, "Falha ao inserir o " + sngTitle + " [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);
+        }
+        return false;
+    }
+    
+    
 
 }

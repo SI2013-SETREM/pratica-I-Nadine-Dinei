@@ -44,14 +44,13 @@ public class Cliente extends ModelTemplate{
      */
     public static Object[][] listTableFields = {
         {"Nome", "Pessoa.PesNome"},
-        {"CPF/CNPJ","Pessoa.PesCPFCNPJ"}
+        {"CPF/CNPJ", "Pessoa.PesCPFCNPJ"}
     };
     /**
      * @see model.ModelTemplate#listFilterFields
      */
     public static FilterField[] listFilterFields = {
-        new FilterFieldText("EstNome", "Nome", 200),
-        new FilterFieldDynamicCombo("Pais.PaiCodigo", "País", 200, Pais.class, "PaiNome", null, null, "")
+        new FilterFieldText("Pessoa.PesNome", "Nome", 200),
     };
 
     public Cliente() {
@@ -144,10 +143,8 @@ public class Cliente extends ModelTemplate{
     }
     
     public boolean save() {
-        if (this.getPesCodigo().getPesCodigo() == 0) { // A pessoa não está cadastrada ainda
-            Pessoa.fncNome = fncNome; //Pessoa não tem funcionalidade, então sempre sobrescrevemos antes de trabalhar com ela
-            this.getPesCodigo().save();
-        }
+        Pessoa.fncNome = fncNome; //Pessoa não tem funcionalidade, então sempre sobrescrevemos antes de trabalhar com ela
+        this.getPesCodigo().save(); //Salva os dados alterados na pessoa
         
         switch (flag) {
             case DB.FLAG_INSERT:

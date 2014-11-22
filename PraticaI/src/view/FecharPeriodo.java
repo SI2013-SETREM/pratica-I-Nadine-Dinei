@@ -41,7 +41,7 @@ public class FecharPeriodo extends javax.swing.JFrame {
 //    public static final ImageIcon iconEfetivarInativo = new ImageIcon(Util.getIconUrl("accept_gray.png"));
 //    public static final ImageIcon iconEstornar = new ImageIcon(Util.getIconUrl("cross.png"));
 //    public static final ImageIcon iconEstornarInativo = new ImageIcon(Util.getIconUrl("cross_gray.png"));
-//    public static final ImageIcon iconQuestion = new ImageIcon(Util.getImageUrl("question.png", ImageSize.M));
+    public static final ImageIcon iconSuccess = new ImageIcon(Util.getImageUrl("accept.png", ImageSize.M));
     
     public static final int colLanDataHora = 0;
 //    public static final int colLanContaCapital = 1;
@@ -134,13 +134,6 @@ public class FecharPeriodo extends javax.swing.JFrame {
     }
     
     public void listar() {
-//        int CntCodigo = 0;
-//        if (cmbContaCapital.getSelectedItem() != null) {
-//            for (ContaCapital cc : ContasDeCapital) {
-//                if ((int) ((ComboBoxItem) cmbContaCapital.getSelectedItem()).getId() == cc.getCntCodigo())
-//                    CntCodigo = cc.getCntCodigo();
-//            }
-//        }
         ContaCapital contaCapital = null;
         if (cmbContaCapital.getSelectedItem() != null) {
             for (ContaCapital cc : ContasDeCapital) {
@@ -161,7 +154,6 @@ public class FecharPeriodo extends javax.swing.JFrame {
                 do { //invertido porque ele já deu um next no if
                     Object[] row = new Object[tbl.getColumnCount()];
                     row[colLanDataHora] = DB.formatColumn(rs.getTimestamp("LanDataHora"));
-//                    row[colLanContaCapital] = rs.getString("CntNome");
                     row[colLanPlanoContas] = rs.getString("PlnNome");
                     row[colLanPessoa] = rs.getString("PesNome");
                     
@@ -236,53 +228,6 @@ public class FecharPeriodo extends javax.swing.JFrame {
         }
     }
 
-//    public void updateRow(int row) {
-//        boolean LanEfetivado = (boolean) tbl.getValueAt(row, colLanEfetivado);
-//        boolean LanEstornado = (boolean) tbl.getValueAt(row, colLanEstornado);
-//        if (!LanEfetivado && !LanEstornado) {
-//            FrmLancamento frm = new FrmLancamento();
-//            frm.idCols = new Object[]{(int) tbl.getValueAt(row, colCntCodigo), (int) tbl.getValueAt(row, colLanCodigo)};
-//            frm.loadUpdate();
-//            frm.setVisible(true);
-//        }
-//    }
-//    
-//    public void efetivar(int row) {
-//        if (!(boolean) tbl.getValueAt(row, colLanEfetivado)) {
-//            int opt = JOptionPane.showConfirmDialog(rootPane, 
-//                    "Deseja realmente efetivar o lançamento: '" + (String) tbl.getValueAt(row, colLanDescricao) + "'?\r\n"
-//                    + "Esta opção é irreversível.", 
-//                    "Efetivar lançamento", 
-//                    JOptionPane.YES_NO_OPTION, 
-//                    JOptionPane.QUESTION_MESSAGE, 
-//                    iconQuestion);
-//            if (opt == JOptionPane.YES_OPTION) {
-//                Lancamento lan = new Lancamento();
-//                lan.load((int) tbl.getValueAt(row, colCntCodigo), (int) tbl.getValueAt(row, colLanCodigo));
-//                lan.efetivar();
-//                listar();
-//            }
-//        }
-//    }
-//    
-//    public void estornar(int row) {
-//        if (!(boolean) tbl.getValueAt(row, colLanEstornado)) {
-//            int opt = JOptionPane.showConfirmDialog(rootPane, 
-//                    "Deseja realmente estornar o lançamento: '" + (String) tbl.getValueAt(row, colLanDescricao) + "'?\r\n"
-//                    + "Esta opção é irreversível.", 
-//                    "Estornar lançamento", 
-//                    JOptionPane.YES_NO_OPTION, 
-//                    JOptionPane.QUESTION_MESSAGE, 
-//                    iconQuestion);
-//            if (opt == JOptionPane.YES_OPTION) {
-//                Lancamento lan = new Lancamento();
-//                lan.load((int) tbl.getValueAt(row, colCntCodigo), (int) tbl.getValueAt(row, colLanCodigo));
-//                lan.estornar();
-//                listar();
-//            }
-//        }
-//    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -320,11 +265,6 @@ public class FecharPeriodo extends javax.swing.JFrame {
         cmbContaCapital.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cmbContaCapitalItemStateChanged(evt);
-            }
-        });
-        cmbContaCapital.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbContaCapitalActionPerformed(evt);
             }
         });
 
@@ -466,22 +406,19 @@ public class FecharPeriodo extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(506, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnFecharPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(txtPeriodo)
                             .addComponent(pnlDadosConta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnFecharPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 165, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -511,13 +448,13 @@ public class FecharPeriodo extends javax.swing.JFrame {
         fch.setUsuCodigo(Usuario.UsuLogado);
         fch.setFchDataHora(LanDataHoraTo);
         fch.setFchSaldo(contaCapital.getCntSaldo());
-        fch.save();
+        if (fch.save()) {
+            JOptionPane.showMessageDialog(rootPane, "Período fechado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE, iconSuccess);
+            LanDataHoraFrom = util.Util.getNow();
+            LanDataHoraTo = util.Util.getNow();
+            contaCapitalSelected();
+        }
     }//GEN-LAST:event_btnFecharPeriodoActionPerformed
-
-    private void cmbContaCapitalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbContaCapitalActionPerformed
-        System.out.println("ACTION PERFORMED");
-        System.out.println(((ContaCapital) ((ComboBoxItem) cmbContaCapital.getSelectedItem()).getId()).toString());
-    }//GEN-LAST:event_cmbContaCapitalActionPerformed
 
     private void cmbContaCapitalItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbContaCapitalItemStateChanged
         if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
@@ -635,7 +572,6 @@ class FecharPeriodoCellRenderer extends DefaultTableCellRenderer {
 
             switch (column) {
                 case FecharPeriodo.colLanDataHora:
-//                case FecharPeriodo.colLanContaCapital:
                 case FecharPeriodo.colLanPlanoContas:
                 case FecharPeriodo.colLanPessoa:
                 case FecharPeriodo.colLanVenda:
@@ -690,22 +626,6 @@ class FecharPeriodoCellRenderer extends DefaultTableCellRenderer {
                                 this.setForeground(Lancamento.COR_INATIVO);
                     }
                     break;
-//                case FecharPeriodo.colBtnEfetivar:
-//                    this.setHorizontalAlignment(SwingConstants.CENTER);
-//                    this.setText(null);
-//                    if (LanEfetivado || LanEstornado)
-//                        this.setIcon(FecharPeriodo.iconEfetivarInativo);
-//                    else
-//                        this.setIcon(FecharPeriodo.iconEfetivar);
-//                    break;
-//                case FecharPeriodo.colBtnEstornar:
-//                    this.setHorizontalAlignment(SwingConstants.CENTER);
-//                    this.setText(null);
-//                    if (LanEstornado)
-//                        this.setIcon(FecharPeriodo.iconEstornarInativo);
-//                    else
-//                        this.setIcon(FecharPeriodo.iconEstornar);
-//                    break;
             }
         }
         return this;

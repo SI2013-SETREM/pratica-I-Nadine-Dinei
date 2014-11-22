@@ -230,9 +230,8 @@ public class Venda extends ModelTemplate {
 
     private void saveVendaProdutos() {
         for (VendaProduto venPrd : this.getVendaProduto()) {
-            venPrd.setFlag(DB.FLAG_INSERT); //Só por garantia
             venPrd.setVenCodigo(this);
-            venPrd.save();
+            venPrd.insert();
         }
     }
     
