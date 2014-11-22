@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fechamentoCaixa" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5bc56cf5-bdaa-4342-92b4-50bf6324ea43">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="Periodo" class="java.lang.String"/>
+	<parameter name="IMAGEM" class="java.lang.String"/>
+	<field name="DataHora" class="java.lang.String"/>
+	<field name="Conta" class="java.lang.String"/>
+	<field name="Saldo" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="46" splitType="Stretch">
+			<staticText>
+				<reportElement x="309" y="1" width="246" height="20" uuid="67851c49-36f4-46ee-a349-4b6d3a01a8d1"/>
+				<textElement textAlignment="Right">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fechamentos de Caixa]]></text>
+			</staticText>
+			<image>
+				<reportElement x="0" y="0" width="98" height="40" uuid="d6b11060-528d-4484-a7e7-1fbfb5d0e464"/>
+				<imageExpression><![CDATA[$P{IMAGEM}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="343" y="21" width="212" height="20" uuid="6eb04fc0-0644-4371-b74d-ee9dcd3634e6"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Período: " +$P{Periodo}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="45" width="555" height="1" uuid="6aaf0ab9-8961-4f45-8784-2d28f644889a"/>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="98" height="20" uuid="69746daa-0aab-492d-8c31-23c2e1b00347"/>
+				<text><![CDATA[Data]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="98" y="1" width="355" height="20" uuid="66491180-1e21-45f6-bf6b-6c805fa9e172"/>
+				<text><![CDATA[Conta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="453" y="0" width="102" height="20" uuid="bedcf528-f102-406f-84aa-90560dc0c6c0"/>
+				<text><![CDATA[Saldo]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="20" width="555" height="1" forecolor="#333333" uuid="e2a4874a-9ff7-44d9-99eb-74cd3e7e9ecd"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="98" height="20" uuid="b1fa426b-67dd-4b68-99d8-e853f22993d5"/>
+				<textFieldExpression><![CDATA[$F{DataHora}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="453" y="0" width="102" height="20" uuid="bb5ca5c5-4640-476b-9fa6-e806f00acaab"/>
+				<textFieldExpression><![CDATA[$F{Saldo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="98" y="0" width="355" height="20" uuid="798959e5-6ced-4f97-ad42-eadaeabc9155"/>
+				<textFieldExpression><![CDATA[$F{Conta}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="24" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement x="527" y="0" width="28" height="20" uuid="8b86054e-ac3e-472e-85f2-6dd6c0855960"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="448" y="0" width="76" height="20" uuid="39fbd6e8-9c25-4fcb-bf05-4789675113dd"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER} + " / "]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="2" splitType="Stretch"/>
+	</summary>
+</jasperReport>
