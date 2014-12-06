@@ -1,4 +1,3 @@
-
 package view;
 
 import java.awt.Toolkit;
@@ -28,23 +27,24 @@ import util.Util;
  * @author Nadine
  */
 public class MainMenu extends javax.swing.JFrame {
-    
+
     private Usuario UsuLogado = Usuario.UsuLogado;
-    
+
     /**
      * Creates new form MainMenu
      */
     public MainMenu() {
         Locale.setDefault(new Locale("pt", "BR"));
-        
+
         java.net.URL urlImage = Util.getImageUrl("logo.png", ImageSize.M);
-        if (urlImage != null)
+        if (urlImage != null) {
             this.setIconImage(Toolkit.getDefaultToolkit().getImage(urlImage));
-        
+        }
+
         initComponents();
         this.setLocationRelativeTo(null);
 //        this.setExtendedState(MAXIMIZED_BOTH);
-        
+
         String bemVindo = "Bem vind";
         switch (UsuLogado.getPesCodigo().getPesSexo()) {
             case Pessoa.SEXO_MASCULINO:
@@ -59,7 +59,7 @@ public class MainMenu extends javax.swing.JFrame {
                 break;
         }
         lblBemVindo.setText(bemVindo + " " + UsuLogado.getPesCodigo().getPesNome());
-        
+
         Timer timer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -69,7 +69,7 @@ public class MainMenu extends javax.swing.JFrame {
         timer.setRepeats(true);
         timer.setCoalesce(true);
         timer.start();
-        
+
         btnEfetuarLancamentoEntrada.setIcon(new ImageIcon(util.Util.getImageUrl("moneyadd.png", util.ImageSize.M)));
         btnEfetuarLancamentoSaida.setIcon(new ImageIcon(util.Util.getImageUrl("moneydelete.png", util.ImageSize.M)));
         btnFecharCaixa.setIcon(new ImageIcon(util.Util.getImageUrl(FechamentoCaixa.iconTitle, util.ImageSize.M)));
@@ -82,21 +82,21 @@ public class MainMenu extends javax.swing.JFrame {
         btnVendas.setIcon(new ImageIcon(util.Util.getImageUrl(Venda.iconTitle, util.ImageSize.M)));
         btnClientes.setIcon(new ImageIcon(util.Util.getImageUrl("clientes.png", util.ImageSize.M)));
         btnProdutos.setIcon(new ImageIcon(util.Util.getImageUrl("produtos.png", util.ImageSize.M)));
-        btnPessoas.setIcon(new ImageIcon(util.Util.getImageUrl("pessoas2.png", util.ImageSize.M)));
-        btnFuncionarios.setIcon(new ImageIcon(util.Util.getImageUrl("funcionarios.png", util.ImageSize.M)));
+        //       btnPessoas.setIcon(new ImageIcon(util.Util.getImageUrl("pessoas2.png", util.ImageSize.M)));
+        //      btnFuncionarios.setIcon(new ImageIcon(util.Util.getImageUrl("funcionarios.png", util.ImageSize.M)));
         btnClientes1.setIcon(new ImageIcon(util.Util.getImageUrl("clientes.png", util.ImageSize.M)));
         btnUsuarios.setIcon(new ImageIcon(util.Util.getImageUrl("user.png", util.ImageSize.M)));
         btnPerfilUsuario.setIcon(new ImageIcon(util.Util.getImageUrl(NivelAcesso.iconTitle, util.ImageSize.M)));
 //        btnContatos1.setIcon(new ImageIcon(util.Util.getImageUrl("email.png", util.ImageSize.M)));
-        btnCargos.setIcon(new ImageIcon(util.Util.getImageUrl("briefcase.png", util.ImageSize.M)));
+        //       btnCargos.setIcon(new ImageIcon(util.Util.getImageUrl("briefcase.png", util.ImageSize.M)));
 //        btnConfiguracoes.setIcon(new ImageIcon(util.Util.getImageUrl("tools.png", util.ImageSize.M)));
         btnLogs.setIcon(new ImageIcon(util.Util.getImageUrl(Log.iconTitle, util.ImageSize.M)));
         btnPaises.setIcon(new ImageIcon(util.Util.getImageUrl(Pais.iconTitle, util.ImageSize.M)));
         btnEstados.setIcon(new ImageIcon(util.Util.getImageUrl(Estado.iconTitle, util.ImageSize.M)));
         btnCidades.setIcon(new ImageIcon(util.Util.getImageUrl(Cidade.iconTitle, util.ImageSize.M)));
-        
+
         btnContatos.setVisible(false);
-        btnContatos1.setVisible(false);
+        //    btnContatos1.setVisible(false);
         btnConfiguracoes.setVisible(false);
     }
 
@@ -127,12 +127,8 @@ public class MainMenu extends javax.swing.JFrame {
         btnProdutos = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         btnUsuarios = new javax.swing.JButton();
-        btnFuncionarios = new javax.swing.JButton();
-        btnPessoas = new javax.swing.JButton();
         btnClientes1 = new javax.swing.JButton();
-        btnContatos1 = new javax.swing.JButton();
         btnPerfilUsuario = new javax.swing.JButton();
-        btnCargos = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         btnConfiguracoes = new javax.swing.JButton();
         btnLogs = new javax.swing.JButton();
@@ -448,38 +444,6 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        btnFuncionarios.setBackground(new java.awt.Color(255, 255, 255));
-        btnFuncionarios.setText("Funcionários");
-        btnFuncionarios.setBorderPainted(false);
-        btnFuncionarios.setContentAreaFilled(false);
-        btnFuncionarios.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnFuncionarios.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnFuncionarios.setMaximumSize(new java.awt.Dimension(75, 75));
-        btnFuncionarios.setMinimumSize(new java.awt.Dimension(75, 75));
-        btnFuncionarios.setPreferredSize(new java.awt.Dimension(75, 75));
-        btnFuncionarios.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnFuncionarios.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFuncionariosActionPerformed(evt);
-            }
-        });
-
-        btnPessoas.setBackground(new java.awt.Color(255, 255, 255));
-        btnPessoas.setText("Pessoas");
-        btnPessoas.setBorderPainted(false);
-        btnPessoas.setContentAreaFilled(false);
-        btnPessoas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnPessoas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnPessoas.setMaximumSize(new java.awt.Dimension(75, 75));
-        btnPessoas.setMinimumSize(new java.awt.Dimension(75, 75));
-        btnPessoas.setPreferredSize(new java.awt.Dimension(75, 75));
-        btnPessoas.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnPessoas.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPessoasActionPerformed(evt);
-            }
-        });
-
         btnClientes1.setBackground(new java.awt.Color(255, 255, 255));
         btnClientes1.setText("Clientes");
         btnClientes1.setBorderPainted(false);
@@ -493,22 +457,6 @@ public class MainMenu extends javax.swing.JFrame {
         btnClientes1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnClientes1ActionPerformed(evt);
-            }
-        });
-
-        btnContatos1.setBackground(new java.awt.Color(255, 255, 255));
-        btnContatos1.setText("Contatos");
-        btnContatos1.setBorderPainted(false);
-        btnContatos1.setContentAreaFilled(false);
-        btnContatos1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnContatos1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnContatos1.setMaximumSize(new java.awt.Dimension(75, 75));
-        btnContatos1.setMinimumSize(new java.awt.Dimension(75, 75));
-        btnContatos1.setPreferredSize(new java.awt.Dimension(75, 75));
-        btnContatos1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnContatos1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnContatos1ActionPerformed(evt);
             }
         });
 
@@ -528,60 +476,28 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
-        btnCargos.setBackground(new java.awt.Color(255, 255, 255));
-        btnCargos.setText("Cargos Funcionários");
-        btnCargos.setBorderPainted(false);
-        btnCargos.setContentAreaFilled(false);
-        btnCargos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnCargos.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnCargos.setMaximumSize(new java.awt.Dimension(75, 75));
-        btnCargos.setMinimumSize(new java.awt.Dimension(75, 75));
-        btnCargos.setPreferredSize(new java.awt.Dimension(75, 75));
-        btnCargos.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnCargos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCargosActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(btnPessoas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnFuncionarios, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap()
                 .addComponent(btnClientes1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnPerfilUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnContatos1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnCargos, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(433, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnContatos1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnClientes1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnFuncionarios, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnPessoas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnCargos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnPerfilUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                    .addComponent(btnClientes1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPerfilUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         jTabbedMenu.addTab("Pessoas", jPanel1);
@@ -790,29 +706,13 @@ public class MainMenu extends javax.swing.JFrame {
         openList(model.Produto.class);
     }//GEN-LAST:event_btnProdutosActionPerformed
 
-    private void btnCargosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargosActionPerformed
-        openList(model.Cargo.class);
-    }//GEN-LAST:event_btnCargosActionPerformed
-
     private void btnPerfilUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPerfilUsuarioActionPerformed
         openList(model.NivelAcesso.class);
     }//GEN-LAST:event_btnPerfilUsuarioActionPerformed
 
-    private void btnContatos1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContatos1ActionPerformed
-        btnContatosActionPerformed(evt);
-    }//GEN-LAST:event_btnContatos1ActionPerformed
-
     private void btnClientes1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClientes1ActionPerformed
         btnClientesActionPerformed(evt);
     }//GEN-LAST:event_btnClientes1ActionPerformed
-
-    private void btnPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPessoasActionPerformed
-        openList(model.Pessoa.class);
-    }//GEN-LAST:event_btnPessoasActionPerformed
-
-    private void btnFuncionariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFuncionariosActionPerformed
-//        openList(model.Funcionario.class);
-    }//GEN-LAST:event_btnFuncionariosActionPerformed
 
     private void btnUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuariosActionPerformed
         openList(model.Usuario.class);
@@ -840,7 +740,7 @@ public class MainMenu extends javax.swing.JFrame {
 //        list.initListComponents();
 //        list.setVisible(true);
         openList(model.Estado.class);
-        
+
     }//GEN-LAST:event_btnEstadosActionPerformed
 
     private void btnCidadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCidadesActionPerformed
@@ -863,28 +763,32 @@ public class MainMenu extends javax.swing.JFrame {
     private void openList(Class<? extends model.ModelTemplate> cls) {
         openList(cls, 0);
     }
+
     private void openList(Class<? extends model.ModelTemplate> cls, int width) {
         String FncNome = (String) reflection.ReflectionUtil.getAttibute(cls, "fncNome");
-        
+
         if (checkAcesso(FncNome, Usuario.IDX_VISUALIZAR, true)) {
             reflection.ListJFrame list = new reflection.ListJFrame();
-            if (width > 0)
+            if (width > 0) {
                 list.setWidth(width);
+            }
             list.setClass(cls);
             list.initListComponents();
 //            list.setAlwaysOnTop(true);
             list.setVisible(true);
         }
     }
-    
+
     private boolean checkAcesso(String FncNome, int idx_acesso, boolean showError) {
         boolean[] acessos;
-        if (FncNome != null && !"".equals(FncNome))
+        if (FncNome != null && !"".equals(FncNome)) {
             acessos = UsuLogado.verificaAcesso(FncNome);
-        else
+        } else {
             acessos = new boolean[]{true, true, true, true};
-        if (showError && !acessos[idx_acesso]) 
+        }
+        if (showError && !acessos[idx_acesso]) {
             JOptionPane.showMessageDialog(this, "Usuário sem acesso ao objeto '" + FncNome + "'", "Sem acesso", JOptionPane.WARNING_MESSAGE);
+        }
         return acessos[idx_acesso];
     }
 
@@ -925,25 +829,21 @@ public class MainMenu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCargos;
     private javax.swing.JButton btnCidades;
     private javax.swing.JButton btnClientes;
     private javax.swing.JButton btnClientes1;
     private javax.swing.JButton btnConfiguracoes;
     private javax.swing.JButton btnContasCapital;
     private javax.swing.JButton btnContatos;
-    private javax.swing.JButton btnContatos1;
     private javax.swing.JButton btnEfetuarLancamentoEntrada;
     private javax.swing.JButton btnEfetuarLancamentoSaida;
     private javax.swing.JButton btnEstados;
     private javax.swing.JButton btnFechaCaixa2;
     private javax.swing.JButton btnFecharCaixa;
-    private javax.swing.JButton btnFuncionarios;
     private javax.swing.JButton btnLancamento;
     private javax.swing.JButton btnLogs;
     private javax.swing.JButton btnPaises;
     private javax.swing.JButton btnPerfilUsuario;
-    private javax.swing.JButton btnPessoas;
     private javax.swing.JButton btnPlanoContas;
     private javax.swing.JButton btnProdutos;
     private javax.swing.JButton btnSair;
