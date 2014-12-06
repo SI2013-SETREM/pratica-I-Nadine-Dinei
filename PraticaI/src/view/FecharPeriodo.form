@@ -42,10 +42,10 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="cmbContaCapital" min="-2" pref="300" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="txtPeriodo" min="-2" max="-2" attributes="0"/>
-                          <Component id="pnlDadosConta" min="-2" max="-2" attributes="0"/>
+                          <Component id="txtPeriodo" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="pnlDadosConta" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="0" pref="165" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="95" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -203,7 +203,7 @@
                       <Group type="102" attributes="0">
                           <Component id="lblDadosConta" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="txtCntBncNumero" pref="89" max="32767" attributes="0"/>
+                          <Component id="txtCntBncNumero" pref="119" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <Component id="lblDadosConta3" min="-2" max="-2" attributes="0"/>

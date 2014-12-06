@@ -348,7 +348,7 @@ public class FecharPeriodo extends javax.swing.JFrame {
                     .addGroup(pnlDadosContaLayout.createSequentialGroup()
                         .addComponent(lblDadosConta)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtCntBncNumero, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE))
+                        .addComponent(txtCntBncNumero, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE))
                     .addGroup(pnlDadosContaLayout.createSequentialGroup()
                         .addComponent(lblDadosConta3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -418,7 +418,7 @@ public class FecharPeriodo extends javax.swing.JFrame {
                                 .addComponent(cmbContaCapital, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(txtPeriodo)
                             .addComponent(pnlDadosConta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 165, Short.MAX_VALUE)))
+                        .addGap(0, 95, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(

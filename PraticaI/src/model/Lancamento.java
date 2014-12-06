@@ -555,10 +555,25 @@ public class Lancamento extends ModelTemplate {
             sqlTbls += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Cliente.class) + " cli ON (l.CliCodigo =cli.CliCodigo)";
             sqlTbls += " LEFT OUTER JOIN " + reflection.ReflectionUtil.getDBTableName(Pessoa.class) + " pes ON (cli.PesCodigo = pes.PesCodigo)";
             sqlTbls += " WHERE LanEfetivado";
-            sqlTbls += " AND LanDataHora BETWEEN ? AND ?";
+            ArrayList<java.sql.Timestamp> parms = new ArrayList<>();
+            if (from != null && to != null) {
+                sqlTbls += " AND LanDataHora BETWEEN ? AND ?";
+                parms.add(from);
+                parms.add(to);
+                parms.add(from);
+                parms.add(to);
+            } else if (from != null) {
+                sqlTbls += " AND LanDataHora >= ?";
+                parms.add(from);
+                parms.add(from);
+            } else if (to != null) {
+                sqlTbls += " AND LanDataHora <= ?";
+                parms.add(to);
+                parms.add(to);
+            }
             
             String sql = "SELECT * FROM ";
-            sql += "(SELECT DATE_FORMAT(l.LanDataHora,'%d/%m/%Y %H:%i:%s') as LanDataHora, cc.CntNome, p.PlnNome, pes.PesNome, l.LanDescricao,";
+            sql += "(SELECT DATE_FORMAT(l.LanDataHora,'%d/%m/%Y %H:%i:%s') as LanDataHora, cc.CntNome, COALESCE(p.PlnNome, '') AS PlnNome, pes.PesNome, l.LanDescricao,";
             sql += " CONCAT('R$ ', FORMAT(COALESCE(l.LanValorEntrada,0), 2)) AS LanValorEntrada, ";
             sql += " CONCAT('R$ ', FORMAT(COALESCE(l.LanValorSaida,0), 2)) AS LanValorSaida,";
             sql += " NULL AS SumEntrada, NULL AS SumSaida";
@@ -572,8 +587,8 @@ public class Lancamento extends ModelTemplate {
             sql += "(SELECT LanValorEntrada, LanValorSaida";
             sql += sqlTbls;
             sql += ") AS somas";
-            System.out.println(sql);
-            ResultSet rs = DB.executeQuery(sql, new java.sql.Timestamp[]{from, to, from, to});
+            
+            ResultSet rs = DB.executeQuery(sql, parms.toArray(new java.sql.Timestamp[parms.size()]));
             return rs;
         } catch (SQLException ex) {
             Log.log(fncNome, Log.INT_OUTRA, "Falha ao buscar a lista de " + prlTitle + " para o relatório [" + ex.getErrorCode() + " - " + ex.getMessage() + "]", Log.NV_ERRO);

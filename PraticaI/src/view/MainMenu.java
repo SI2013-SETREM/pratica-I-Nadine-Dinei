@@ -43,7 +43,7 @@ public class MainMenu extends javax.swing.JFrame {
 
         initComponents();
         this.setLocationRelativeTo(null);
-//        this.setExtendedState(MAXIMIZED_BOTH);
+        this.setExtendedState(MAXIMIZED_BOTH);
 
         String bemVindo = "Bem vind";
         switch (UsuLogado.getPesCodigo().getPesSexo()) {
@@ -70,6 +70,8 @@ public class MainMenu extends javax.swing.JFrame {
         timer.setCoalesce(true);
         timer.start();
 
+        lblImg.setIcon(new ImageIcon(util.Util.getImageUrl("logo_report.png", util.ImageSize.G)));
+        
         btnEfetuarLancamentoEntrada.setIcon(new ImageIcon(util.Util.getImageUrl("moneyadd.png", util.ImageSize.M)));
         btnEfetuarLancamentoSaida.setIcon(new ImageIcon(util.Util.getImageUrl("moneydelete.png", util.ImageSize.M)));
         btnFecharCaixa.setIcon(new ImageIcon(util.Util.getImageUrl(FechamentoCaixa.iconTitle, util.ImageSize.M)));
@@ -79,6 +81,7 @@ public class MainMenu extends javax.swing.JFrame {
         btnPlanoContas.setIcon(new ImageIcon(util.Util.getImageUrl("category.png", util.ImageSize.M)));
         btnContasCapital.setIcon(new ImageIcon(util.Util.getImageUrl(ContaCapital.iconTitle, util.ImageSize.M)));
         btnFechaCaixa2.setIcon(new ImageIcon(util.Util.getImageUrl(FechamentoCaixa.iconTitle, util.ImageSize.M)));
+        btnExportarFechamentos.setIcon(new ImageIcon(util.Util.getImageUrl("documentcheck.png", util.ImageSize.M)));
         btnVendas.setIcon(new ImageIcon(util.Util.getImageUrl(Venda.iconTitle, util.ImageSize.M)));
         btnClientes.setIcon(new ImageIcon(util.Util.getImageUrl("clientes.png", util.ImageSize.M)));
         btnProdutos.setIcon(new ImageIcon(util.Util.getImageUrl("produtos.png", util.ImageSize.M)));
@@ -121,6 +124,7 @@ public class MainMenu extends javax.swing.JFrame {
         btnPlanoContas = new javax.swing.JButton();
         btnContasCapital = new javax.swing.JButton();
         btnFechaCaixa2 = new javax.swing.JButton();
+        btnExportarFechamentos = new javax.swing.JButton();
         pnlVendas = new javax.swing.JPanel();
         btnVendas = new javax.swing.JButton();
         btnClientes = new javax.swing.JButton();
@@ -137,6 +141,7 @@ public class MainMenu extends javax.swing.JFrame {
         btnCidades = new javax.swing.JButton();
         lblBemVindo = new javax.swing.JLabel();
         lblRelogio = new javax.swing.JLabel();
+        lblImg = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -325,6 +330,22 @@ public class MainMenu extends javax.swing.JFrame {
             }
         });
 
+        btnExportarFechamentos.setBackground(new java.awt.Color(255, 255, 255));
+        btnExportarFechamentos.setText("Exportar Fechamentos");
+        btnExportarFechamentos.setBorderPainted(false);
+        btnExportarFechamentos.setContentAreaFilled(false);
+        btnExportarFechamentos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnExportarFechamentos.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnExportarFechamentos.setMaximumSize(new java.awt.Dimension(75, 75));
+        btnExportarFechamentos.setMinimumSize(new java.awt.Dimension(75, 75));
+        btnExportarFechamentos.setPreferredSize(new java.awt.Dimension(75, 75));
+        btnExportarFechamentos.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnExportarFechamentos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportarFechamentosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlFluxoDeCaixaLayout = new javax.swing.GroupLayout(pnlFluxoDeCaixa);
         pnlFluxoDeCaixa.setLayout(pnlFluxoDeCaixaLayout);
         pnlFluxoDeCaixaLayout.setHorizontalGroup(
@@ -337,13 +358,16 @@ public class MainMenu extends javax.swing.JFrame {
                 .addComponent(btnContasCapital, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnFechaCaixa2, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(248, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnExportarFechamentos, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(89, Short.MAX_VALUE))
         );
         pnlFluxoDeCaixaLayout.setVerticalGroup(
             pnlFluxoDeCaixaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlFluxoDeCaixaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlFluxoDeCaixaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnExportarFechamentos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnFechaCaixa2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnContasCapital, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnPlanoContas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -629,9 +653,14 @@ public class MainMenu extends javax.swing.JFrame {
             .addComponent(jTabbedMenu)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblBemVindo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lblRelogio)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblImg, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblBemVindo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblRelogio)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -643,7 +672,9 @@ public class MainMenu extends javax.swing.JFrame {
                     .addComponent(lblRelogio))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTabbedMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(243, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 201, Short.MAX_VALUE)
+                .addComponent(lblImg, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -760,6 +791,11 @@ public class MainMenu extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnEfetuarLancamentoSaidaActionPerformed
 
+    private void btnExportarFechamentosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarFechamentosActionPerformed
+        ExpFechamentoCaixa frm = new ExpFechamentoCaixa();
+        frm.setVisible(true);
+    }//GEN-LAST:event_btnExportarFechamentosActionPerformed
+
     private void openList(Class<? extends model.ModelTemplate> cls) {
         openList(cls, 0);
     }
@@ -838,6 +874,7 @@ public class MainMenu extends javax.swing.JFrame {
     private javax.swing.JButton btnEfetuarLancamentoEntrada;
     private javax.swing.JButton btnEfetuarLancamentoSaida;
     private javax.swing.JButton btnEstados;
+    private javax.swing.JButton btnExportarFechamentos;
     private javax.swing.JButton btnFechaCaixa2;
     private javax.swing.JButton btnFecharCaixa;
     private javax.swing.JButton btnLancamento;
@@ -853,6 +890,7 @@ public class MainMenu extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTabbedPane jTabbedMenu;
     private javax.swing.JLabel lblBemVindo;
+    private javax.swing.JLabel lblImg;
     private javax.swing.JLabel lblRelogio;
     private javax.swing.JPanel pnlFluxoDeCaixa;
     private javax.swing.JPanel pnlPrincipal;

@@ -144,7 +144,8 @@ public class Cliente extends ModelTemplate{
     
     public boolean save() {
         Pessoa.fncNome = fncNome; //Pessoa não tem funcionalidade, então sempre sobrescrevemos antes de trabalhar com ela
-        this.getPesCodigo().save(); //Salva os dados alterados na pessoa
+        getPesCodigo().setPesIsCliente(true);
+        getPesCodigo().save(); //Salva os dados alterados na pessoa
         
         switch (flag) {
             case DB.FLAG_INSERT:

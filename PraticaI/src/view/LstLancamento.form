@@ -87,6 +87,8 @@
                           <Group type="102" attributes="0">
                               <Component id="btnFiltrar" min="-2" pref="110" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
+                              <Component id="btnExportar" min="-2" pref="103" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnAddSaida" min="-2" pref="130" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnAddEntrada" min="-2" pref="130" max="-2" attributes="0"/>
@@ -131,6 +133,7 @@
                   <Component id="btnAddSaida" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnFiltrar" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnAddEntrada" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnExportar" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="285" max="-2" attributes="0"/>
@@ -239,8 +242,8 @@
                 <Column editable="false" title="Pessoa" type="java.lang.Object"/>
                 <Column editable="false" title="Venda" type="java.lang.Object"/>
                 <Column editable="false" title="Descri&#xe7;&#xe3;o" type="java.lang.Object"/>
-                <Column editable="false" title="Sa&#xed;da" type="java.lang.Object"/>
                 <Column editable="false" title="Entrada" type="java.lang.Object"/>
+                <Column editable="false" title="Sa&#xed;da" type="java.lang.Object"/>
                 <Column editable="false" title="Efetivar" type="java.lang.Object"/>
                 <Column editable="false" title="Estornar" type="java.lang.Object"/>
                 <Column editable="false" title="CntCodigo" type="java.lang.Object"/>
@@ -364,6 +367,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBuscaVendaActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnExportar">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Exportar"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnExportarActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

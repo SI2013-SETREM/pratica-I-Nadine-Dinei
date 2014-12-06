@@ -3,10 +3,15 @@ package util;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
+import java.sql.ResultSet;
 import java.util.Calendar;
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.JOptionPane;
+import net.sf.jasperreports.engine.JRResultSetDataSource;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *  Classe com funções úteis
@@ -201,5 +206,20 @@ public abstract class Util {
     }
     public static javax.swing.ImageIcon getImageIconCancel() {
         return new javax.swing.ImageIcon(getIconUrl("cancel.png"));
+    }
+    
+    public static void callReport(String relatorio, ResultSet rs, String periodo) {
+        try {
+            Map<String, Object> param = new HashMap<>();
+            param.put("IMAGEM", util.Util.getImageUrl("logo_report.png", util.ImageSize.G));
+            param.put("Periodo",  periodo);
+            JRResultSetDataSource relatRes = new JRResultSetDataSource(rs);
+            JasperPrint p = JasperFillManager.fillReport("reports/" + relatorio + ".jasper", param, relatRes);
+            JasperViewer jv = new JasperViewer(p);
+            jv.setDefaultCloseOperation(JasperViewer.DISPOSE_ON_CLOSE);
+            jv.setVisible(true);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Falha na geração do relatório: " + ex.getMessage(), "Falha", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

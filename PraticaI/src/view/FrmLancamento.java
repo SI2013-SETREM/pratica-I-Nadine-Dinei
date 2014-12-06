@@ -106,8 +106,12 @@ public class FrmLancamento extends reflection.FormJDialog {
     }
     public void setVenda(Venda venda) {
         this.venda = venda;
-        if (getVenda() != null)
+        if (getVenda() != null) {
             txtVenda.setText(venda.toString());
+            if (Util.getMoneyFromText(txtLanValor.getText()) == 0) {
+                txtLanValor.setText(Util.getFormattedMoney(venda.getVenValorFinal()));
+            }
+        }
     }
     
     public void setEntrada() {

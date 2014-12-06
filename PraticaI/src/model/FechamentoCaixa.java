@@ -3,6 +3,7 @@ package model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.DB;
@@ -188,6 +189,32 @@ public class FechamentoCaixa extends ModelTemplate {
             }
         }
         return fchCx;
+    }
+    
+    public static ResultSet getFechamentosReport(java.sql.Timestamp from, java.sql.Timestamp to) {
+        try {
+            String sql = "SELECT cc.CntNome as Conta, fc.FchDataHora as DataHora,  CONCAT('R$ ', FORMAT(COALESCE(fc.FchSaldo,0), 2)) AS Saldo ";
+            sql += " FROM " + reflection.ReflectionUtil.getDBTableName(FechamentoCaixa.class) + " fc";
+            sql += " INNER JOIN " + reflection.ReflectionUtil.getDBTableName(ContaCapital.class) + " cc ON (fc.CntCodigo = cc.CntCodigo)";
+            ArrayList<java.sql.Timestamp> parms = new ArrayList<>();
+            if (from != null && to != null) {
+                sql += " WHERE fc.FchDataHora BETWEEN ? AND ?";
+                parms.add(from);
+                parms.add(to);
+            } else if (from != null) {
+                sql += " WHERE fc.FchDataHora >= ?";
+                parms.add(from);
+            } else if (to != null) {
+                sql += " WHERE fc.FchDataHora <= ?";
+                parms.add(to);
+            }
+            sql += " ORDER BY fc.FchDataHora ASC";
+            
+            return DB.executeQuery(sql, parms.toArray(new java.sql.Timestamp[parms.size()]));
+        } catch (SQLException ex) {
+            Logger.getLogger(FechamentoCaixa.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
     
 }

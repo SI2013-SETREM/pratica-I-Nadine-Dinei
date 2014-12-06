@@ -1,10 +1,8 @@
 package model;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import reflection.ReflectionUtil;
 import util.DB;
 import util.field.FilterField;
 import util.field.FilterFieldDynamicCombo;

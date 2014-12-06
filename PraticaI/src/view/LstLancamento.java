@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +33,10 @@ import model.Pessoa;
 import model.PlanoContas;
 import model.Usuario;
 import model.Venda;
+import net.sf.jasperreports.engine.JRResultSetDataSource;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.view.JasperViewer;
 import util.DB;
 import util.ImageSize;
 import util.Util;
@@ -55,8 +60,8 @@ public class LstLancamento extends javax.swing.JFrame {
     public static final int colLanPessoa = 3;
     public static final int colLanVenda = 4;
     public static final int colLanDescricao = 5;
-    public static final int colLanValorSaida = 6;
-    public static final int colLanValorEntrada = 7;
+    public static final int colLanValorEntrada = 6;
+    public static final int colLanValorSaida = 7;
     public static final int colBtnEfetivar = 8;
     public static final int colBtnEstornar = 9;
     public static final int colCntCodigo = 10;
@@ -90,6 +95,7 @@ public class LstLancamento extends javax.swing.JFrame {
         btnFiltrar.setIcon(new ImageIcon(Util.getIconUrl("filter.png")));
         btnAddEntrada.setIcon(new ImageIcon(Util.getIconUrl("moneyadd.png")));
         btnAddSaida.setIcon(new ImageIcon(Util.getIconUrl("moneydelete.png")));
+        btnExportar.setIcon(new ImageIcon(Util.getIconUrl("documentcheck.png")));
         Util.setSlcButton(btnBuscaPessoa);
         Util.setSlcButton(btnBuscaVenda);
         
@@ -336,6 +342,7 @@ public class LstLancamento extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         txtVenda = new javax.swing.JTextField();
         btnBuscaVenda = new javax.swing.JButton();
+        btnExportar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -395,7 +402,7 @@ public class LstLancamento extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Data", "Conta de Capital", "Plano de Contas", "Pessoa", "Venda", "Descrição", "Saída", "Entrada", "Efetivar", "Estornar", "CntCodigo", "LanCodigo", "LanEfetivado", "LanEstornado"
+                "Data", "Conta de Capital", "Plano de Contas", "Pessoa", "Venda", "Descrição", "Entrada", "Saída", "Efetivar", "Estornar", "CntCodigo", "LanCodigo", "LanEfetivado", "LanEstornado"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -447,6 +454,13 @@ public class LstLancamento extends javax.swing.JFrame {
         btnBuscaVenda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBuscaVendaActionPerformed(evt);
+            }
+        });
+
+        btnExportar.setText("Exportar");
+        btnExportar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportarActionPerformed(evt);
             }
         });
 
@@ -503,6 +517,8 @@ public class LstLancamento extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnExportar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnAddSaida, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnAddEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -537,7 +553,8 @@ public class LstLancamento extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAddSaida)
                     .addComponent(btnFiltrar)
-                    .addComponent(btnAddEntrada))
+                    .addComponent(btnAddEntrada)
+                    .addComponent(btnExportar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -592,6 +609,26 @@ public class LstLancamento extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnBuscaVendaActionPerformed
 
+    private void btnExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarActionPerformed
+        Util.callReport(
+            "rptLancamentosPorPeriodo",
+            Lancamento.getLancamentosReport(Util.getTimestampFromString(txtLanDataHoraFrom.getText()), Util.getTimestampFromString(txtLanDataHoraTo.getText())), 
+            txtLanDataHoraFrom.getText() + " a " + txtLanDataHoraTo.getText()
+        );
+//        try {
+//            Map<String, Object> param = new HashMap<String, Object>();
+//            param.put("IMAGEM", util.Util.getImageUrl("logo_report.png", util.ImageSize.G));
+//            param.put("Periodo", txtLanDataHoraFrom.getText() + " a " + txtLanDataHoraTo.getText());
+//            ResultSet rs = Lancamento.getLancamentosReport(Util.getTimestampFromString(txtLanDataHoraFrom.getText()), Util.getTimestampFromString(txtLanDataHoraTo.getText()));
+//            JRResultSetDataSource relatRes = new JRResultSetDataSource(rs);
+//            JasperPrint p = JasperFillManager.fillReport("reports/rptLancamentosPorPeriodo.jasper", param, relatRes);
+//            JasperViewer jv = new JasperViewer(p);
+//            jv.setVisible(true);
+//        } catch (Exception ex) {
+//            JOptionPane.showMessageDialog(rootPane, "Falha na erxportação: " + ex.getMessage(), "Falha", JOptionPane.ERROR_MESSAGE);
+//        }
+    }//GEN-LAST:event_btnExportarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -632,6 +669,7 @@ public class LstLancamento extends javax.swing.JFrame {
     private javax.swing.JButton btnAddSaida;
     private javax.swing.JButton btnBuscaPessoa;
     private javax.swing.JButton btnBuscaVenda;
+    private javax.swing.JButton btnExportar;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JComboBox cmbContaCapital;
     private javax.swing.JComboBox cmbPlanoContas;

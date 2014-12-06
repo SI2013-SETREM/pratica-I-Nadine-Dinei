@@ -168,6 +168,7 @@ public class FrmContaCapital extends FormJDialog {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -187,7 +188,7 @@ public class FrmContaCapital extends FormJDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblSaldo)
                     .addComponent(txtSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 5, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(ckbContaPadrao)
                 .addContainerGap())
         );
@@ -211,8 +212,8 @@ public class FrmContaCapital extends FormJDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
                     .addComponent(btnCancelar))
@@ -236,7 +237,7 @@ public class FrmContaCapital extends FormJDialog {
         contaCapital.setCntPadrao(ckbContaPadrao.isSelected());
         boolean dispose = true;
         if (ContaCapital.getCntPadraoCodigo() != contaCapital.getCntCodigo() && ckbContaPadrao.isSelected()) {
-            int i = JOptionPane.showConfirmDialog(null, "Você já possui uma conta padrão: '" + ContaCapital.getCntPadraoNome() + "', deseja substitui-la?");
+            int i = JOptionPane.showConfirmDialog(null, "Você já possui uma conta padrão: '" + ContaCapital.getCntPadraoNome() + "', deseja substitui-la?", "Conta Padrão", JOptionPane.YES_NO_CANCEL_OPTION);
             if (i == JOptionPane.OK_OPTION) {
                 ContaCapital ccPadrao = new ContaCapital();
                 ccPadrao.load(contaCapital.getCntPadraoCodigo());
